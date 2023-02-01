@@ -41,6 +41,8 @@ class Ui_Form(object):
         self.label.setFont(font)
 
         self.retranslateUi(Form)
+        self.pushButton.clicked.connect(Form.close_program)
+        self.pushButton_2.clicked.connect(Form.get_workspace)
 
         QMetaObject.connectSlotsByName(Form)
     # setupUi

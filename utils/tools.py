@@ -4,7 +4,10 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-import yaml
+import configparser
+import os
+
+from utils import global_obj
 
 
 def file_r(path):
@@ -32,3 +35,20 @@ def file_w(path, text, mode, encoding="UTF-8"):
         f.write(text)
 
 
+def read_ini_config(ini_path="conf/config.ini"):
+    config = configparser.ConfigParser()
+    config.read(ini_path)
+    global_obj.set_value("config", config)
+
+
+def update_ini_config(config, config_path="conf/config.ini"):
+    with open(config_path, "w+") as f:
+        config.write(f)
+
+
+def init_program():
+    read_ini_config()
+
+
+if __name__ == '__main__':
+    init_program()

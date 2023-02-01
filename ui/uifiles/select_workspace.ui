@@ -74,5 +74,42 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Form</receiver>
+   <slot>close_program()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>323</x>
+     <y>164</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>253</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>Form</receiver>
+   <slot>get_workspace()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>137</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>close_program()</slot>
+  <slot>get_workspace()</slot>
+ </slots>
 </ui>
