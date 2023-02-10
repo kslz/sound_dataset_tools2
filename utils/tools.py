@@ -8,6 +8,8 @@ import configparser
 import os
 
 from utils import global_obj
+from utils.peewee_orm import get_peewee_db
+from utils.sqlitedb import MyDB
 
 
 def file_r(path):
@@ -48,6 +50,14 @@ def update_ini_config(config, config_path="conf/config.ini"):
 
 def init_program():
     read_ini_config()
+
+
+def inti_workspace(workspace_path):
+    os.makedirs(workspace_path, exist_ok=True)
+    os.makedirs(os.path.join(workspace_path, "db"), exist_ok=True)
+    mydb = MyDB(os.path.join(workspace_path, "db/workspace.db"))
+    global_obj.set_value("mydb", mydb)
+    get_peewee_db(os.path.join(workspace_path, "db/workspace.db"))
 
 
 if __name__ == '__main__':

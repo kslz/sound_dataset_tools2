@@ -36,7 +36,7 @@ def creatlogger(logname):
 if __name__ == '__main__':
     logger = creatlogger("testlog")
     # 6、进行日志输出
-    logger.info("这是一条INFO级别的信息,来自 【WeiyiGeek.top】 触发。")
+    logger.info("这是一条INFO级别的信息。")
     logger.debug('debug message')
     logger.info('info message')
     logger.warning('warn message')

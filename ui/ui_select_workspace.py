@@ -51,6 +51,7 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"\u9009\u62e9\u5de5\u4f5c\u533a", None))
         self.pushButton.setText(QCoreApplication.translate("Form", u"\u9000\u51fa", None))
         self.pushButton_2.setText(QCoreApplication.translate("Form", u"\u786e\u5b9a", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("Form", u"\u8bf7\u5728\u8fd9\u91cc\u8f93\u5165\u5de5\u4f5c\u533a\u8def\u5f84\uff0c\u652f\u6301\u76f8\u5bf9\u8def\u5f84", None))
         self.label.setText(QCoreApplication.translate("Form", u"\u5de5\u4f5c\u533a\uff1a", None))
     # retranslateUi
 

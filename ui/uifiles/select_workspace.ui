@@ -53,6 +53,9 @@
      <pointsize>10</pointsize>
     </font>
    </property>
+   <property name="placeholderText">
+    <string>请在这里输入工作区路径，支持相对路径</string>
+   </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">

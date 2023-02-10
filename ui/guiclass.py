@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 from ui.ui_select_workspace import Ui_Form
 from utils import global_obj
 from utils.log import creatlogger
-from utils.tools import update_ini_config
+from utils.tools import update_ini_config, inti_workspace
 
 
 class SelectWorkspaceWindow(QMainWindow):
@@ -33,12 +33,14 @@ class SelectWorkspaceWindow(QMainWindow):
 
     def get_workspace(self):
         workspace_path = self.ui.lineEdit.text()
-        if os.path.exists(workspace_path):
-            print("路径存在")
-            config["program_configs"]["default_workspace"] = workspace_path
-            update_ini_config(config)
-        else:
-            print("路径不存在")
+        inti_workspace(workspace_path)
+        config["program_configs"]["default_workspace"] = workspace_path
+        update_ini_config(config)
+
+        # if os.path.exists(workspace_path):
+        #     print("路径存在")
+        # else:
+        #     print("路径不存在")
 
     pass
 
