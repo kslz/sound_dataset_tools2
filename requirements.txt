@@ -1,0 +1,5 @@
+peewee==3.15.4
+PySide6==6.4.2
+PySide6-Addons==6.4.2
+PySide6-Essentials==6.4.2
+shiboken6==6.4.2
