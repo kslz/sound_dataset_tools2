@@ -7,7 +7,7 @@
 import configparser
 import os
 
-from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
 
 from ui.ui_select_workspace import Ui_Form
 from utils import global_obj
@@ -15,7 +15,7 @@ from utils.log import creatlogger
 from utils.tools import update_ini_config, inti_workspace
 
 
-class SelectWorkspaceWindow(QMainWindow):
+class SelectWorkspaceWindow(QWidget):
     def __init__(self):
         super().__init__()
         # 使用ui文件导入定义界面类
@@ -33,6 +33,7 @@ class SelectWorkspaceWindow(QMainWindow):
 
     def get_workspace(self):
         workspace_path = self.ui.lineEdit.text()
+        global_obj.set_value("workspace_path",workspace_path)
         inti_workspace(workspace_path)
         config["program_configs"]["default_workspace"] = workspace_path
         update_ini_config(config)
@@ -54,6 +55,8 @@ def main():
     select_workspace_window = SelectWorkspaceWindow()
     select_workspace_window.show()
     guilogger.debug("进入工作区选择窗口")
+
+
 
     app.exec()
 

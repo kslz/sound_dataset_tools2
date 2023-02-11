@@ -23,6 +23,8 @@ class Ui_Form(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(400, 200)
+        Form.setMinimumSize(QSize(400, 200))
+        Form.setMaximumSize(QSize(400, 200))
         self.pushButton = QPushButton(Form)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setGeometry(QRect(280, 150, 100, 30))
