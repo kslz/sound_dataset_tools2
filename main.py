@@ -12,7 +12,6 @@ from utils.tools import init_program
 
 
 def main():
-    ini_path = "conf/config.ini"
     global_obj._init()
     init_program()
     config = global_obj.get_value("config")

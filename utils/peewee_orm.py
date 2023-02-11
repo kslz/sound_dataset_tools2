@@ -5,19 +5,11 @@
     @Url : https://github.com/kslz
 """
 from datetime import datetime
-from time import sleep
 
 from peewee import *
 
-global db
 
-
-def get_peewee_db(db_path="test.db"):
-    global db
-    db = SqliteDatabase(db_path)
-
-
-get_peewee_db()
+db = SqliteDatabase(None)
 
 
 class BaseModel(Model):
@@ -90,7 +82,13 @@ class Teacher(BaseModel):
 
 
 if __name__ == "__main__":
-    db.connect()
+    # init_peewee_db()
+    # db1 = get_peewee_db()
+    #
+    # db1.connect()
+    # create_all_tables(db1)
     # db.create_tables([Workspace, Dataset, Info])
-    dataset1 = Dataset.create(dataset_name="test2")
-    info1 = Info.create(info_text="你好世界",dataset_id=dataset1)
+    # dataset1 = Dataset.create(dataset_name="test2")
+    # info1 = Info.create(info_text="你好世界", dataset_id=dataset1)
+
+    pass

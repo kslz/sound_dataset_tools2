@@ -8,7 +8,7 @@ import configparser
 import os
 
 from utils import global_obj
-from utils.peewee_orm import get_peewee_db
+from utils.peewee_orm import *
 from utils.sqlitedb import MyDB
 
 
@@ -49,15 +49,40 @@ def update_ini_config(config, config_path="conf/config.ini"):
 
 
 def init_program():
+    """
+    初始化程序
+
+    """
     read_ini_config()
 
 
+def init_database(database_path):
+    db.init(database_path)
+    db.connect()
+    db.create_tables([Workspace, Dataset, Info])
+    global_obj.set_value("peewee_db", db)
+
+
 def inti_workspace(workspace_path):
+    """
+    初始化工作区
+    1、新建目录：workspace_path、workspace_path/db
+    2、连接数据库
+
+    """
     os.makedirs(workspace_path, exist_ok=True)
     os.makedirs(os.path.join(workspace_path, "db"), exist_ok=True)
-    mydb = MyDB(os.path.join(workspace_path, "db/workspace.db"))
-    global_obj.set_value("mydb", mydb)
-    get_peewee_db(os.path.join(workspace_path, "db/workspace.db"))
+    # mydb = MyDB(os.path.join(workspace_path, "db/workspace.db"))
+    # global_obj.set_value("mydb", mydb)
+
+    init_database(os.path.join(workspace_path, "db/workspace.db"))
+    peewee_db: SqliteDatabase = global_obj.get_value("peewee_db")
+    table_names = peewee_db.get_tables()
+    print(table_names)
+
+
+
+
 
 
 if __name__ == '__main__':
