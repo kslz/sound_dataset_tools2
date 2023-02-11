@@ -6,6 +6,8 @@
 """
 
 import logging
+import os
+
 
 def creatlogger(logname):
     # 1、创建一个logger
@@ -14,7 +16,8 @@ def creatlogger(logname):
 
     # Handler方法有很多下面主要介绍两种：StreamHandler 和 FileHandler
     # 2、创建一个handler，用于写入日志文件
-    fh = logging.FileHandler('logs/program.log', encoding="utf-8")  # 将日志写入到test.log文件
+    os.makedirs('logs', exist_ok=True)
+    fh = logging.FileHandler('logs/program.log', encoding="utf-8")  # 将日志写入到logs/program.log文件
     fh.setLevel(logging.DEBUG)  # 并且需要指定写入的内容严重级别
     # 再创建一个handler，用于输出到控制台
     ch = logging.StreamHandler()  # 将日志写入控制台
