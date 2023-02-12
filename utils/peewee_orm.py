@@ -45,13 +45,14 @@ class Info(BaseModel):
     info_text = CharField(null=True, )
     info_pinyin = CharField(null=True, )
     info_speaker = CharField(null=True, )
-    info_file_path = TextField(null=True, )
+    info_raw_file_path = TextField(null=True, )
     info_start_time = IntegerField(null=True, )
     info_end_time = IntegerField(null=True, )
     info_acc_score = FloatField(null=True, )
     info_flu_score = FloatField(null=True, )
     info_int_score = FloatField(null=True, )
     info_all_score = FloatField(null=True, )
+    info_file_path = TextField(null=True, )
     info_is_del = BooleanField(default=False)
 
     class Meta:
