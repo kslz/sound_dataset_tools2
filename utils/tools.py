@@ -41,7 +41,6 @@ def read_ini_config(ini_path="conf/config.ini"):
     config = ConfigParserWithFile()
     config.read(ini_path)
     global_obj.set_value("config", config)
-    print(config["program_configs"]["default_workspace"])
 
 
 def update_ini_config(config, config_path="conf/config.ini"):

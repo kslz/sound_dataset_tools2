@@ -4,17 +4,10 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-import configparser
-import os
-
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QPushButton, QLabel
 
 from ui.mygui import *
-from ui.ui_select_dataset import Ui_MainWindow
-from ui.ui_select_workspace import Ui_Form
 from utils import global_obj
 from utils.log import creatlogger
-from utils.tools import update_ini_config, inti_workspace
 
 
 def main():
@@ -25,6 +18,7 @@ def main():
     app = QApplication([])
     select_workspace_window = SelectWorkspaceWindow()
     select_dataset_window = SelectDatasetWindow()
+    select_workspace_window.show_select_dataset_window.connect(select_dataset_window.add_dataset_data)
     select_workspace_window.show_select_dataset_window.connect(select_dataset_window.show)
 
     select_workspace_window.show()

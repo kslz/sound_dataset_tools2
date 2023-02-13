@@ -10,6 +10,7 @@ from PySide6.QtCore import Signal
 from ui.ui_select_dataset import Ui_MainWindow
 from ui.ui_select_workspace import Ui_Form
 from utils import global_obj
+from utils.peewee_orm import *
 from utils.tools import update_ini_config, inti_workspace
 
 global config
@@ -27,7 +28,22 @@ class SelectDatasetWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         # 初始化界面
         self.ui.setupUi(self)
-        self.addData("1", "2", "3", "4")
+        self.ui.tableWidget.setColumnWidth(0, 100)
+        self.ui.tableWidget.setColumnWidth(1, 150)
+        self.ui.tableWidget.setColumnWidth(2, 150)
+        self.ui.tableWidget.setColumnWidth(3, 200)
+        self.ui.tableWidget.setColumnWidth(4, 100)
+
+    def add_dataset_data(self):
+        # dataset1 = Dataset.create(dataset_name="test1")
+        # dataset2 = Dataset.create(dataset_name="test2")
+        datasets = Dataset.select()
+        print(len(datasets))
+        for dataset in datasets:
+            self.addData(dataset.dataset_name,
+                         dataset.dataset_create_time,
+                         dataset.dataset_last_use_time,
+                         dataset.dataset_info)
 
     def addData(self, data1=None, data2=None, data3=None, data4=None):
         row = self.ui.tableWidget.rowCount()

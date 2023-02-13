@@ -8,7 +8,6 @@ from datetime import datetime
 
 from peewee import *
 
-
 db = SqliteDatabase(None)
 
 
@@ -30,9 +29,9 @@ class Workspace(BaseModel):
 
 class Dataset(BaseModel):
     dataset_id = PrimaryKeyField()
-    dataset_name = CharField(null=False)
-    dataset_create_time = DateTimeField(default=datetime.now)
-    dataset_last_use_time = DateTimeField(default=datetime.now)
+    dataset_name = CharField(null=False, unique=True)
+    dataset_create_time = DateTimeField(default=datetime.now().replace(microsecond=0))
+    dataset_last_use_time = DateTimeField(default=datetime.now().replace(microsecond=0))
     dataset_info = TextField(null=True, help_text='数据集介绍')
 
     class Meta:
