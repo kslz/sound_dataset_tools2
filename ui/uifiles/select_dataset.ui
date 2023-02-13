@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>选择数据集</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTableWidget" name="tableWidget">
@@ -48,7 +48,7 @@
     </column>
     <column>
      <property name="text">
-      <string>进入数据集</string>
+      <string>操作</string>
      </property>
     </column>
    </widget>

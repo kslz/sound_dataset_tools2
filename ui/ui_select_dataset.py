@@ -63,7 +63,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u9009\u62e9\u6570\u636e\u96c6", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"\u6570\u636e\u96c6\u540d", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
@@ -73,7 +73,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"\u5907\u6ce8", None));
         ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"\u8fdb\u5165\u6570\u636e\u96c6", None));
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"\u64cd\u4f5c", None));
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u6dfb\u52a0\u6570\u636e\u96c6", None))
     # retranslateUi
 

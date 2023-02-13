@@ -37,6 +37,22 @@ def file_w(path, text, mode, encoding="UTF-8"):
         f.write(text)
 
 
+def huanhang(text: str, num=10):
+    """
+    长文本换行
+
+    """
+    if text is None:
+        return None
+
+    out_text = ""
+    while len(text) > num:
+        out_text += text[:num] + "\n"
+        text = text[num:]
+    out_text += text
+    return out_text
+
+
 def read_ini_config(ini_path="conf/config.ini"):
     config = ConfigParserWithFile()
     config.read(ini_path)
