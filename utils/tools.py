@@ -38,9 +38,10 @@ def file_w(path, text, mode, encoding="UTF-8"):
 
 
 def read_ini_config(ini_path="conf/config.ini"):
-    config = configparser.ConfigParser()
+    config = ConfigParserWithFile()
     config.read(ini_path)
     global_obj.set_value("config", config)
+    print(config["program_configs"]["default_workspace"])
 
 
 def update_ini_config(config, config_path="conf/config.ini"):
@@ -81,8 +82,15 @@ def inti_workspace(workspace_path):
     print(table_names)
 
 
+class ConfigParserWithFile(configparser.ConfigParser):
+    file = None
 
+    def read(self, filenames, encoding=None):
+        self.file = filenames
+        return super().read(filenames, encoding)
 
+    def refresh_config(self, encoding=None):
+        return super().read(self.file, encoding)
 
 
 if __name__ == '__main__':

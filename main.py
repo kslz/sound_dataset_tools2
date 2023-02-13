@@ -6,13 +6,12 @@
 """
 import configparser
 
-import ui.guiclass
 from utils import global_obj
 from utils.tools import init_program
+import ui.guiclass
 
 
 def main():
-    global_obj._init()
     init_program()
     config = global_obj.get_value("config")
     config: configparser.ConfigParser
