@@ -4,21 +4,57 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QPushButton, QLabel, QHBoxLayout
-from PySide6.QtCore import Signal
+import peewee
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QPushButton, QLabel, QHBoxLayout, \
+    QDialog
+from PySide6.QtCore import Signal, Qt
 
+from ui.ui_add_dataset import Ui_Dialog
 from ui.ui_select_dataset import Ui_MainWindow
 from ui.ui_select_workspace import Ui_Form
 from utils import global_obj
+from utils.log import creatlogger
 from utils.peewee_orm import *
 from utils.tools import update_ini_config, inti_workspace, huanhang
 
 global config
 
-
+guilogger = creatlogger("guilogger")
 def getconfig():
     global config
     config = global_obj.get_value("config")
+
+
+class AddDatasetWindow(QDialog):
+    refresh_table = Signal()
+    def __init__(self, parent):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = Ui_Dialog()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.ui.buttonBox.accepted.connect(self.add_dataset)
+        self.ui.buttonBox.rejected.connect(self.goback)
+
+    def add_dataset(self):
+        dataset_name = self.ui.lineEdit.text()
+        datset_info = self.ui.textEdit.toPlainText()
+
+        try:
+            dataset = Dataset(dataset_name=dataset_name, datset_info=datset_info)
+            dataset.save()
+        except peewee.IntegrityError as e:
+            if "UNIQUE constraint failed" in str(e):
+                guilogger.error("数据集名称重复")
+            else:
+                guilogger.error(e)
+        else:
+            guilogger.info(f"数据集 {dataset_name} 添加成功")
+            self.refresh_table.emit()
+            self.close()
+
+    def goback(self):
+        self.close()
 
 
 class SelectDatasetWindow(QMainWindow):
@@ -36,10 +72,15 @@ class SelectDatasetWindow(QMainWindow):
         # self.ui.tableWidget.verticalHeader().setVisible(True)
 
     def add_dataset_data(self):
+        """
+        从数据库中取出数据集信息填入表格
+
+        :return:
+        """
         # dataset1 = Dataset.create(dataset_name="test1")
         # dataset2 = Dataset.create(dataset_name="test2")
+        self.ui.tableWidget.setRowCount(0)
         datasets = Dataset.select()
-        print(len(datasets))
         for dataset in datasets:
             self.addData(dataset.dataset_id,
                          dataset.dataset_name,
@@ -76,7 +117,12 @@ class SelectDatasetWindow(QMainWindow):
         caozuo_widget.setLayout(layout)
         self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
 
-        # self.ui.tableWidget.setCellWidget(row, 4, btn_jr)
+    def open_add_dataset_window(self, useby="add"):
+        self.add_window = AddDatasetWindow(self)
+        self.add_window.refresh_table.connect(self.add_dataset_data)
+        # self.add_window.setModal(True)
+        # self.add_window.show()
+        self.add_window.exec_()
 
     def openNewWindow(self, dataset_id):
         window = QMainWindow(self)
