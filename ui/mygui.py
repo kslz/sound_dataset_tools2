@@ -20,6 +20,8 @@ from utils.tools import update_ini_config, inti_workspace, huanhang
 global config
 
 guilogger = creatlogger("guilogger")
+
+
 def getconfig():
     global config
     config = global_obj.get_value("config")
@@ -27,31 +29,74 @@ def getconfig():
 
 class AddDatasetWindow(QDialog):
     refresh_table = Signal()
-    def __init__(self, parent):
+
+    def __init__(self, parent, useby="add", dataset_id=None):
         super().__init__(parent)
         # 使用ui文件导入定义界面类
         self.ui = Ui_Dialog()
         # 初始化界面
         self.ui.setupUi(self)
-        self.ui.buttonBox.accepted.connect(self.add_dataset)
         self.ui.buttonBox.rejected.connect(self.goback)
+        self.useby = useby
+        self.dataset_id = dataset_id
+        if useby != "add":
+            self.setWindowTitle("编辑数据集")
+            self.ui.buttonBox.accepted.connect(self.edit_dataset)
+            print((dataset_id))
+            dataset = Dataset.get_by_id(self.dataset_id)
+            self.ui.lineEdit.setText(dataset.dataset_name)
+            self.ui.textEdit.setText(dataset.dataset_info)
+            self.dataset_oldname = dataset.dataset_name
+        else:
+            self.ui.buttonBox.accepted.connect(self.add_dataset)
+
+    def edit_dataset(self):
+        dataset_name = self.ui.lineEdit.text()
+        dataset_info = self.ui.textEdit.toPlainText()
+        if dataset_name == "":
+            guilogger.error("修改失败，数据集名称为空")
+            self.show_error("修改失败，数据集名称为空")
+            return
+        try:
+            dataset = Dataset.update(dataset_name=dataset_name, dataset_info=dataset_info).where(
+                Dataset.dataset_id == self.dataset_id).execute()
+        except peewee.IntegrityError as e:
+            if "UNIQUE constraint failed" in str(e):
+                guilogger.error("修改失败，数据集名称重复")
+                self.show_error("修改失败，数据集名称重复")
+            else:
+                guilogger.error(e)
+        else:
+            guilogger.info(f"数据集 {dataset_name} 成功修改")
+            self.refresh_table.emit()
+            self.close()
+
+        pass
 
     def add_dataset(self):
         dataset_name = self.ui.lineEdit.text()
         datset_info = self.ui.textEdit.toPlainText()
+        if dataset_name == "":
+            guilogger.error("修改失败，数据集名称为空")
+            self.show_error("修改失败，数据集名称为空")
+            return
 
         try:
             dataset = Dataset(dataset_name=dataset_name, datset_info=datset_info)
             dataset.save()
         except peewee.IntegrityError as e:
             if "UNIQUE constraint failed" in str(e):
-                guilogger.error("数据集名称重复")
+                guilogger.error("修改失败，数据集名称重复")
+                self.show_error("修改失败，数据集名称重复")
             else:
                 guilogger.error(e)
         else:
             guilogger.info(f"数据集 {dataset_name} 添加成功")
             self.refresh_table.emit()
             self.close()
+
+    def show_error(self, text):
+        self.ui.label_3.setText(text)
 
     def goback(self):
         self.close()
@@ -134,8 +179,11 @@ class SelectDatasetWindow(QMainWindow):
         window.show()
 
     def edit_dataset(self, dataset_id):
-        print(f"编辑 {dataset_id}")
-        pass
+        self.edit_window = AddDatasetWindow(self, useby="edit", dataset_id=dataset_id)
+        self.edit_window.refresh_table.connect(self.add_dataset_data)
+        # self.add_window.setModal(True)
+        # self.add_window.show()
+        self.edit_window.exec_()
 
     def del_dataset(self, dataset_id):
         print(f"删除 {dataset_id}")
