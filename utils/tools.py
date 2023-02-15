@@ -6,6 +6,8 @@
 """
 import configparser
 import os
+import string
+import textwrap
 
 from utils import global_obj
 from utils.peewee_orm import *
@@ -37,20 +39,66 @@ def file_w(path, text, mode, encoding="UTF-8"):
         f.write(text)
 
 
-def huanhang(text: str, num=10):
+def huanhang(text: str, num=30):
     """
     长文本换行
 
     """
-    if text is None:
+    # 这么简单的需求前前后后墨迹了一个小时才解决，难顶
+    if text == None:
         return None
+    # 定义字符宽度
+    WIDTH = num
+    CHINESE_WIDTH = 2
+    ENGLISH_WIDTH = 1
 
-    out_text = ""
-    while len(text) > num:
-        out_text += text[:num] + "\n"
-        text = text[num:]
-    out_text += text
-    return out_text
+    # 定义中英文标点
+    punctuation = string.punctuation + '，。！？、；：‘’“”《》【】（）'
+
+    # 将字符串分割成多行
+    lines = []
+    for line in text.split('\n'):
+        # 每行的可用宽度
+        line_width = 0
+        for c in line:
+            if c in punctuation:
+                line_width += CHINESE_WIDTH
+            elif c.isascii():
+                line_width += ENGLISH_WIDTH
+            else:
+                line_width += CHINESE_WIDTH
+        if line_width <= WIDTH:
+            lines.append(line)
+            continue
+        line_now = ""
+        width_now = 0
+        for i in range(len(line)):
+            line_now += line[i]
+            if line[i] in punctuation:
+                width_now += CHINESE_WIDTH
+            elif line[i].isascii():
+                width_now += ENGLISH_WIDTH
+            else:
+                width_now += CHINESE_WIDTH
+
+            if i < len(line) - 1:
+                if width_now == WIDTH - 1:
+                    if line[i + 1].isascii():
+                        continue
+                    else:
+                        # line_now += "\n"
+                        lines.append(line_now)
+                        line_now = ""
+                        width_now = 0
+            if width_now == WIDTH:
+                # line_now += "\n"
+                lines.append(line_now)
+                line_now = ""
+                width_now = 0
+        lines.append(line_now)
+
+    formatted_text = '\n'.join(lines)
+    return formatted_text
 
 
 def read_ini_config(ini_path="conf/config.ini"):

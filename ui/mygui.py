@@ -143,7 +143,7 @@ class SelectDatasetWindow(QMainWindow):
         # self.ui.tableWidget.setItem(row, 3, QTableWidgetItem(str(dataset_info)))
         info_cell = QTableWidgetItem()
         info_cell.setText(dataset_info)
-        info_cell.setToolTip(huanhang(dataset_info))
+        info_cell.setToolTip(f"<pre>{huanhang(dataset_info)}</pre>")
         self.ui.tableWidget.setItem(row, 3, info_cell)
 
         btn_jr = QPushButton('进入', self)
