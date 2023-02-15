@@ -142,7 +142,7 @@ def inti_workspace(workspace_path):
     init_database(os.path.join(workspace_path, "db/workspace.db"))
     peewee_db: SqliteDatabase = global_obj.get_value("peewee_db")
     table_names = peewee_db.get_tables()
-    print(table_names)
+    # print(table_names)
 
 
 class ConfigParserWithFile(configparser.ConfigParser):

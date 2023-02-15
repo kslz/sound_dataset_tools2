@@ -42,7 +42,6 @@ class AddDatasetWindow(QDialog):
         if useby != "add":
             self.setWindowTitle("编辑数据集")
             self.ui.buttonBox.accepted.connect(self.edit_dataset)
-            print((dataset_id))
             dataset = Dataset.get_by_id(self.dataset_id)
             self.ui.lineEdit.setText(dataset.dataset_name)
             self.ui.textEdit.setText(dataset.dataset_info)
@@ -76,18 +75,19 @@ class AddDatasetWindow(QDialog):
     def add_dataset(self):
         dataset_name = self.ui.lineEdit.text()
         datset_info = self.ui.textEdit.toPlainText()
+        print(datset_info)
         if dataset_name == "":
-            guilogger.error("修改失败，数据集名称为空")
-            self.show_error("修改失败，数据集名称为空")
+            guilogger.error("添加失败，数据集名称为空")
+            self.show_error("添加失败，数据集名称为空")
             return
 
         try:
-            dataset = Dataset(dataset_name=dataset_name, datset_info=datset_info)
+            dataset = Dataset(dataset_name=dataset_name, dataset_info=datset_info)
             dataset.save()
         except peewee.IntegrityError as e:
             if "UNIQUE constraint failed" in str(e):
-                guilogger.error("修改失败，数据集名称重复")
-                self.show_error("修改失败，数据集名称重复")
+                guilogger.error("添加失败，数据集名称重复")
+                self.show_error("添加失败，数据集名称重复")
             else:
                 guilogger.error(e)
         else:
@@ -118,7 +118,7 @@ class SelectDatasetWindow(QMainWindow):
 
     def add_dataset_data(self):
         """
-        从数据库中取出数据集信息填入表格
+        刷新表格数据，从数据库中取出数据集信息填入表格
 
         :return:
         """
@@ -186,8 +186,21 @@ class SelectDatasetWindow(QMainWindow):
         self.edit_window.exec_()
 
     def del_dataset(self, dataset_id):
-        print(f"删除 {dataset_id}")
-        pass
+
+        try:
+            # dataset = Dataset.delete().where(Dataset.dataset_id == dataset_id)
+            # self.add_dataset_data()
+            dataset = Dataset.get(Dataset.dataset_id == dataset_id)
+            name = dataset.dataset_name
+            dataset.delete_instance()
+
+        except Exception as e:
+            guilogger.error(f"删除数据集 id={dataset_id} 失败")
+            guilogger.error(e)
+        else:
+            guilogger.info(f"数据集 {name} 成功删除")
+        finally:
+            self.add_dataset_data()
 
 
 class SelectWorkspaceWindow(QWidget):
