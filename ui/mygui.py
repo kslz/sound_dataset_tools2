@@ -6,7 +6,7 @@
 """
 import peewee
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QPushButton, QLabel, QHBoxLayout, \
-    QDialog
+    QDialog, QMessageBox
 from PySide6.QtCore import Signal, Qt
 
 from ui.ui_add_dataset import Ui_Dialog
@@ -151,7 +151,7 @@ class SelectDatasetWindow(QMainWindow):
         btn_bj = QPushButton('编辑', self)
         btn_bj.clicked.connect(lambda: self.edit_dataset(dataset_id))
         btn_sc = QPushButton('删除', self)
-        btn_sc.clicked.connect(lambda: self.del_dataset(dataset_id))
+        btn_sc.clicked.connect(lambda: self.del_dataset(dataset_id, dataset_name))
         layout = QHBoxLayout()
         layout.addWidget(btn_jr)
         layout.addWidget(btn_bj)
@@ -185,22 +185,44 @@ class SelectDatasetWindow(QMainWindow):
         # self.add_window.show()
         self.edit_window.exec_()
 
-    def del_dataset(self, dataset_id):
+    def del_dataset(self, dataset_id, dataset_name):
+        """
+        考虑做伪删除，但是感觉没必要
 
-        try:
-            # dataset = Dataset.delete().where(Dataset.dataset_id == dataset_id)
-            # self.add_dataset_data()
-            dataset = Dataset.get(Dataset.dataset_id == dataset_id)
-            name = dataset.dataset_name
-            dataset.delete_instance()
+        """
+        msg_box = QMessageBox()  # 后悔药（不
+        msg_box.setWindowTitle("提示")
+        msg_box.setText(f"确认删除数据集 {dataset_name} 吗？\n{dataset_name} 将会永久失去!(真的很久!)")
+        msg_box.setIcon(QMessageBox.Question)
 
-        except Exception as e:
-            guilogger.error(f"删除数据集 id={dataset_id} 失败")
-            guilogger.error(e)
+        # 添加按钮
+        yes_button = msg_box.addButton("确定", QMessageBox.AcceptRole)
+        no_button = msg_box.addButton("取消", QMessageBox.RejectRole)
+
+        # 显示消息框，等待用户响应
+        msg_box.exec()
+
+        # 获取用户的响应
+        button_clicked = msg_box.clickedButton()
+        if button_clicked == yes_button:
+            try:
+                # dataset = Dataset.delete().where(Dataset.dataset_id == dataset_id)
+                # self.add_dataset_data()
+                dataset = Dataset.get(Dataset.dataset_id == dataset_id)
+                name = dataset.dataset_name
+                dataset.delete_instance()
+
+            except Exception as e:
+                guilogger.error(f"删除数据集 id={dataset_id} 失败")
+                guilogger.error(e)
+            else:
+                guilogger.info(f"数据集 {name} 成功删除")
+            finally:
+                self.add_dataset_data()
+
         else:
-            guilogger.info(f"数据集 {name} 成功删除")
-        finally:
-            self.add_dataset_data()
+            pass
+
 
 
 class SelectWorkspaceWindow(QWidget):
