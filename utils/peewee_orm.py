@@ -57,6 +57,19 @@ class Info(BaseModel):
     class Meta:
         table_name = 'info_tbl'
 
+class SpkInfo(BaseModel):
+    spkinfo_id = PrimaryKeyField()
+    info_id = ForeignKeyField(Info, "info_id", "spkinfos")
+    spkinfo_name = CharField()
+    spkinfo_score = FloatField()
+
+    class Meta:
+        table_name = 'spkinfo_tbl'
+
+
+
+
+
 
 class Course(BaseModel):
     id = PrimaryKeyField()

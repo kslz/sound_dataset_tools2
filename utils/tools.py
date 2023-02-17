@@ -123,7 +123,7 @@ def init_program():
 def init_database(database_path):
     db.init(database_path)
     db.connect()
-    db.create_tables([Workspace, Dataset, Info])
+    db.create_tables([Workspace, Dataset, Info, SpkInfo])
     global_obj.set_value("peewee_db", db)
 
 
