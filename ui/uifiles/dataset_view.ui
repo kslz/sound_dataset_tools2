@@ -42,6 +42,9 @@
            <height>476</height>
           </rect>
          </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
          <row>
           <property name="text">
            <string>新建行</string>
@@ -132,6 +135,21 @@
            <string>新建列</string>
           </property>
          </column>
+        </widget>
+        <widget class="QComboBox" name="comboBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>490</y>
+           <width>201</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
         </widget>
        </widget>
       </item>
