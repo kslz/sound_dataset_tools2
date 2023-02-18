@@ -50,89 +50,34 @@
            <string>新建行</string>
           </property>
          </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
          <column>
           <property name="text">
-           <string>新建列</string>
+           <string>序号</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>新建列</string>
+           <string>标注文本</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>新建列</string>
+           <string>发音人</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>独立文件</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>标签</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>操作</string>
           </property>
          </column>
         </widget>
