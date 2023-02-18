@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetIt
     QDialog, QMessageBox
 from PySide6.QtCore import Signal, Qt
 
+import ui.ui_dataset_view
 from ui.ui_add_dataset import Ui_Dialog
 from ui.ui_select_dataset import Ui_MainWindow
 from ui.ui_select_workspace import Ui_Form
@@ -25,6 +26,39 @@ guilogger = creatlogger("guilogger")
 def getconfig():
     global config
     config = global_obj.get_value("config")
+
+
+class DatasetWindow(QMainWindow):
+    def __init__(self, parent, dataset_id):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = ui.ui_dataset_view.Ui_MainWindow()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.ui.tableWidget.setColumnWidth(0, 100)
+        self.ui.tableWidget.setColumnWidth(1, 500)
+        self.ui.tableWidget.setColumnWidth(2, 150)
+        self.ui.tableWidget.setColumnWidth(3, 100)
+        self.ui.tableWidget.setColumnWidth(4, 200)
+        self.ui.tableWidget.setColumnWidth(5, 400)
+        self.dataset_id = dataset_id
+
+    def get_dataset_id(self, dataset_id):
+        self.dataset_id = dataset_id
+        self.refresh_table()
+
+    def refresh_table(self):
+        self.ui.tableWidget.setRowCount(0)
+        dataset_id = self.dataset_id
+        print(dataset_id)
+        get_dataset_window_info()
+
+        # 重新填入数据
+        pass
+
+    def closeEvent(self, event):
+        self.parent().show()
+        super().closeEvent(event)
 
 
 class AddDatasetWindow(QDialog):
@@ -147,7 +181,7 @@ class SelectDatasetWindow(QMainWindow):
         self.ui.tableWidget.setItem(row, 3, info_cell)
 
         btn_jr = QPushButton('进入', self)
-        btn_jr.clicked.connect(lambda: self.openNewWindow(dataset_id))
+        btn_jr.clicked.connect(lambda: self.openDatasetWindow(dataset_id))
         btn_bj = QPushButton('编辑', self)
         btn_bj.clicked.connect(lambda: self.edit_dataset(dataset_id))
         btn_sc = QPushButton('删除', self)
@@ -169,14 +203,13 @@ class SelectDatasetWindow(QMainWindow):
         # self.add_window.show()
         self.add_window.exec_()
 
-    def openNewWindow(self, dataset_id):
-        window = QMainWindow(self)
-        window.setWindowTitle('New Window')
-        window.setGeometry(100, 100, 300, 200)
+    def openDatasetWindow(self, dataset_id):
+        self.hide()
+        self.dataset_window = DatasetWindow(self, dataset_id)
+        self.dataset_window.refresh_table()
+        self.dataset_window.show()
 
-        window.label = QLabel(window)
-        window.label.setText(str(dataset_id))
-        window.show()
+        pass
 
     def edit_dataset(self, dataset_id):
         self.edit_window = AddDatasetWindow(self, useby="edit", dataset_id=dataset_id)
@@ -222,7 +255,6 @@ class SelectDatasetWindow(QMainWindow):
 
         else:
             pass
-
 
 
 class SelectWorkspaceWindow(QWidget):
