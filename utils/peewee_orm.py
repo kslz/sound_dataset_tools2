@@ -68,10 +68,7 @@ class SpkInfo(BaseModel):
         table_name = 'spkinfo_tbl'
 
 
-def get_dataset_window_info():
-    page_size = 15  # 每页15条数据
-    page_number = 1  # 第1页
-    dataset_id = 1  # 指定的 dataset_id
+def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
 
     # 下面的查询是chatGPT写的
     # 都说先进的科技乍一看和魔法无异，想来这就是了
@@ -100,19 +97,21 @@ def get_dataset_window_info():
         Info.info_id.asc()
     ))
 
-    total_count = query.count()  # 总共有多少条数据
-    print(total_count)
+    total_count = query.count()
+    # print(total_count)
 
     # 分页
     query = query.paginate(page_number, page_size)
 
     # 执行查询
+    # 我发现这里的查询好像会查询很多次数据库，不过也还好吧，应该不会有人存几百万条数据进去
     results = list(query.dicts())
-
-    # 显示结果
-    for i, result in enumerate(results, start=1):
-        print(
-            f"{i + (page_number - 1) * page_size} {result['info_id']} {result['info_text']} {result['speaker']} {result['is_separate_file']}")
+    return total_count, results
+    #
+    # # 显示结果
+    # for i, result in enumerate(results, start=1):
+    #     print(
+    #         f"{i + (page_number - 1) * page_size} {result['info_id']} {result['info_text']} {result['speaker']} {result['is_separate_file']}")
 
 
 class Course(BaseModel):
@@ -167,7 +166,7 @@ def add_fake_data():
 
 if __name__ == "__main__":
     db.init("../workspace/db/workspace.db")
-    add_fake_data()
+    # add_fake_data()
     get_dataset_window_info()
     # init_peewee_db()
     # db1 = get_peewee_db()

@@ -5,6 +5,7 @@
     @Url : https://github.com/kslz
 """
 import peewee
+from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QPushButton, QLabel, QHBoxLayout, \
     QDialog, QMessageBox
 from PySide6.QtCore import Signal, Qt
@@ -29,35 +30,94 @@ def getconfig():
 
 
 class DatasetWindow(QMainWindow):
-    def __init__(self, parent, dataset_id):
-        super().__init__(parent)
+    reopen = Signal()
+    need_refresh_table = Signal(object)
+
+    def __init__(self, dataset_id):
+        super().__init__()
         # 使用ui文件导入定义界面类
-        self.ui = ui.ui_dataset_view.Ui_MainWindow()
+        self.ui = ui.ui_dataset_view.Ui_DatasetMainWindow()
         # 初始化界面
         self.ui.setupUi(self)
         self.ui.tableWidget.setColumnWidth(0, 100)
         self.ui.tableWidget.setColumnWidth(1, 500)
-        self.ui.tableWidget.setColumnWidth(2, 150)
-        self.ui.tableWidget.setColumnWidth(3, 100)
-        self.ui.tableWidget.setColumnWidth(4, 200)
-        self.ui.tableWidget.setColumnWidth(5, 400)
+        self.ui.tableWidget.setColumnWidth(2, 100)
+        self.ui.tableWidget.setColumnWidth(3, 75)
+        self.ui.tableWidget.setColumnWidth(4, 150)
+        self.ui.tableWidget.setColumnWidth(5, 200)
+        self.set_table_style()
         self.dataset_id = dataset_id
-
-    def get_dataset_id(self, dataset_id):
-        self.dataset_id = dataset_id
+        self.page_number = 1
+        self.page_size = 15
+        self.refresh_done = False
         self.refresh_table()
+        self.refresh_done = True
 
-    def refresh_table(self):
+        # 连接信号
+        self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
+
+    def set_table_style(self):
+        self.ui.tableWidget.verticalHeader().setDefaultSectionSize(20)  # 设置行高20
+
+        header = self.ui.tableWidget.horizontalHeader()
+        header.setDefaultAlignment(QtCore.Qt.AlignLeft)  # 设置表头左对齐
+        # 创建一个字体对象，并设置字号为14
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+
+        # 将字体对象设置为表头的字体
+        header.setFont(font)
+
+    def change_page_number(self, index):
+        new_page_num = self.ui.comboBox.itemData(index)
+        self.refresh_table(new_page_num)
+        self.page_number = new_page_num
+
+
+    def refresh_table(self, page_number=0):
+        # QcomboBox在被清空的时候也会发出currentIndexChanged信号，找这个问题花了一个小时
+        # 警钟敲烂
+        self.ui.comboBox.blockSignals(True)
+        page_size = self.page_size
+        if page_number == 0:
+            page_number = self.page_number
         self.ui.tableWidget.setRowCount(0)
-        dataset_id = self.dataset_id
-        print(dataset_id)
-        get_dataset_window_info()
+        self.ui.comboBox.clear()
+        total_count, results = get_dataset_window_info(self.dataset_id, page_size, page_number)
+        pagecount = 1
+        while total_count > 0:
+            start = page_size * (pagecount - 1) + 1
+            if total_count >= page_size:
+                end = start + page_size - 1
+            else:
+                end = start + total_count - 1
+            self.ui.comboBox.addItem(f"第 {str(pagecount)} 页  {str(start)} ~ {str(end)}", pagecount)
+            total_count -= page_size
+            pagecount += 1
 
-        # 重新填入数据
-        pass
+        for i, result in enumerate(results, start=1):
+            index = i + (page_number - 1) * page_size
+            info_id = result['info_id']
+            info_text = result['info_text']
+            speaker = result['speaker']
+            is_separate_file = result['is_separate_file']
+            row = self.ui.tableWidget.rowCount()
+            self.ui.tableWidget.insertRow(row)
+            self.ui.tableWidget.setItem(row, 0, QTableWidgetItem(str(index)))
+            self.ui.tableWidget.setItem(row, 1, QTableWidgetItem(info_text))
+            self.ui.tableWidget.setItem(row, 2, QTableWidgetItem(speaker))
+            if is_separate_file == 0:
+                is_separate_file = "否"
+            if is_separate_file == 1:
+                is_separate_file = "是"
+            self.ui.tableWidget.setItem(row, 3, QTableWidgetItem(is_separate_file))
+            self.ui.tableWidget.setItem(row, 5, QTableWidgetItem(str(info_id) + "一些操作"))
+        self.ui.comboBox.setCurrentIndex(page_number-1)
+        self.ui.comboBox.blockSignals(False)
 
     def closeEvent(self, event):
-        self.parent().show()
+        self.reopen.emit()
         super().closeEvent(event)
 
 
@@ -109,7 +169,7 @@ class AddDatasetWindow(QDialog):
     def add_dataset(self):
         dataset_name = self.ui.lineEdit.text()
         datset_info = self.ui.textEdit.toPlainText()
-        print(datset_info)
+        # print(datset_info)
         if dataset_name == "":
             guilogger.error("添加失败，数据集名称为空")
             self.show_error("添加失败，数据集名称为空")
@@ -205,9 +265,9 @@ class SelectDatasetWindow(QMainWindow):
 
     def openDatasetWindow(self, dataset_id):
         self.hide()
-        self.dataset_window = DatasetWindow(self, dataset_id)
-        self.dataset_window.refresh_table()
+        self.dataset_window = DatasetWindow(dataset_id)
         self.dataset_window.show()
+        self.dataset_window.reopen.connect(self.show)
 
         pass
 
