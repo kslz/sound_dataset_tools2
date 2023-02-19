@@ -22,9 +22,9 @@ class Ui_select_file_wav_srt_Dialog(object):
     def setupUi(self, select_file_wav_srt_Dialog):
         if not select_file_wav_srt_Dialog.objectName():
             select_file_wav_srt_Dialog.setObjectName(u"select_file_wav_srt_Dialog")
-        select_file_wav_srt_Dialog.resize(600, 202)
-        select_file_wav_srt_Dialog.setMinimumSize(QSize(600, 202))
-        select_file_wav_srt_Dialog.setMaximumSize(QSize(600, 202))
+        select_file_wav_srt_Dialog.resize(600, 250)
+        select_file_wav_srt_Dialog.setMinimumSize(QSize(600, 250))
+        select_file_wav_srt_Dialog.setMaximumSize(QSize(600, 250))
         font = QFont()
         font.setPointSize(12)
         select_file_wav_srt_Dialog.setFont(font)
@@ -51,15 +51,21 @@ class Ui_select_file_wav_srt_Dialog(object):
         self.pushButton_select_srt.setGeometry(QRect(500, 99, 81, 23))
         self.pushButton_back = QPushButton(select_file_wav_srt_Dialog)
         self.pushButton_back.setObjectName(u"pushButton_back")
-        self.pushButton_back.setGeometry(QRect(500, 160, 81, 24))
+        self.pushButton_back.setGeometry(QRect(500, 200, 81, 24))
         self.pushButton_submit = QPushButton(select_file_wav_srt_Dialog)
         self.pushButton_submit.setObjectName(u"pushButton_submit")
-        self.pushButton_submit.setGeometry(QRect(390, 160, 81, 24))
+        self.pushButton_submit.setGeometry(QRect(390, 200, 81, 24))
         self.error_lable = QLabel(select_file_wav_srt_Dialog)
         self.error_lable.setObjectName(u"error_lable")
-        self.error_lable.setGeometry(QRect(30, 130, 541, 16))
+        self.error_lable.setGeometry(QRect(30, 170, 541, 16))
         self.error_lable.setFont(font)
         self.error_lable.setStyleSheet(u"color: red;")
+        self.lineEdit_srt_2 = QLineEdit(select_file_wav_srt_Dialog)
+        self.lineEdit_srt_2.setObjectName(u"lineEdit_srt_2")
+        self.lineEdit_srt_2.setGeometry(QRect(110, 130, 371, 21))
+        self.label_4 = QLabel(select_file_wav_srt_Dialog)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setGeometry(QRect(30, 130, 81, 16))
 
         self.retranslateUi(select_file_wav_srt_Dialog)
 
@@ -78,5 +84,7 @@ class Ui_select_file_wav_srt_Dialog(object):
         self.pushButton_back.setText(QCoreApplication.translate("select_file_wav_srt_Dialog", u"\u53d6\u6d88", None))
         self.pushButton_submit.setText(QCoreApplication.translate("select_file_wav_srt_Dialog", u"\u786e\u5b9a", None))
         self.error_lable.setText("")
+        self.lineEdit_srt_2.setText("")
+        self.label_4.setText(QCoreApplication.translate("select_file_wav_srt_Dialog", u"\u53d1\u97f3\u4eba\uff1a", None))
     # retranslateUi
 
