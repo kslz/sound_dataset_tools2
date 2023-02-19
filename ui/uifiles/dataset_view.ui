@@ -152,6 +152,19 @@
           </font>
          </property>
         </widget>
+        <widget class="QPushButton" name="pushButton_add_wav_srt">
+         <property name="geometry">
+          <rect>
+           <x>230</x>
+           <y>380</y>
+           <width>181</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>从文件导入（音频+字幕）</string>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>

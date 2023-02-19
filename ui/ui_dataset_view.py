@@ -16,9 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QHeaderView,
-    QMainWindow, QMenuBar, QSizePolicy, QStatusBar,
-    QTabWidget, QTableWidget, QTableWidgetItem, QVBoxLayout,
-    QWidget)
+    QMainWindow, QMenuBar, QPushButton, QSizePolicy,
+    QStatusBar, QTabWidget, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_DatasetMainWindow(object):
     def setupUi(self, DatasetMainWindow):
@@ -87,6 +87,9 @@ class Ui_DatasetMainWindow(object):
         font1 = QFont()
         font1.setPointSize(10)
         self.comboBox.setFont(font1)
+        self.pushButton_add_wav_srt = QPushButton(self.widget_2)
+        self.pushButton_add_wav_srt.setObjectName(u"pushButton_add_wav_srt")
+        self.pushButton_add_wav_srt.setGeometry(QRect(230, 380, 181, 31))
 
         self.verticalLayout_2.addWidget(self.widget_2)
 
@@ -152,6 +155,7 @@ class Ui_DatasetMainWindow(object):
         ___qtablewidgetitem14.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
         ___qtablewidgetitem15 = self.tableWidget.verticalHeaderItem(9)
         ___qtablewidgetitem15.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
+        self.pushButton_add_wav_srt.setText(QCoreApplication.translate("DatasetMainWindow", u"\u4ece\u6587\u4ef6\u5bfc\u5165\uff08\u97f3\u9891+\u5b57\u5e55\uff09", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u96c6\u6982\u89c8", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("DatasetMainWindow", u"Tab 2", None))
     # retranslateUi

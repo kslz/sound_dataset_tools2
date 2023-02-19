@@ -5,13 +5,21 @@
     @Url : https://github.com/kslz
 """
 import configparser
+import json
 import os
+import re
 import string
+import subprocess
 import textwrap
 
 from utils import global_obj
 from utils.peewee_orm import *
 from utils.sqlitedb import MyDB
+
+if os.path.isfile(os.path.join("./lib/ffmpeg/", "ffmpeg.exe")):
+    ffmpeg_path = "./lib/ffmpeg/"
+else:
+    ffmpeg_path = ""
 
 
 def file_r(path):
@@ -37,6 +45,23 @@ def file_w(path, text, mode, encoding="UTF-8"):
     """
     with open(path, mode, encoding=encoding) as f:
         f.write(text)
+
+
+def get_audio_duration(file_path):
+    # 构造 ffprobe 命令行
+    ffprobe_cmd = [
+        os.path.join(ffmpeg_path, 'ffprobe'), '-v', 'quiet', '-print_format', 'json', '-show_format', file_path
+    ]
+
+    # 执行命令行并解析 JSON 输出
+    process = subprocess.Popen(ffprobe_cmd, stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    output = output.decode('utf-8')
+    metadata = json.loads(output)
+
+    # 提取音频文件长度
+    duration = float(metadata['format']['duration'])
+    return duration
 
 
 def huanhang(text: str, num=30):

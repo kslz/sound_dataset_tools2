@@ -4,20 +4,25 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+import os
+import time
+
 import peewee
+import pysrt
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QPushButton, QLabel, QHBoxLayout, \
-    QDialog, QMessageBox
+    QDialog, QMessageBox, QFileDialog
 from PySide6.QtCore import Signal, Qt
 
 import ui.ui_dataset_view
 from ui.ui_add_dataset import Ui_Dialog
 from ui.ui_select_dataset import Ui_MainWindow
+from ui.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
 from ui.ui_select_workspace import Ui_Form
 from utils import global_obj
 from utils.log import creatlogger
 from utils.peewee_orm import *
-from utils.tools import update_ini_config, inti_workspace, huanhang
+from utils.tools import update_ini_config, inti_workspace, huanhang, get_audio_duration
 
 global config
 
@@ -27,6 +32,80 @@ guilogger = creatlogger("guilogger")
 def getconfig():
     global config
     config = global_obj.get_value("config")
+
+
+class SelectWavSrtFile(QDialog):
+    def __init__(self, parent, dataset_id):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = Ui_select_file_wav_srt_Dialog()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.ui.lineEdit_wav.setReadOnly(True)
+        self.ui.lineEdit_srt.setReadOnly(True)
+        self.file_paths = {}
+        self.dataset_id = dataset_id
+        self.ui.pushButton_select_wav.clicked.connect(self.select_file_wav)
+        self.ui.pushButton_select_srt.clicked.connect(self.select_file_srt)
+        self.ui.pushButton_submit.clicked.connect(self.save_to_dataset)
+        self.ui.pushButton_back.clicked.connect(self.go_back)
+
+    def select_file_wav(self):
+        filePath, _ = QFileDialog.getOpenFileName(
+            self,  # 父窗口对象
+            "选择你要导入的音频文件",  # 标题
+            r"./",  # 起始目录
+            "音频文件 (*)"  # 选择类型过滤项，过滤内容在括号中
+        )
+        self.file_paths["wav"] = filePath
+        self.ui.lineEdit_wav.setText(filePath)
+
+    def select_file_srt(self):
+        filePath, _ = QFileDialog.getOpenFileName(
+            self,  # 父窗口对象
+            "选择你要导入的字幕文件",  # 标题
+            r"./",  # 起始目录
+            "字幕文件 (*.srt)"  # 选择类型过滤项，过滤内容在括号中
+        )
+        self.file_paths["srt"] = filePath
+        self.ui.lineEdit_srt.setText(filePath)
+
+    def save_to_dataset(self):
+        wav_path = self.file_paths["wav"]
+        srt_path = self.file_paths["srt"]
+        if os.path.isfile(wav_path) and os.path.isfile(srt_path):
+            try:
+                duration = get_audio_duration(wav_path)
+            except:
+                self.ui.error_lable.setText("音频文件解析失败，请检查所选文件是否正确")
+                guilogger.error(f"音频文件 {wav_path} 解析失败，请检查所选文件是否正确")
+                return
+
+            try:
+                mysrt = pysrt.open(srt_path)
+
+            except:
+                self.ui.error_lable.setText(f"字幕文件解析失败，请检查所选文件是否正确")
+                guilogger.error(f"字幕文件 {srt_path} 解析失败，请检查所选文件是否正确")
+                return
+
+            srt_end_time = mysrt[-1].end.ordinal / 1000
+            if srt_end_time > duration:
+                self.ui.error_lable.setText(f"字幕文件长度长于音频文件，请检查是否选择错误")
+                guilogger.error(f"字幕文件长度长于音频文件，请检查是否选择错误")
+                return
+
+
+
+
+
+        else:
+            self.ui.error_lable.setText("音频文件或字幕文件不存在！")
+            guilogger.error(f"音频文件 {wav_path} 或字幕文件 {srt_path} 不存在")
+        pass
+
+    def go_back(self):
+        self.close()
 
 
 class DatasetWindow(QMainWindow):
@@ -55,6 +134,7 @@ class DatasetWindow(QMainWindow):
 
         # 连接信号
         self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
+        self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
 
     def set_table_style(self):
         self.ui.tableWidget.verticalHeader().setDefaultSectionSize(20)  # 设置行高20
@@ -73,7 +153,6 @@ class DatasetWindow(QMainWindow):
         new_page_num = self.ui.comboBox.itemData(index)
         self.refresh_table(new_page_num)
         self.page_number = new_page_num
-
 
     def refresh_table(self, page_number=0):
         # QcomboBox在被清空的时候也会发出currentIndexChanged信号，找这个问题花了一个小时
@@ -113,12 +192,16 @@ class DatasetWindow(QMainWindow):
                 is_separate_file = "是"
             self.ui.tableWidget.setItem(row, 3, QTableWidgetItem(is_separate_file))
             self.ui.tableWidget.setItem(row, 5, QTableWidgetItem(str(info_id) + "一些操作"))
-        self.ui.comboBox.setCurrentIndex(page_number-1)
+        self.ui.comboBox.setCurrentIndex(page_number - 1)
         self.ui.comboBox.blockSignals(False)
 
     def closeEvent(self, event):
         self.reopen.emit()
         super().closeEvent(event)
+
+    def add_from_file_wav_srt(self):
+        add_wav_srt_window = SelectWavSrtFile(self, self.dataset_id)
+        add_wav_srt_window.exec_()
 
 
 class AddDatasetWindow(QDialog):
