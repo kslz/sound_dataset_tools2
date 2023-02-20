@@ -12,6 +12,9 @@ import string
 import subprocess
 import textwrap
 
+import pysrt
+from pysrt import SubRipTime
+
 from utils import global_obj
 from utils.peewee_orm import *
 from utils.sqlitedb import MyDB
@@ -47,15 +50,51 @@ def file_w(path, text, mode, encoding="UTF-8"):
         f.write(text)
 
 
-def add_info_by_file_wav_srt(wav_path,srt_path):
+def add_info_by_file_wav_srt(wav_path, srt_path, is_merge=True):
+    subs = pysrt.open(srt_path)
+    if is_merge:
+        subs = merge_srt(subs)
 
     pass
 
-def merge_srt(subs, min_time=200):
 
-    pass
+def merge_srt(subs, min_time=35):
+    """
+    剪映生成的字幕偶尔会出现长句被截成两个紧贴着的短句的情况，这个函数可以将紧贴着的两个或更多短句合成一句
 
+    """
+    subs: pysrt.SubRipFile  # 加上编辑器也不给我代码提示 寄
+    subs2 = pysrt.SubRipFile()
+    i = 0
+    while i < len(subs):  # 经典for循环
 
+        if i + 1 == len(subs):
+            subs2.append(subs[i])
+            break
+        this_start_time = subs[i].start.ordinal
+        this_end_time = subs[i].end.ordinal
+        next_start_time = subs[i + 1].start.ordinal
+        next_end_time = subs[i + 1].end.ordinal
+
+        if next_start_time - this_end_time > min_time:
+            subs2.append(subs[i])
+            i += 1
+            continue
+        start_time = this_start_time
+        end_time = next_end_time
+        text = subs[i].text
+        for n in range(i + 1, len(subs)):
+            end_time = subs[n].end.ordinal
+            text += subs[n].text
+            if n == len(subs) - 1 or subs[n + 1].start.ordinal - subs[n].end.ordinal > min_time:
+                start = SubRipTime(milliseconds=start_time)
+                end = SubRipTime(milliseconds=end_time)
+                line = subtitle = pysrt.SubRipItem(index=i, start=start, end=end, text=text)
+                print(f"合成完成：{text}")
+                i = n + 1
+                subs2.append(line)
+                break
+    return subs2
 
 
 def get_audio_duration(file_path):
