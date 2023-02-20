@@ -47,6 +47,17 @@ def file_w(path, text, mode, encoding="UTF-8"):
         f.write(text)
 
 
+def add_info_by_file_wav_srt(wav_path,srt_path):
+
+    pass
+
+def merge_srt(subs, min_time=200):
+
+    pass
+
+
+
+
 def get_audio_duration(file_path):
     # 构造 ffprobe 命令行
     ffprobe_cmd = [
