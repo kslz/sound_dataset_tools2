@@ -25,6 +25,8 @@ class Ui_DatasetMainWindow(object):
         if not DatasetMainWindow.objectName():
             DatasetMainWindow.setObjectName(u"DatasetMainWindow")
         DatasetMainWindow.resize(1200, 800)
+        DatasetMainWindow.setMinimumSize(QSize(1200, 800))
+        DatasetMainWindow.setMaximumSize(QSize(1200, 800))
         self.centralwidget = QWidget(DatasetMainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.tabWidget = QTabWidget(self.centralwidget)

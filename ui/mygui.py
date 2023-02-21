@@ -22,8 +22,7 @@ from ui.ui_select_workspace import Ui_Form
 from utils import global_obj
 from utils.log import creatlogger
 from utils.peewee_orm import *
-from utils.tools import update_ini_config, inti_workspace, huanhang, get_audio_duration, add_info_by_file_wav_srt, \
-    play_by_ffmpeg
+from utils.tools import *
 
 global config
 
@@ -73,6 +72,7 @@ class SelectWavSrtFile(QDialog):
 
     def save_to_dataset(self):
         wav_path = self.file_paths["wav"]
+        wav_path = copy_file_to_workspace(wav_path, os.path.join(workspace_path, "sounds"))
         srt_path = self.file_paths["srt"]
         speaker = self.ui.lineEdit_spk.text()
         if wav_path.strip() == "" or None:

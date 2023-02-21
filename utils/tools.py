@@ -8,6 +8,7 @@ import configparser
 import json
 import os
 import re
+import shutil
 import string
 import subprocess
 import textwrap
@@ -24,6 +25,8 @@ if os.path.isfile(os.path.join("./lib/ffmpeg/", "ffmpeg.exe")):
     ffmpeg_path = "./lib/ffmpeg/"
 else:
     ffmpeg_path = ""
+
+workspace_path = ""
 
 
 def file_r(path):
@@ -49,6 +52,14 @@ def file_w(path, text, mode, encoding="UTF-8"):
     """
     with open(path, mode, encoding=encoding) as f:
         f.write(text)
+
+def copy_file_to_workspace(raw_path,to_path):
+    file_name = os.path.basename(raw_path)
+    new_path = os.path.join(to_path,file_name)
+    shutil.copyfile(raw_path, new_path)
+    return new_path
+
+
 
 
 def add_info_by_file_wav_srt(dataset_id, wav_path, srt_path, speaker, is_merge=True):
@@ -111,13 +122,13 @@ def merge_srt(subs, min_time=35):
 
 def play_by_ffmpeg(wav_path,start_time,end_time):
     # 将毫秒转换为ffmpeg需要的时间格式
+    duration = (end_time - start_time) / 1000
     start_time = start_time / 1000
-    end_time = end_time / 1000
 
     # 从长音频文件中提取指定时间段的音频
     output = (
         ffmpeg
-        .input(wav_path, ss=start_time, t=end_time)
+        .input(wav_path, ss=start_time, t=duration)
         .output('pipe:', format='wav')
         .run(capture_stdout=True)
     )
@@ -238,15 +249,18 @@ def init_database(database_path):
     global_obj.set_value("peewee_db", db)
 
 
-def inti_workspace(workspace_path):
+def inti_workspace(workspace_path_now):
     """
     初始化工作区
     1、新建目录：workspace_path、workspace_path/db
     2、连接数据库
 
     """
+    global workspace_path
+    workspace_path = workspace_path_now
     os.makedirs(workspace_path, exist_ok=True)
     os.makedirs(os.path.join(workspace_path, "db"), exist_ok=True)
+    os.makedirs(os.path.join(workspace_path, "sounds"), exist_ok=True)
     # mydb = MyDB(os.path.join(workspace_path, "db/workspace.db"))
     # global_obj.set_value("mydb", mydb)
 
