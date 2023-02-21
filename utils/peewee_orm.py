@@ -69,7 +69,6 @@ class SpkInfo(BaseModel):
 
 
 def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
-
     # 下面的查询是chatGPT写的
     # 都说先进的科技乍一看和魔法无异，想来这就是了
     query = (Info
@@ -112,6 +111,12 @@ def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
     # for i, result in enumerate(results, start=1):
     #     print(
     #         f"{i + (page_number - 1) * page_size} {result['info_id']} {result['info_text']} {result['speaker']} {result['is_separate_file']}")
+
+
+def insert_info_many(data_list, batch_size=1000):
+    for i in range(0, len(data_list), batch_size):
+        with db.atomic():
+            Info.insert_many(data_list[i:i + batch_size]).execute()
 
 
 class Course(BaseModel):

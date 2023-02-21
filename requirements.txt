@@ -4,3 +4,5 @@ PySide6-Addons==6.4.2
 PySide6-Essentials==6.4.2
 shiboken6==6.4.2
 pysrt==1.1.2
+pydub==0.25.1
+pyaudio==0.2.13

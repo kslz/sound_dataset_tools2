@@ -12,6 +12,7 @@ import string
 import subprocess
 import textwrap
 
+import ffmpeg
 import pysrt
 from pysrt import SubRipTime
 
@@ -50,12 +51,25 @@ def file_w(path, text, mode, encoding="UTF-8"):
         f.write(text)
 
 
-def add_info_by_file_wav_srt(wav_path, srt_path, is_merge=True):
+def add_info_by_file_wav_srt(dataset_id, wav_path, srt_path, speaker, is_merge=True):
     subs = pysrt.open(srt_path)
     if is_merge:
         subs = merge_srt(subs)
+    data_list = []
+    for line in subs:
+        line: pysrt.srtitem.SubRipItem
+        line_data = {}
+        line_data["dataset_id"] = dataset_id
+        line_data["info_text"] = line.text
+        line_data["info_speaker"] = speaker
+        line_data["info_raw_file_path"] = wav_path
+        line_data["info_start_time"] = line.start.ordinal
+        line_data["info_end_time"] = line.end.ordinal
+        data_list.append(line_data)
 
-    pass
+    insert_info_many(data_list)
+
+    return True
 
 
 def merge_srt(subs, min_time=35):
@@ -90,14 +104,36 @@ def merge_srt(subs, min_time=35):
                 start = SubRipTime(milliseconds=start_time)
                 end = SubRipTime(milliseconds=end_time)
                 line = subtitle = pysrt.SubRipItem(index=i, start=start, end=end, text=text)
-                print(f"合成完成：{text}")
                 i = n + 1
                 subs2.append(line)
                 break
     return subs2
 
+def play_by_ffmpeg(wav_path,start_time,end_time):
+    # 将毫秒转换为ffmpeg需要的时间格式
+    start_time = start_time / 1000
+    end_time = end_time / 1000
+
+    # 从长音频文件中提取指定时间段的音频
+    output = (
+        ffmpeg
+        .input(wav_path, ss=start_time, t=end_time)
+        .output('pipe:', format='wav')
+        .run(capture_stdout=True)
+    )
+
+    # 播放输出的音频
+    process = subprocess.Popen(['ffplay', "-nodisp", "-autoexit", '-'], stdin=subprocess.PIPE)
+    process.communicate(output[0])
+
 
 def get_audio_duration(file_path):
+    """
+    获取音频持续时间
+
+    :param file_path:
+    :return:
+    """
     # 构造 ffprobe 命令行
     ffprobe_cmd = [
         os.path.join(ffmpeg_path, 'ffprobe'), '-v', 'quiet', '-print_format', 'json', '-show_format', file_path

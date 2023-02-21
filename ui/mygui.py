@@ -22,7 +22,8 @@ from ui.ui_select_workspace import Ui_Form
 from utils import global_obj
 from utils.log import creatlogger
 from utils.peewee_orm import *
-from utils.tools import update_ini_config, inti_workspace, huanhang, get_audio_duration
+from utils.tools import update_ini_config, inti_workspace, huanhang, get_audio_duration, add_info_by_file_wav_srt, \
+    play_by_ffmpeg
 
 global config
 
@@ -73,6 +74,18 @@ class SelectWavSrtFile(QDialog):
     def save_to_dataset(self):
         wav_path = self.file_paths["wav"]
         srt_path = self.file_paths["srt"]
+        speaker = self.ui.lineEdit_spk.text()
+        if wav_path.strip() == "" or None:
+            self.ui.error_lable.setText("输入音频路径为空")
+            return
+        if srt_path.strip() == "" or None:
+            self.ui.error_lable.setText("输入字幕路径为空")
+            return
+        if speaker.strip() == "" or None:
+            self.ui.error_lable.setText("输入发音人为空")
+            return
+        # 多写return就不用写else了，某种意义上来讲能少几段缩进，提高可读性（也许
+
         if os.path.isfile(wav_path) and os.path.isfile(srt_path):
             try:
                 duration = get_audio_duration(wav_path)
@@ -83,6 +96,8 @@ class SelectWavSrtFile(QDialog):
 
             try:
                 mysrt = pysrt.open(srt_path)
+                if len(mysrt) == 0:
+                    raise Exception('所选文件不是SRT格式的文件！')
 
             except:
                 self.ui.error_lable.setText(f"字幕文件解析失败，请检查所选文件是否正确")
@@ -94,7 +109,9 @@ class SelectWavSrtFile(QDialog):
                 self.ui.error_lable.setText(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 guilogger.error(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 return
-
+            if add_info_by_file_wav_srt(self.dataset_id, wav_path, srt_path, speaker):
+                self.parent().refresh_table()
+                self.close()
 
 
 
@@ -106,6 +123,29 @@ class SelectWavSrtFile(QDialog):
 
     def go_back(self):
         self.close()
+
+
+class PlaySoundBTN(QPushButton):
+    def __init__(self, text, info_id, parent):
+        super().__init__(text, parent)
+        self.info_id = info_id
+        self.clicked.connect(self.play_sound)
+
+    def play_sound(self):
+        self.setText("停止")
+        info = Info.get_by_id(self.info_id)
+
+        # todo 判断是否有已导出的文件
+        wav_path = info.info_raw_file_path
+
+        start_time = info.info_start_time
+        end_time = info.info_end_time
+
+        play_by_ffmpeg(wav_path, start_time, end_time)
+
+        self.setText("试听")
+
+        pass
 
 
 class DatasetWindow(QMainWindow):
@@ -137,11 +177,11 @@ class DatasetWindow(QMainWindow):
         self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
 
     def set_table_style(self):
-        self.ui.tableWidget.verticalHeader().setDefaultSectionSize(20)  # 设置行高20
+        self.ui.tableWidget.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
 
         header = self.ui.tableWidget.horizontalHeader()
         header.setDefaultAlignment(QtCore.Qt.AlignLeft)  # 设置表头左对齐
-        # 创建一个字体对象，并设置字号为14
+        # 创建一个字体对象，并设置字号为12
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -175,6 +215,7 @@ class DatasetWindow(QMainWindow):
             total_count -= page_size
             pagecount += 1
 
+        self.btn_dict = {}
         for i, result in enumerate(results, start=1):
             index = i + (page_number - 1) * page_size
             info_id = result['info_id']
@@ -191,9 +232,35 @@ class DatasetWindow(QMainWindow):
             if is_separate_file == 1:
                 is_separate_file = "是"
             self.ui.tableWidget.setItem(row, 3, QTableWidgetItem(is_separate_file))
-            self.ui.tableWidget.setItem(row, 5, QTableWidgetItem(str(info_id) + "一些操作"))
+            # self.ui.tableWidget.setItem(row, 5, QTableWidgetItem(str(info_id) + "一些操作"))
+
+            btn_shiting = PlaySoundBTN('试听', info_id, self)
+            btn_bianji = QPushButton('编辑', self)
+            btn_shiting.clicked.connect(lambda: self.edit_info(info_id))
+            self.btn_dict[f"{row}_shiting"] = btn_shiting
+            self.btn_dict[f"{row}_bianji"] = btn_bianji
+            layout = QHBoxLayout()
+            layout.addWidget(self.btn_dict[f"{row}_shiting"])
+            layout.addWidget(self.btn_dict[f"{row}_bianji"])
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(1)
+            caozuo_widget = QWidget()
+            caozuo_widget.setLayout(layout)
+            self.ui.tableWidget.setCellWidget(row, 5, caozuo_widget)
+
         self.ui.comboBox.setCurrentIndex(page_number - 1)
         self.ui.comboBox.blockSignals(False)
+
+    def add_button(self, info_id):
+        button_list = []
+        btn_shiting = QPushButton('试听', self)
+        btn_shiting.clicked.connect(lambda: self.play_sound(info_id))
+        btn_bianji = QPushButton('编辑', self)
+        btn_shiting.clicked.connect(lambda: self.edit_info(info_id))
+        button_list.append(btn_shiting)
+        button_list.append(btn_bianji)
+
+        return button_list
 
     def closeEvent(self, event):
         self.reopen.emit()
@@ -202,6 +269,9 @@ class DatasetWindow(QMainWindow):
     def add_from_file_wav_srt(self):
         add_wav_srt_window = SelectWavSrtFile(self, self.dataset_id)
         add_wav_srt_window.exec_()
+
+    def edit_info(self, info_id):
+        pass
 
 
 class AddDatasetWindow(QDialog):
