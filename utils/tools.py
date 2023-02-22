@@ -51,13 +51,14 @@ def file_w(path, text, mode, encoding="UTF-8"):
     with open(path, mode, encoding=encoding) as f:
         f.write(text)
 
-def copy_file_to_workspace(raw_path,to_path):
+
+def copy_file_to_workspace(raw_path, to_path):
     file_name = os.path.basename(raw_path)
     now = datetime.now()
     formatted_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-    file_name_new = os.path.splitext(file_name)[0]+"_"+formatted_time+".flac"
-    new_path = os.path.join(to_path,file_name_new)
+    file_name_new = os.path.splitext(file_name)[0] + "_" + formatted_time + ".flac"
+    new_path = os.path.join(to_path, file_name_new)
 
     (
         ffmpeg
@@ -68,8 +69,6 @@ def copy_file_to_workspace(raw_path,to_path):
 
     # shutil.copyfile(raw_path, new_path)
     return new_path
-
-
 
 
 def add_info_by_file_wav_srt(dataset_id, wav_path, srt_path, speaker, is_merge=True):
@@ -130,7 +129,8 @@ def merge_srt(subs, min_time=35):
                 break
     return subs2
 
-def play_by_ffmpeg(wav_path,start_time,end_time):
+
+def play_by_ffmpeg(wav_path, start_time, end_time):
     # 将毫秒转换为ffmpeg需要的时间格式
     duration = (end_time - start_time) / 1000
     start_time = start_time / 1000
@@ -256,7 +256,7 @@ def init_database(database_path):
     db.init(database_path)
     db.connect()
     db.pragma('foreign_keys', 'on')
-    db.create_tables([Workspace, Dataset, Info, SpkInfo])
+    db.create_tables([Workspace, Dataset, Info, SpkInfo, AuthorizationInfo])
     global_obj.set_value("peewee_db", db)
 
 

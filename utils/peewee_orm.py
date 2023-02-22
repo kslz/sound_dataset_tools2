@@ -68,6 +68,19 @@ class SpkInfo(BaseModel):
         table_name = 'spkinfo_tbl'
 
 
+class AuthorizationInfo(BaseModel):
+    authorizationinfo_id = PrimaryKeyField()
+    authorizationinfo_name = CharField(null=False)
+    authorizationinfo_APPID = CharField(null=False)
+    authorizationinfo_APISecret = CharField(null=False)
+    authorizationinfo_APIKey = CharField(null=False)
+    authorizationinfo_company = CharField(null=False)
+    authorizationinfo_app = CharField(null=False)
+
+    class Meta:
+        table_name = 'authorizationinfo_tbl'
+
+
 def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
     # 下面的查询是chatGPT写的
     # 都说先进的科技乍一看和魔法无异，想来这就是了
