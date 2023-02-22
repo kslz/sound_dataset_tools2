@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QHeaderView,
-    QMainWindow, QMenuBar, QPushButton, QSizePolicy,
-    QStatusBar, QTabWidget, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QGroupBox,
+    QHeaderView, QLabel, QMainWindow, QMenuBar,
+    QPushButton, QSizePolicy, QStatusBar, QTabWidget,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_DatasetMainWindow(object):
     def setupUi(self, DatasetMainWindow):
@@ -32,6 +32,9 @@ class Ui_DatasetMainWindow(object):
         self.tabWidget = QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setGeometry(QRect(10, 10, 1181, 681))
+        font = QFont()
+        font.setPointSize(12)
+        self.tabWidget.setFont(font)
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
         self.verticalLayout_2 = QVBoxLayout(self.tab)
@@ -77,8 +80,6 @@ class Ui_DatasetMainWindow(object):
         self.tableWidget.setVerticalHeaderItem(9, __qtablewidgetitem15)
         self.tableWidget.setObjectName(u"tableWidget")
         self.tableWidget.setGeometry(QRect(10, 10, 1141, 421))
-        font = QFont()
-        font.setPointSize(12)
         self.tableWidget.setFont(font)
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget.verticalHeader().setVisible(False)
@@ -91,7 +92,7 @@ class Ui_DatasetMainWindow(object):
         self.comboBox.setFont(font1)
         self.pushButton_add_wav_srt = QPushButton(self.widget_2)
         self.pushButton_add_wav_srt.setObjectName(u"pushButton_add_wav_srt")
-        self.pushButton_add_wav_srt.setGeometry(QRect(230, 440, 181, 31))
+        self.pushButton_add_wav_srt.setGeometry(QRect(230, 440, 231, 31))
 
         self.verticalLayout_2.addWidget(self.widget_2)
 
@@ -106,6 +107,64 @@ class Ui_DatasetMainWindow(object):
         self.verticalLayout.addWidget(self.widget)
 
         self.tabWidget.addTab(self.tab_2, "")
+        self.tab_3 = QWidget()
+        self.tab_3.setObjectName(u"tab_3")
+        self.label = QLabel(self.tab_3)
+        self.label.setObjectName(u"label")
+        self.label.setGeometry(QRect(20, 10, 271, 21))
+        self.label.setFont(font)
+        self.tabWidget_2 = QTabWidget(self.tab_3)
+        self.tabWidget_2.setObjectName(u"tabWidget_2")
+        self.tabWidget_2.setGeometry(QRect(20, 50, 1141, 601))
+        self.tab_4 = QWidget()
+        self.tab_4.setObjectName(u"tab_4")
+        self.groupBox = QGroupBox(self.tab_4)
+        self.groupBox.setObjectName(u"groupBox")
+        self.groupBox.setGeometry(QRect(10, 10, 1111, 271))
+        self.tableWidget_biaobei = QTableWidget(self.groupBox)
+        if (self.tableWidget_biaobei.columnCount() < 5):
+            self.tableWidget_biaobei.setColumnCount(5)
+        __qtablewidgetitem16 = QTableWidgetItem()
+        self.tableWidget_biaobei.setHorizontalHeaderItem(0, __qtablewidgetitem16)
+        __qtablewidgetitem17 = QTableWidgetItem()
+        self.tableWidget_biaobei.setHorizontalHeaderItem(1, __qtablewidgetitem17)
+        __qtablewidgetitem18 = QTableWidgetItem()
+        self.tableWidget_biaobei.setHorizontalHeaderItem(2, __qtablewidgetitem18)
+        __qtablewidgetitem19 = QTableWidgetItem()
+        self.tableWidget_biaobei.setHorizontalHeaderItem(3, __qtablewidgetitem19)
+        __qtablewidgetitem20 = QTableWidgetItem()
+        self.tableWidget_biaobei.setHorizontalHeaderItem(4, __qtablewidgetitem20)
+        self.tableWidget_biaobei.setObjectName(u"tableWidget_biaobei")
+        self.tableWidget_biaobei.setGeometry(QRect(20, 20, 961, 231))
+        self.pushButton_add_biaobei = QPushButton(self.groupBox)
+        self.pushButton_add_biaobei.setObjectName(u"pushButton_add_biaobei")
+        self.pushButton_add_biaobei.setGeometry(QRect(990, 20, 111, 41))
+        self.groupBox_2 = QGroupBox(self.tab_4)
+        self.groupBox_2.setObjectName(u"groupBox_2")
+        self.groupBox_2.setGeometry(QRect(10, 290, 1111, 271))
+        self.pushButton_add_xunfei = QPushButton(self.groupBox_2)
+        self.pushButton_add_xunfei.setObjectName(u"pushButton_add_xunfei")
+        self.pushButton_add_xunfei.setGeometry(QRect(990, 20, 111, 41))
+        self.tableWidget_xunfei = QTableWidget(self.groupBox_2)
+        if (self.tableWidget_xunfei.columnCount() < 5):
+            self.tableWidget_xunfei.setColumnCount(5)
+        __qtablewidgetitem21 = QTableWidgetItem()
+        self.tableWidget_xunfei.setHorizontalHeaderItem(0, __qtablewidgetitem21)
+        __qtablewidgetitem22 = QTableWidgetItem()
+        self.tableWidget_xunfei.setHorizontalHeaderItem(1, __qtablewidgetitem22)
+        __qtablewidgetitem23 = QTableWidgetItem()
+        self.tableWidget_xunfei.setHorizontalHeaderItem(2, __qtablewidgetitem23)
+        __qtablewidgetitem24 = QTableWidgetItem()
+        self.tableWidget_xunfei.setHorizontalHeaderItem(3, __qtablewidgetitem24)
+        __qtablewidgetitem25 = QTableWidgetItem()
+        self.tableWidget_xunfei.setHorizontalHeaderItem(4, __qtablewidgetitem25)
+        self.tableWidget_xunfei.setObjectName(u"tableWidget_xunfei")
+        self.tableWidget_xunfei.setGeometry(QRect(20, 20, 961, 231))
+        self.tabWidget_2.addTab(self.tab_4, "")
+        self.tab_5 = QWidget()
+        self.tab_5.setObjectName(u"tab_5")
+        self.tabWidget_2.addTab(self.tab_5, "")
+        self.tabWidget.addTab(self.tab_3, "")
         DatasetMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(DatasetMainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -118,13 +177,14 @@ class Ui_DatasetMainWindow(object):
         self.retranslateUi(DatasetMainWindow)
 
         self.tabWidget.setCurrentIndex(0)
+        self.tabWidget_2.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(DatasetMainWindow)
     # setupUi
 
     def retranslateUi(self, DatasetMainWindow):
-        DatasetMainWindow.setWindowTitle(QCoreApplication.translate("DatasetMainWindow", u"MainWindow", None))
+        DatasetMainWindow.setWindowTitle(QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u96c6", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("DatasetMainWindow", u"\u5e8f\u53f7", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
@@ -159,6 +219,34 @@ class Ui_DatasetMainWindow(object):
         ___qtablewidgetitem15.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
         self.pushButton_add_wav_srt.setText(QCoreApplication.translate("DatasetMainWindow", u"\u4ece\u6587\u4ef6\u5bfc\u5165\uff08\u97f3\u9891+\u5b57\u5e55\uff09", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u96c6\u6982\u89c8", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("DatasetMainWindow", u"Tab 2", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u96c6\u5904\u7406", None))
+        self.label.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6ce8\u610f\uff1a\u672c\u9875\u8bbe\u7f6e\u5728\u672c\u5de5\u4f5c\u533a\u4e0b\u901a\u7528", None))
+        self.groupBox.setTitle(QCoreApplication.translate("DatasetMainWindow", u"\u6807\u8d1d", None))
+        ___qtablewidgetitem16 = self.tableWidget_biaobei.horizontalHeaderItem(0)
+        ___qtablewidgetitem16.setText(QCoreApplication.translate("DatasetMainWindow", u"id", None));
+        ___qtablewidgetitem17 = self.tableWidget_biaobei.horizontalHeaderItem(1)
+        ___qtablewidgetitem17.setText(QCoreApplication.translate("DatasetMainWindow", u"\u540d\u79f0", None));
+        ___qtablewidgetitem18 = self.tableWidget_biaobei.horizontalHeaderItem(2)
+        ___qtablewidgetitem18.setText(QCoreApplication.translate("DatasetMainWindow", u"APPID", None));
+        ___qtablewidgetitem19 = self.tableWidget_biaobei.horizontalHeaderItem(3)
+        ___qtablewidgetitem19.setText(QCoreApplication.translate("DatasetMainWindow", u"APISecret\uff08client_secret\uff09", None));
+        ___qtablewidgetitem20 = self.tableWidget_biaobei.horizontalHeaderItem(4)
+        ___qtablewidgetitem20.setText(QCoreApplication.translate("DatasetMainWindow", u"APIKey\uff08client_id\uff09", None));
+        self.pushButton_add_biaobei.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6dfb\u52a0", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("DatasetMainWindow", u"\u8baf\u98de", None))
+        self.pushButton_add_xunfei.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6dfb\u52a0", None))
+        ___qtablewidgetitem21 = self.tableWidget_xunfei.horizontalHeaderItem(0)
+        ___qtablewidgetitem21.setText(QCoreApplication.translate("DatasetMainWindow", u"id", None));
+        ___qtablewidgetitem22 = self.tableWidget_xunfei.horizontalHeaderItem(1)
+        ___qtablewidgetitem22.setText(QCoreApplication.translate("DatasetMainWindow", u"\u540d\u79f0", None));
+        ___qtablewidgetitem23 = self.tableWidget_xunfei.horizontalHeaderItem(2)
+        ___qtablewidgetitem23.setText(QCoreApplication.translate("DatasetMainWindow", u"APPID", None));
+        ___qtablewidgetitem24 = self.tableWidget_xunfei.horizontalHeaderItem(3)
+        ___qtablewidgetitem24.setText(QCoreApplication.translate("DatasetMainWindow", u"APISecret\uff08client_secret\uff09", None));
+        ___qtablewidgetitem25 = self.tableWidget_xunfei.horizontalHeaderItem(4)
+        ___qtablewidgetitem25.setText(QCoreApplication.translate("DatasetMainWindow", u"APIKey\uff08client_id\uff09", None));
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_4), QCoreApplication.translate("DatasetMainWindow", u"\u6388\u6743\u7ba1\u7406", None))
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_5), QCoreApplication.translate("DatasetMainWindow", u"\u5168\u5c40\u8bbe\u7f6e", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("DatasetMainWindow", u"\u8f6f\u4ef6\u8bbe\u7f6e", None))
     # retranslateUi
 
