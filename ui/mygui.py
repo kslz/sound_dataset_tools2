@@ -72,6 +72,7 @@ class SelectWavSrtFile(QDialog):
 
     def save_to_dataset(self):
         wav_path = self.file_paths["wav"]
+        workspace_path = global_obj.get_value("workspace_path")
         wav_path = copy_file_to_workspace(wav_path, os.path.join(workspace_path, "sounds"))
         srt_path = self.file_paths["srt"]
         speaker = self.ui.lineEdit_spk.text()

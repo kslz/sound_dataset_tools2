@@ -40,7 +40,7 @@ class Dataset(BaseModel):
 
 class Info(BaseModel):
     info_id = PrimaryKeyField()
-    dataset_id = ForeignKeyField(Dataset, "dataset_id", "infos")
+    dataset_id = ForeignKeyField(Dataset, "dataset_id", "infos", on_delete='CASCADE')
     info_text = CharField(null=True, )
     info_pinyin = CharField(null=True, )
     info_speaker = CharField(null=True, )
@@ -60,7 +60,7 @@ class Info(BaseModel):
 
 class SpkInfo(BaseModel):
     spkinfo_id = PrimaryKeyField()
-    info_id = ForeignKeyField(Info, "info_id", "spkinfos")
+    info_id = ForeignKeyField(Info, "info_id", "spkinfos", on_delete='CASCADE')
     spkinfo_name = CharField()
     spkinfo_score = FloatField()
 
@@ -101,6 +101,7 @@ def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
 
     # 分页
     query = query.paginate(page_number, page_size)
+    # todo 待优化 目前搜索范围外的数据时会出现空白页
 
     # 执行查询
     # 我发现这里的查询好像会查询很多次数据库，不过也还好吧，应该不会有人存几百万条数据进去

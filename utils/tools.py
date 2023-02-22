@@ -26,8 +26,6 @@ if os.path.isfile(os.path.join("./lib/ffmpeg/", "ffmpeg.exe")):
 else:
     ffmpeg_path = ""
 
-workspace_path = ""
-
 
 def file_r(path):
     """
@@ -55,8 +53,20 @@ def file_w(path, text, mode, encoding="UTF-8"):
 
 def copy_file_to_workspace(raw_path,to_path):
     file_name = os.path.basename(raw_path)
-    new_path = os.path.join(to_path,file_name)
-    shutil.copyfile(raw_path, new_path)
+    now = datetime.now()
+    formatted_time = now.strftime("%Y-%m-%d_%H-%M-%S")
+
+    file_name_new = os.path.splitext(file_name)[0]+"_"+formatted_time+".flac"
+    new_path = os.path.join(to_path,file_name_new)
+
+    (
+        ffmpeg
+        .input(raw_path)
+        .output(new_path, codec="flac", compression_level=5)
+        .run()
+    )
+
+    # shutil.copyfile(raw_path, new_path)
     return new_path
 
 
@@ -245,19 +255,19 @@ def init_program():
 def init_database(database_path):
     db.init(database_path)
     db.connect()
+    db.pragma('foreign_keys', 'on')
     db.create_tables([Workspace, Dataset, Info, SpkInfo])
     global_obj.set_value("peewee_db", db)
 
 
-def inti_workspace(workspace_path_now):
+def inti_workspace(workspace_path):
     """
     初始化工作区
     1、新建目录：workspace_path、workspace_path/db
     2、连接数据库
 
     """
-    global workspace_path
-    workspace_path = workspace_path_now
+    global_obj.set_value("workspace_path", workspace_path)
     os.makedirs(workspace_path, exist_ok=True)
     os.makedirs(os.path.join(workspace_path, "db"), exist_ok=True)
     os.makedirs(os.path.join(workspace_path, "sounds"), exist_ok=True)
