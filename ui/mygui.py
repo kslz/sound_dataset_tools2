@@ -4,6 +4,7 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+import _thread
 import os
 import time
 
@@ -127,26 +128,38 @@ class SelectWavSrtFile(QDialog):
 
 
 class PlaySoundBTN(QPushButton):
+    class PlaySoundThread(QtCore.QThread):
+        update_signal = Signal(str, bool)
+
+        def __init__(self, wav_path, start_time, end_time):
+            super().__init__()
+            self.wav_path = wav_path
+            self.start_time = start_time
+            self.end_time = end_time
+
+        def run(self):
+            self.update_signal.emit("播放中", False)
+            play_by_ffmpeg(self.wav_path, self.start_time, self.end_time)
+            self.update_signal.emit("试听", True)
+
     def __init__(self, text, info_id, parent):
         super().__init__(text, parent)
         self.info_id = info_id
         self.clicked.connect(self.play_sound)
-
-    def play_sound(self):
-        self.setText("停止")
         info = Info.get_by_id(self.info_id)
-
-        # todo 判断是否有已导出的文件
         wav_path = info.info_raw_file_path
-
         start_time = info.info_start_time
         end_time = info.info_end_time
+        self.play_thread = self.PlaySoundThread(wav_path, start_time, end_time)
 
-        play_by_ffmpeg(wav_path, start_time, end_time)
+    def play_sound(self):
+        # 多线程避免阻塞界面
+        self.play_thread.update_signal.connect(lambda text, is_enabled: self.set_text(text, is_enabled))
+        self.play_thread.start()
 
-        self.setText("试听")
-
-        pass
+    def set_text(self, text, is_enabled):
+        self.text = text
+        # self.setEnabled(is_enabled)
 
 
 class DatasetWindow(QMainWindow):
@@ -251,17 +264,6 @@ class DatasetWindow(QMainWindow):
 
         self.ui.comboBox.setCurrentIndex(page_number - 1)
         self.ui.comboBox.blockSignals(False)
-
-    def add_button(self, info_id):
-        button_list = []
-        btn_shiting = QPushButton('试听', self)
-        btn_shiting.clicked.connect(lambda: self.play_sound(info_id))
-        btn_bianji = QPushButton('编辑', self)
-        btn_shiting.clicked.connect(lambda: self.edit_info(info_id))
-        button_list.append(btn_shiting)
-        button_list.append(btn_bianji)
-
-        return button_list
 
     def closeEvent(self, event):
         self.reopen.emit()
