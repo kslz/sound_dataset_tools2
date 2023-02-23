@@ -13,7 +13,7 @@ import pysrt
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QPushButton, QLabel, QHBoxLayout, \
     QDialog, QMessageBox, QFileDialog
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Signal, Qt, QThread
 
 import ui.ui_dataset_view
 from ui.ui_add_dataset import Ui_Dialog
@@ -130,9 +130,12 @@ class SelectWavSrtFile(QDialog):
 class PlaySoundBTN(QPushButton):
     class PlaySoundThread(QtCore.QThread):
         update_signal = Signal(str, bool)
+        # stop_thread_signal = Signal()
 
         def __init__(self, wav_path, start_time, end_time):
             super().__init__()
+            # self.stop_flag = False
+            # self.stop_thread_signal.connect(self.stop_thread)
             self.wav_path = wav_path
             self.start_time = start_time
             self.end_time = end_time
@@ -142,23 +145,38 @@ class PlaySoundBTN(QPushButton):
             play_by_ffmpeg(self.wav_path, self.start_time, self.end_time)
             self.update_signal.emit("试听", True)
 
+        # def stop_thread(self):
+        #     self.stop_flag = True
+        #     print("收到停止信号")
+        #     self.wait()
+
     def __init__(self, text, info_id, parent):
         super().__init__(text, parent)
         self.info_id = info_id
-        self.clicked.connect(self.play_sound)
+        self.clicked.connect(self.play_or_stop_sound)
         info = Info.get_by_id(self.info_id)
         wav_path = info.info_raw_file_path
         start_time = info.info_start_time
         end_time = info.info_end_time
-        self.play_thread = self.PlaySoundThread(wav_path, start_time, end_time)
-
-    def play_sound(self):
-        # 多线程避免阻塞界面
+        # self.thread1 = QThread(self)  # 创建一个线程 不行 没用明白，先这样吧
+        self.play_thread = self.PlaySoundThread(wav_path, start_time, end_time)  # 实例化线程类
+        # self.play_thread.moveToThread(self.thread1)  # 将类移动到线程中运行
+        # self.thread1.started.connect(self.play_thread.run)
         self.play_thread.update_signal.connect(lambda text, is_enabled: self.set_text(text, is_enabled))
-        self.play_thread.start()
+
+    def play_or_stop_sound(self):
+        # 多线程避免阻塞界面
+        if self.text() == "试听":
+            self.play_thread.start()
+        else:
+            # 终止播放失败
+            # self.play_thread.stop_thread_signal.emit()
+            # self.play_thread.exit()
+            # self.set_text("试听", True)
+            pass
 
     def set_text(self, text, is_enabled):
-        self.text = text
+        self.setText(text)
         # self.setEnabled(is_enabled)
 
 
