@@ -5,10 +5,20 @@
     @Url : https://github.com/kslz
 """
 from datetime import datetime
+from typing import Optional
 
 from peewee import *
 
 db = SqliteDatabase(None)
+
+class DbStr():
+    BiaoBei = "标贝"
+    XunFei = "讯飞"
+    ShengWen = "声纹识别"
+    PingCe = "语音评测"
+
+
+
 
 
 class BaseModel(Model):
@@ -76,9 +86,24 @@ class AuthorizationInfo(BaseModel):
     authorizationinfo_APIKey = CharField(null=False)
     authorizationinfo_company = CharField(null=False)
     authorizationinfo_app = CharField(null=False)
+    authorizationinfo_token = TextField(null=True)
 
     class Meta:
         table_name = 'authorizationinfo_tbl'
+
+
+def get_authorizationinfo(company: Optional[str] = None, app: Optional[str] = None):
+    query = AuthorizationInfo.select()
+
+    if company is not None:
+        query = query.where(AuthorizationInfo.authorizationinfo_company == company)
+
+    if app is not None:
+        query = query.where(AuthorizationInfo.authorizationinfo_app == app)
+
+    results = query.execute()
+
+    return list(results)
 
 
 def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
