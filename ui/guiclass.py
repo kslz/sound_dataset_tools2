@@ -4,6 +4,7 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+from PySide6.QtWidgets import QApplication
 
 from ui.mygui import *
 from utils import global_obj

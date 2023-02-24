@@ -4,25 +4,21 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-import _thread
-import os
-import time
 
 import peewee
-import pysrt
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QPushButton, QLabel, QHBoxLayout, \
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QMainWindow, QWidget, QTableWidgetItem, QPushButton, QHBoxLayout, \
     QDialog, QMessageBox, QFileDialog
-from PySide6.QtCore import Signal, Qt, QThread
 
 import ui.ui_dataset_view
+from ui.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.ui_add_dataset import Ui_Dialog
 from ui.ui_select_dataset import Ui_MainWindow
 from ui.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
 from ui.ui_select_workspace import Ui_Form
-from utils import global_obj
 from utils.log import creatlogger
-from utils.peewee_orm import *
+from utils.request_tools import get_biaobei_token
 from utils.tools import *
 
 global config
@@ -33,6 +29,53 @@ guilogger = creatlogger("guilogger")
 def getconfig():
     global config
     config = global_obj.get_value("config")
+
+
+class AddAuthentication(QDialog):
+    def __init__(self, parent, company):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = Ui_AddAuthenticationDialog()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.company = company
+        self.add_combobox()
+
+        # 连接信号和槽
+        self.ui.pushButton_commit.clicked.connect(self.commit)
+        self.ui.pushButton_close.clicked.connect(self.close)
+
+    def add_combobox(self):
+        """
+        不同的公司实现不同的APP
+
+        :return:
+        """
+        if self.company == DbStr.BiaoBei:
+            self.ui.comboBox_app.addItem(DbStr.PingCe)
+        if self.company == DbStr.XunFei:
+            self.ui.comboBox_app.addItem(DbStr.ShengWen)
+
+    def commit(self):
+        name = self.ui.lineEdit_name.text()
+        appid = self.ui.lineEdit_appid.text()
+        apisecret = self.ui.lineEdit_apisecret.text()
+        apikey = self.ui.lineEdit_apikey.text()
+        token = get_biaobei_token(apikey, apisecret)
+        app = self.ui.comboBox_app.currentText()
+        if token is not None:
+            AuthorizationInfo.insert({
+                "authorizationinfo_name": name,
+                "authorizationinfo_APPID": appid,
+                "authorizationinfo_APISecret": apisecret,
+                "authorizationinfo_APIKey": apikey,
+                "authorizationinfo_company": self.company,
+                "authorizationinfo_app": app,
+                "authorizationinfo_token": token
+            }).execute()
+            self.close()
+        else:
+            self.ui.label_error.setText("获取token失败，请检查网络或输入是否有误")
 
 
 class SelectWavSrtFile(QDialog):
@@ -130,6 +173,7 @@ class SelectWavSrtFile(QDialog):
 class PlaySoundBTN(QPushButton):
     class PlaySoundThread(QtCore.QThread):
         update_signal = Signal(str, bool)
+
         # stop_thread_signal = Signal()
 
         def __init__(self, wav_path, start_time, end_time):
@@ -182,7 +226,7 @@ class PlaySoundBTN(QPushButton):
 
 class DatasetWindow(QMainWindow):
     reopen = Signal()
-    need_refresh_table = Signal(object)
+    refresh_authorization_table = Signal(object)
 
     def __init__(self, dataset_id):
         super().__init__()
@@ -190,36 +234,82 @@ class DatasetWindow(QMainWindow):
         self.ui = ui.ui_dataset_view.Ui_DatasetMainWindow()
         # 初始化界面
         self.ui.setupUi(self)
+        self.set_table_style()
+        self.dataset_id = dataset_id
+        self.page_number = 1
+        self.page_size = 15
+        self.refresh_table()
+        self.refresh_authorization_table()
+
+        # 连接信号
+        self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
+        self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
+        self.ui.pushButton_add_biaobei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.BiaoBei))
+        self.ui.pushButton_add_xunfei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.XunFei))
+
+    def set_table_style(self):
+
+        # 数据集表格
         self.ui.tableWidget.setColumnWidth(0, 100)
         self.ui.tableWidget.setColumnWidth(1, 500)
         self.ui.tableWidget.setColumnWidth(2, 100)
         self.ui.tableWidget.setColumnWidth(3, 75)
         self.ui.tableWidget.setColumnWidth(4, 150)
         self.ui.tableWidget.setColumnWidth(5, 200)
-        self.set_table_style()
-        self.dataset_id = dataset_id
-        self.page_number = 1
-        self.page_size = 15
-        self.refresh_done = False
-        self.refresh_table()
-        self.refresh_done = True
-
-        # 连接信号
-        self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
-        self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
-
-    def set_table_style(self):
         self.ui.tableWidget.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
-
         header = self.ui.tableWidget.horizontalHeader()
         header.setDefaultAlignment(QtCore.Qt.AlignLeft)  # 设置表头左对齐
         # 创建一个字体对象，并设置字号为12
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
-
         # 将字体对象设置为表头的字体
         header.setFont(font)
+
+        # 授权管理页两个表格
+        self.ui.tableWidget_biaobei.setColumnWidth(0, 50)
+        self.ui.tableWidget_biaobei.setColumnWidth(1, 150)
+        self.ui.tableWidget_biaobei.setColumnWidth(2, 150)
+        self.ui.tableWidget_biaobei.setColumnWidth(3, 200)
+        self.ui.tableWidget_biaobei.setColumnWidth(4, 200)
+        self.ui.tableWidget_biaobei.setColumnWidth(5, 200)
+
+        self.ui.tableWidget_xunfei.setColumnWidth(0, 50)
+        self.ui.tableWidget_xunfei.setColumnWidth(1, 150)
+        self.ui.tableWidget_xunfei.setColumnWidth(2, 150)
+        self.ui.tableWidget_xunfei.setColumnWidth(3, 200)
+        self.ui.tableWidget_xunfei.setColumnWidth(4, 200)
+        self.ui.tableWidget_xunfei.setColumnWidth(5, 200)
+
+    def open_add_authorization_dialog(self, company):
+        add_authorization_dialog = AddAuthentication(self, company)
+        add_authorization_dialog.exec_()
+        self.refresh_authorization_table()
+
+    def refresh_authorization_table(self):
+        self.ui.tableWidget_biaobei.setRowCount(0)
+        biaobei_list = get_authorizationinfo(DbStr.BiaoBei)
+        for line in biaobei_list:
+            row = self.ui.tableWidget_biaobei.rowCount()
+            self.ui.tableWidget_biaobei.insertRow(row)
+            self.ui.tableWidget_biaobei.setItem(row, 0, QTableWidgetItem(str(line.authorizationinfo_id)))
+            self.ui.tableWidget_biaobei.setItem(row, 1, QTableWidgetItem(line.authorizationinfo_name))
+            self.ui.tableWidget_biaobei.setItem(row, 2, QTableWidgetItem(line.authorizationinfo_app))
+            self.ui.tableWidget_biaobei.setItem(row, 3, QTableWidgetItem(line.authorizationinfo_APPID))
+            self.ui.tableWidget_biaobei.setItem(row, 4, QTableWidgetItem(line.authorizationinfo_APISecret))
+            self.ui.tableWidget_biaobei.setItem(row, 5, QTableWidgetItem(line.authorizationinfo_APIKey))
+
+        self.ui.tableWidget_xunfei.setRowCount(0)
+        xunfei_list = get_authorizationinfo(DbStr.XunFei)
+        for line in xunfei_list:
+            row = self.ui.tableWidget_xunfei.rowCount()
+            self.ui.tableWidget_xunfei.insertRow(row)
+            self.ui.tableWidget_xunfei.setItem(row, 0, QTableWidgetItem(line.authorizationinfo_id))
+            self.ui.tableWidget_xunfei.setItem(row, 1, QTableWidgetItem(line.authorizationinfo_name))
+            self.ui.tableWidget_xunfei.setItem(row, 2, QTableWidgetItem(line.authorizationinfo_app))
+            self.ui.tableWidget_xunfei.setItem(row, 3, QTableWidgetItem(line.authorizationinfo_APPID))
+            self.ui.tableWidget_xunfei.setItem(row, 4, QTableWidgetItem(line.authorizationinfo_APISecret))
+            self.ui.tableWidget_xunfei.setItem(row, 5, QTableWidgetItem(line.authorizationinfo_APIKey))
 
     def change_page_number(self, index):
         new_page_num = self.ui.comboBox.itemData(index)

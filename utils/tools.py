@@ -7,11 +7,8 @@
 import configparser
 import json
 import os
-import re
-import shutil
 import string
 import subprocess
-import textwrap
 
 import ffmpeg
 import pysrt
@@ -19,7 +16,6 @@ from pysrt import SubRipTime
 
 from utils import global_obj
 from utils.peewee_orm import *
-from utils.sqlitedb import MyDB
 
 if os.path.isfile(os.path.join("./lib/ffmpeg/", "ffmpeg.exe")):
     ffmpeg_path = "./lib/ffmpeg/"
