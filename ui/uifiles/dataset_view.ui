@@ -188,7 +188,7 @@
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>数据集处理</string>
+      <string>数据处理</string>
      </attribute>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -255,6 +255,12 @@
            <height>231</height>
           </rect>
          </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>id</string>
@@ -263,6 +269,11 @@
          <column>
           <property name="text">
            <string>名称</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>APP类型</string>
           </property>
          </column>
          <column>
@@ -329,6 +340,12 @@
            <height>231</height>
           </rect>
          </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>id</string>
@@ -337,6 +354,11 @@
          <column>
           <property name="text">
            <string>名称</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>APP类型</string>
           </property>
          </column>
          <column>
