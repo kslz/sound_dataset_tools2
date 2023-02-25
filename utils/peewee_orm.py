@@ -11,14 +11,12 @@ from peewee import *
 
 db = SqliteDatabase(None)
 
+
 class DbStr():
     BiaoBei = "标贝"
     XunFei = "讯飞"
     ShengWen = "声纹识别"
     PingCe = "语音评测"
-
-
-
 
 
 class BaseModel(Model):
@@ -151,6 +149,40 @@ def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
     # for i, result in enumerate(results, start=1):
     #     print(
     #         f"{i + (page_number - 1) * page_size} {result['info_id']} {result['info_text']} {result['speaker']} {result['is_separate_file']}")
+
+
+def get_speakers(dataset_id):
+    """
+    获取所有speaker值
+
+    """
+    # query = (Info
+    #          .select(Info.info_speaker, SpkInfo.spkinfo_name.alias('spk_name'))
+    #          .join(SpkInfo, JOIN.LEFT_OUTER)
+    #          .where(
+    #              (Info.info_is_del == 0) &
+    #              (Info.dataset_id == dataset_id)
+    #          )
+    #          .order_by(Info.info_id))
+    query = (Info
+             .select(Info.info_speaker, SpkInfo.spkinfo_name)
+             .join(SpkInfo, JOIN.LEFT_OUTER)
+             .where(
+        (Info.info_is_del == 0) &
+        (Info.dataset_id == dataset_id)
+    )
+             .order_by(Info.info_id))
+    result_list = []
+    for row in query.dicts():
+        if row["spkinfo_name"] is not None:
+            row_result = (row["spkinfo_name"], "spkinfo")
+        else:
+            row_result = (row["info_speaker"], "info")
+        if result_list.count(row_result) == 0:
+            result_list.append(row_result)
+
+    print(result_list)
+    return result_list
 
 
 def insert_info_many(data_list, batch_size=1000):

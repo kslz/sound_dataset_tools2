@@ -177,7 +177,7 @@
           <string>从文件导入（音频+字幕）</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_add_wav_srt_2">
+        <widget class="QPushButton" name="pushButton_output_speaker">
          <property name="geometry">
           <rect>
            <x>920</x>

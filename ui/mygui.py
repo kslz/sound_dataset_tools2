@@ -14,6 +14,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QTableWidgetItem, QPushButto
 import ui.ui_dataset_view
 from ui.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.ui_add_dataset import Ui_Dialog
+from ui.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
 from ui.ui_select_dataset import Ui_MainWindow
 from ui.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
 from ui.ui_select_workspace import Ui_Form
@@ -29,6 +30,30 @@ guilogger = creatlogger("guilogger")
 def getconfig():
     global config
     config = global_obj.get_value("config")
+
+class OutPutSpeaker(QDialog):
+    def __init__(self, parent, dataset_id):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = Ui_OutPutSpeakerDialog()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.dataset_id = dataset_id
+        self.add_info()
+
+    def add_info(self):
+        """
+        添加speaker和文件层级
+
+        """
+        self.ui.comboBox_geshi.addItem(f"默认", "default")
+        result_list = get_speakers(self.dataset_id)
+        for line in result_list:
+            if line[1]=="spkinfo":
+                text = f"{line[0]}-已识别"
+            else:
+                text = f"{line[0]}-未识别"
+            self.ui.comboBox_speaker.addItem(text, line)
 
 
 class AddAuthentication(QDialog):
@@ -246,6 +271,7 @@ class DatasetWindow(QMainWindow):
         self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
         self.ui.pushButton_add_biaobei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.BiaoBei))
         self.ui.pushButton_add_xunfei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.XunFei))
+        self.ui.pushButton_output_speaker.clicked.connect(self.open_output_speaker_dialog)
 
     def set_table_style(self):
 
@@ -284,6 +310,10 @@ class DatasetWindow(QMainWindow):
         add_authorization_dialog = AddAuthentication(self, company)
         add_authorization_dialog.exec_()
         self.refresh_authorization_table()
+
+    def open_output_speaker_dialog(self):
+        output_speaker_dialog = OutPutSpeaker(self,self.dataset_id)
+        output_speaker_dialog.exec_()
 
     def refresh_authorization_table(self):
         self.ui.tableWidget_biaobei.setRowCount(0)
