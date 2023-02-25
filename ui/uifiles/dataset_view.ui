@@ -187,7 +187,7 @@
           </rect>
          </property>
          <property name="text">
-          <string>导出数据集</string>
+          <string>导出数据集（单发音人）</string>
          </property>
         </widget>
        </widget>
