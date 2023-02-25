@@ -252,10 +252,9 @@ class DatasetWindow(QMainWindow):
         # 数据集表格
         self.ui.tableWidget.setColumnWidth(0, 100)
         self.ui.tableWidget.setColumnWidth(1, 500)
-        self.ui.tableWidget.setColumnWidth(2, 100)
-        self.ui.tableWidget.setColumnWidth(3, 75)
-        self.ui.tableWidget.setColumnWidth(4, 150)
-        self.ui.tableWidget.setColumnWidth(5, 200)
+        self.ui.tableWidget.setColumnWidth(2, 125)
+        self.ui.tableWidget.setColumnWidth(3, 200)
+        self.ui.tableWidget.setColumnWidth(4, 200)
         self.ui.tableWidget.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
         header = self.ui.tableWidget.horizontalHeader()
         header.setDefaultAlignment(QtCore.Qt.AlignLeft)  # 设置表头左对齐
@@ -343,17 +342,17 @@ class DatasetWindow(QMainWindow):
             info_id = result['info_id']
             info_text = result['info_text']
             speaker = result['speaker']
-            is_separate_file = result['is_separate_file']
+            # is_separate_file = result['is_separate_file']
             row = self.ui.tableWidget.rowCount()
             self.ui.tableWidget.insertRow(row)
             self.ui.tableWidget.setItem(row, 0, QTableWidgetItem(str(index)))
             self.ui.tableWidget.setItem(row, 1, QTableWidgetItem(info_text))
             self.ui.tableWidget.setItem(row, 2, QTableWidgetItem(speaker))
-            if is_separate_file == 0:
-                is_separate_file = "否"
-            if is_separate_file == 1:
-                is_separate_file = "是"
-            self.ui.tableWidget.setItem(row, 3, QTableWidgetItem(is_separate_file))
+            # if is_separate_file == 0:
+            #     is_separate_file = "否"
+            # if is_separate_file == 1:
+            #     is_separate_file = "是"
+            # self.ui.tableWidget.setItem(row, 3, QTableWidgetItem(is_separate_file))
             # self.ui.tableWidget.setItem(row, 5, QTableWidgetItem(str(info_id) + "一些操作"))
 
             btn_shiting = PlaySoundBTN('试听', info_id, self)
@@ -368,7 +367,7 @@ class DatasetWindow(QMainWindow):
             layout.setSpacing(1)
             caozuo_widget = QWidget()
             caozuo_widget.setLayout(layout)
-            self.ui.tableWidget.setCellWidget(row, 5, caozuo_widget)
+            self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
 
         self.ui.comboBox.setCurrentIndex(page_number - 1)
         self.ui.comboBox.blockSignals(False)

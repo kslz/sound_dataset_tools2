@@ -117,7 +117,8 @@ def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
         fn.COALESCE(
             SpkInfo.spkinfo_name,
             Info.info_speaker).alias('speaker'),
-        SQL('(CASE WHEN info_file_path = "" OR info_file_path IS NULL THEN 0 ELSE 1 END)').alias('is_separate_file'))
+        # SQL('(CASE WHEN info_file_path = "" OR info_file_path IS NULL THEN 0 ELSE 1 END)').alias('is_separate_file')
+    )
     .join(
         SpkInfo,
         JOIN.LEFT_OUTER,

@@ -140,11 +140,6 @@
          </column>
          <column>
           <property name="text">
-           <string>独立文件</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
            <string>标签</string>
           </property>
          </column>
@@ -180,6 +175,19 @@
          </property>
          <property name="text">
           <string>从文件导入（音频+字幕）</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_add_wav_srt_2">
+         <property name="geometry">
+          <rect>
+           <x>920</x>
+           <y>440</y>
+           <width>231</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>导出数据集</string>
          </property>
         </widget>
        </widget>

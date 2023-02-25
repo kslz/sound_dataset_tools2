@@ -42,8 +42,8 @@ class Ui_DatasetMainWindow(object):
         self.widget_2 = QWidget(self.tab)
         self.widget_2.setObjectName(u"widget_2")
         self.tableWidget = QTableWidget(self.widget_2)
-        if (self.tableWidget.columnCount() < 6):
-            self.tableWidget.setColumnCount(6)
+        if (self.tableWidget.columnCount() < 5):
+            self.tableWidget.setColumnCount(5)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -54,30 +54,28 @@ class Ui_DatasetMainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
         __qtablewidgetitem4 = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(5, __qtablewidgetitem5)
         if (self.tableWidget.rowCount() < 10):
             self.tableWidget.setRowCount(10)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.tableWidget.setVerticalHeaderItem(0, __qtablewidgetitem5)
         __qtablewidgetitem6 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(0, __qtablewidgetitem6)
+        self.tableWidget.setVerticalHeaderItem(1, __qtablewidgetitem6)
         __qtablewidgetitem7 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(1, __qtablewidgetitem7)
+        self.tableWidget.setVerticalHeaderItem(2, __qtablewidgetitem7)
         __qtablewidgetitem8 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(2, __qtablewidgetitem8)
+        self.tableWidget.setVerticalHeaderItem(3, __qtablewidgetitem8)
         __qtablewidgetitem9 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(3, __qtablewidgetitem9)
+        self.tableWidget.setVerticalHeaderItem(4, __qtablewidgetitem9)
         __qtablewidgetitem10 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(4, __qtablewidgetitem10)
+        self.tableWidget.setVerticalHeaderItem(5, __qtablewidgetitem10)
         __qtablewidgetitem11 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(5, __qtablewidgetitem11)
+        self.tableWidget.setVerticalHeaderItem(6, __qtablewidgetitem11)
         __qtablewidgetitem12 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(6, __qtablewidgetitem12)
+        self.tableWidget.setVerticalHeaderItem(7, __qtablewidgetitem12)
         __qtablewidgetitem13 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(7, __qtablewidgetitem13)
+        self.tableWidget.setVerticalHeaderItem(8, __qtablewidgetitem13)
         __qtablewidgetitem14 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(8, __qtablewidgetitem14)
-        __qtablewidgetitem15 = QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(9, __qtablewidgetitem15)
+        self.tableWidget.setVerticalHeaderItem(9, __qtablewidgetitem14)
         self.tableWidget.setObjectName(u"tableWidget")
         self.tableWidget.setGeometry(QRect(10, 10, 1141, 421))
         self.tableWidget.setFont(font)
@@ -93,6 +91,9 @@ class Ui_DatasetMainWindow(object):
         self.pushButton_add_wav_srt = QPushButton(self.widget_2)
         self.pushButton_add_wav_srt.setObjectName(u"pushButton_add_wav_srt")
         self.pushButton_add_wav_srt.setGeometry(QRect(230, 440, 231, 31))
+        self.pushButton_add_wav_srt_2 = QPushButton(self.widget_2)
+        self.pushButton_add_wav_srt_2.setObjectName(u"pushButton_add_wav_srt_2")
+        self.pushButton_add_wav_srt_2.setGeometry(QRect(920, 440, 231, 31))
 
         self.verticalLayout_2.addWidget(self.widget_2)
 
@@ -124,18 +125,18 @@ class Ui_DatasetMainWindow(object):
         self.tableWidget_biaobei = QTableWidget(self.groupBox)
         if (self.tableWidget_biaobei.columnCount() < 6):
             self.tableWidget_biaobei.setColumnCount(6)
+        __qtablewidgetitem15 = QTableWidgetItem()
+        self.tableWidget_biaobei.setHorizontalHeaderItem(0, __qtablewidgetitem15)
         __qtablewidgetitem16 = QTableWidgetItem()
-        self.tableWidget_biaobei.setHorizontalHeaderItem(0, __qtablewidgetitem16)
+        self.tableWidget_biaobei.setHorizontalHeaderItem(1, __qtablewidgetitem16)
         __qtablewidgetitem17 = QTableWidgetItem()
-        self.tableWidget_biaobei.setHorizontalHeaderItem(1, __qtablewidgetitem17)
+        self.tableWidget_biaobei.setHorizontalHeaderItem(2, __qtablewidgetitem17)
         __qtablewidgetitem18 = QTableWidgetItem()
-        self.tableWidget_biaobei.setHorizontalHeaderItem(2, __qtablewidgetitem18)
+        self.tableWidget_biaobei.setHorizontalHeaderItem(3, __qtablewidgetitem18)
         __qtablewidgetitem19 = QTableWidgetItem()
-        self.tableWidget_biaobei.setHorizontalHeaderItem(3, __qtablewidgetitem19)
+        self.tableWidget_biaobei.setHorizontalHeaderItem(4, __qtablewidgetitem19)
         __qtablewidgetitem20 = QTableWidgetItem()
-        self.tableWidget_biaobei.setHorizontalHeaderItem(4, __qtablewidgetitem20)
-        __qtablewidgetitem21 = QTableWidgetItem()
-        self.tableWidget_biaobei.setHorizontalHeaderItem(5, __qtablewidgetitem21)
+        self.tableWidget_biaobei.setHorizontalHeaderItem(5, __qtablewidgetitem20)
         self.tableWidget_biaobei.setObjectName(u"tableWidget_biaobei")
         self.tableWidget_biaobei.setGeometry(QRect(20, 20, 961, 231))
         self.tableWidget_biaobei.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -152,18 +153,18 @@ class Ui_DatasetMainWindow(object):
         self.tableWidget_xunfei = QTableWidget(self.groupBox_2)
         if (self.tableWidget_xunfei.columnCount() < 6):
             self.tableWidget_xunfei.setColumnCount(6)
+        __qtablewidgetitem21 = QTableWidgetItem()
+        self.tableWidget_xunfei.setHorizontalHeaderItem(0, __qtablewidgetitem21)
         __qtablewidgetitem22 = QTableWidgetItem()
-        self.tableWidget_xunfei.setHorizontalHeaderItem(0, __qtablewidgetitem22)
+        self.tableWidget_xunfei.setHorizontalHeaderItem(1, __qtablewidgetitem22)
         __qtablewidgetitem23 = QTableWidgetItem()
-        self.tableWidget_xunfei.setHorizontalHeaderItem(1, __qtablewidgetitem23)
+        self.tableWidget_xunfei.setHorizontalHeaderItem(2, __qtablewidgetitem23)
         __qtablewidgetitem24 = QTableWidgetItem()
-        self.tableWidget_xunfei.setHorizontalHeaderItem(2, __qtablewidgetitem24)
+        self.tableWidget_xunfei.setHorizontalHeaderItem(3, __qtablewidgetitem24)
         __qtablewidgetitem25 = QTableWidgetItem()
-        self.tableWidget_xunfei.setHorizontalHeaderItem(3, __qtablewidgetitem25)
+        self.tableWidget_xunfei.setHorizontalHeaderItem(4, __qtablewidgetitem25)
         __qtablewidgetitem26 = QTableWidgetItem()
-        self.tableWidget_xunfei.setHorizontalHeaderItem(4, __qtablewidgetitem26)
-        __qtablewidgetitem27 = QTableWidgetItem()
-        self.tableWidget_xunfei.setHorizontalHeaderItem(5, __qtablewidgetitem27)
+        self.tableWidget_xunfei.setHorizontalHeaderItem(5, __qtablewidgetitem26)
         self.tableWidget_xunfei.setObjectName(u"tableWidget_xunfei")
         self.tableWidget_xunfei.setGeometry(QRect(20, 20, 961, 231))
         self.tableWidget_xunfei.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -200,63 +201,62 @@ class Ui_DatasetMainWindow(object):
         ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("DatasetMainWindow", u"\u53d1\u97f3\u4eba", None));
         ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("DatasetMainWindow", u"\u72ec\u7acb\u6587\u4ef6", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6807\u7b7e", None));
         ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6807\u7b7e", None));
-        ___qtablewidgetitem5 = self.tableWidget.horizontalHeaderItem(5)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("DatasetMainWindow", u"\u64cd\u4f5c", None));
-        ___qtablewidgetitem6 = self.tableWidget.verticalHeaderItem(0)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("DatasetMainWindow", u"\u64cd\u4f5c", None));
+        ___qtablewidgetitem5 = self.tableWidget.verticalHeaderItem(0)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
+        ___qtablewidgetitem6 = self.tableWidget.verticalHeaderItem(1)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem7 = self.tableWidget.verticalHeaderItem(1)
+        ___qtablewidgetitem7 = self.tableWidget.verticalHeaderItem(2)
         ___qtablewidgetitem7.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem8 = self.tableWidget.verticalHeaderItem(2)
+        ___qtablewidgetitem8 = self.tableWidget.verticalHeaderItem(3)
         ___qtablewidgetitem8.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem9 = self.tableWidget.verticalHeaderItem(3)
+        ___qtablewidgetitem9 = self.tableWidget.verticalHeaderItem(4)
         ___qtablewidgetitem9.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem10 = self.tableWidget.verticalHeaderItem(4)
+        ___qtablewidgetitem10 = self.tableWidget.verticalHeaderItem(5)
         ___qtablewidgetitem10.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem11 = self.tableWidget.verticalHeaderItem(5)
+        ___qtablewidgetitem11 = self.tableWidget.verticalHeaderItem(6)
         ___qtablewidgetitem11.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem12 = self.tableWidget.verticalHeaderItem(6)
+        ___qtablewidgetitem12 = self.tableWidget.verticalHeaderItem(7)
         ___qtablewidgetitem12.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem13 = self.tableWidget.verticalHeaderItem(7)
+        ___qtablewidgetitem13 = self.tableWidget.verticalHeaderItem(8)
         ___qtablewidgetitem13.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem14 = self.tableWidget.verticalHeaderItem(8)
+        ___qtablewidgetitem14 = self.tableWidget.verticalHeaderItem(9)
         ___qtablewidgetitem14.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
-        ___qtablewidgetitem15 = self.tableWidget.verticalHeaderItem(9)
-        ___qtablewidgetitem15.setText(QCoreApplication.translate("DatasetMainWindow", u"\u65b0\u5efa\u884c", None));
         self.pushButton_add_wav_srt.setText(QCoreApplication.translate("DatasetMainWindow", u"\u4ece\u6587\u4ef6\u5bfc\u5165\uff08\u97f3\u9891+\u5b57\u5e55\uff09", None))
+        self.pushButton_add_wav_srt_2.setText(QCoreApplication.translate("DatasetMainWindow", u"\u5bfc\u51fa\u6570\u636e\u96c6", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u96c6\u6982\u89c8", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u5904\u7406", None))
         self.label.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6ce8\u610f\uff1a\u672c\u9875\u8bbe\u7f6e\u5728\u672c\u5de5\u4f5c\u533a\u4e0b\u901a\u7528", None))
         self.groupBox.setTitle(QCoreApplication.translate("DatasetMainWindow", u"\u6807\u8d1d", None))
-        ___qtablewidgetitem16 = self.tableWidget_biaobei.horizontalHeaderItem(0)
-        ___qtablewidgetitem16.setText(QCoreApplication.translate("DatasetMainWindow", u"id", None));
-        ___qtablewidgetitem17 = self.tableWidget_biaobei.horizontalHeaderItem(1)
-        ___qtablewidgetitem17.setText(QCoreApplication.translate("DatasetMainWindow", u"\u540d\u79f0", None));
-        ___qtablewidgetitem18 = self.tableWidget_biaobei.horizontalHeaderItem(2)
-        ___qtablewidgetitem18.setText(QCoreApplication.translate("DatasetMainWindow", u"APP\u7c7b\u578b", None));
-        ___qtablewidgetitem19 = self.tableWidget_biaobei.horizontalHeaderItem(3)
-        ___qtablewidgetitem19.setText(QCoreApplication.translate("DatasetMainWindow", u"APPID", None));
-        ___qtablewidgetitem20 = self.tableWidget_biaobei.horizontalHeaderItem(4)
-        ___qtablewidgetitem20.setText(QCoreApplication.translate("DatasetMainWindow", u"APISecret\uff08client_secret\uff09", None));
-        ___qtablewidgetitem21 = self.tableWidget_biaobei.horizontalHeaderItem(5)
-        ___qtablewidgetitem21.setText(QCoreApplication.translate("DatasetMainWindow", u"APIKey\uff08client_id\uff09", None));
+        ___qtablewidgetitem15 = self.tableWidget_biaobei.horizontalHeaderItem(0)
+        ___qtablewidgetitem15.setText(QCoreApplication.translate("DatasetMainWindow", u"id", None));
+        ___qtablewidgetitem16 = self.tableWidget_biaobei.horizontalHeaderItem(1)
+        ___qtablewidgetitem16.setText(QCoreApplication.translate("DatasetMainWindow", u"\u540d\u79f0", None));
+        ___qtablewidgetitem17 = self.tableWidget_biaobei.horizontalHeaderItem(2)
+        ___qtablewidgetitem17.setText(QCoreApplication.translate("DatasetMainWindow", u"APP\u7c7b\u578b", None));
+        ___qtablewidgetitem18 = self.tableWidget_biaobei.horizontalHeaderItem(3)
+        ___qtablewidgetitem18.setText(QCoreApplication.translate("DatasetMainWindow", u"APPID", None));
+        ___qtablewidgetitem19 = self.tableWidget_biaobei.horizontalHeaderItem(4)
+        ___qtablewidgetitem19.setText(QCoreApplication.translate("DatasetMainWindow", u"APISecret\uff08client_secret\uff09", None));
+        ___qtablewidgetitem20 = self.tableWidget_biaobei.horizontalHeaderItem(5)
+        ___qtablewidgetitem20.setText(QCoreApplication.translate("DatasetMainWindow", u"APIKey\uff08client_id\uff09", None));
         self.pushButton_add_biaobei.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6dfb\u52a0", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("DatasetMainWindow", u"\u8baf\u98de", None))
         self.pushButton_add_xunfei.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6dfb\u52a0", None))
-        ___qtablewidgetitem22 = self.tableWidget_xunfei.horizontalHeaderItem(0)
-        ___qtablewidgetitem22.setText(QCoreApplication.translate("DatasetMainWindow", u"id", None));
-        ___qtablewidgetitem23 = self.tableWidget_xunfei.horizontalHeaderItem(1)
-        ___qtablewidgetitem23.setText(QCoreApplication.translate("DatasetMainWindow", u"\u540d\u79f0", None));
-        ___qtablewidgetitem24 = self.tableWidget_xunfei.horizontalHeaderItem(2)
-        ___qtablewidgetitem24.setText(QCoreApplication.translate("DatasetMainWindow", u"APP\u7c7b\u578b", None));
-        ___qtablewidgetitem25 = self.tableWidget_xunfei.horizontalHeaderItem(3)
-        ___qtablewidgetitem25.setText(QCoreApplication.translate("DatasetMainWindow", u"APPID", None));
-        ___qtablewidgetitem26 = self.tableWidget_xunfei.horizontalHeaderItem(4)
-        ___qtablewidgetitem26.setText(QCoreApplication.translate("DatasetMainWindow", u"APISecret\uff08client_secret\uff09", None));
-        ___qtablewidgetitem27 = self.tableWidget_xunfei.horizontalHeaderItem(5)
-        ___qtablewidgetitem27.setText(QCoreApplication.translate("DatasetMainWindow", u"APIKey\uff08client_id\uff09", None));
+        ___qtablewidgetitem21 = self.tableWidget_xunfei.horizontalHeaderItem(0)
+        ___qtablewidgetitem21.setText(QCoreApplication.translate("DatasetMainWindow", u"id", None));
+        ___qtablewidgetitem22 = self.tableWidget_xunfei.horizontalHeaderItem(1)
+        ___qtablewidgetitem22.setText(QCoreApplication.translate("DatasetMainWindow", u"\u540d\u79f0", None));
+        ___qtablewidgetitem23 = self.tableWidget_xunfei.horizontalHeaderItem(2)
+        ___qtablewidgetitem23.setText(QCoreApplication.translate("DatasetMainWindow", u"APP\u7c7b\u578b", None));
+        ___qtablewidgetitem24 = self.tableWidget_xunfei.horizontalHeaderItem(3)
+        ___qtablewidgetitem24.setText(QCoreApplication.translate("DatasetMainWindow", u"APPID", None));
+        ___qtablewidgetitem25 = self.tableWidget_xunfei.horizontalHeaderItem(4)
+        ___qtablewidgetitem25.setText(QCoreApplication.translate("DatasetMainWindow", u"APISecret\uff08client_secret\uff09", None));
+        ___qtablewidgetitem26 = self.tableWidget_xunfei.horizontalHeaderItem(5)
+        ___qtablewidgetitem26.setText(QCoreApplication.translate("DatasetMainWindow", u"APIKey\uff08client_id\uff09", None));
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_4), QCoreApplication.translate("DatasetMainWindow", u"\u6388\u6743\u7ba1\u7406", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_5), QCoreApplication.translate("DatasetMainWindow", u"\u5168\u5c40\u8bbe\u7f6e", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("DatasetMainWindow", u"\u8f6f\u4ef6\u8bbe\u7f6e", None))
