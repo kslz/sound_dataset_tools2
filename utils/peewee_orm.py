@@ -52,6 +52,8 @@ class Info(BaseModel):
     info_text = CharField(null=True, )
     info_pinyin = CharField(null=True, )
     info_speaker = CharField(null=True, )
+    info_shibie_speaker = CharField(null=True, )
+    info_shibie_score = FloatField(null=True, )
     info_raw_file_path = TextField(null=True, )
     info_start_time = IntegerField(null=True, )
     info_end_time = IntegerField(null=True, )
@@ -66,14 +68,14 @@ class Info(BaseModel):
         table_name = 'info_tbl'
 
 
-class SpkInfo(BaseModel):
-    spkinfo_id = PrimaryKeyField()
-    info_id = ForeignKeyField(Info, "info_id", "spkinfos", on_delete='CASCADE')
-    spkinfo_name = CharField()
-    spkinfo_score = FloatField()
-
-    class Meta:
-        table_name = 'spkinfo_tbl'
+# class SpkInfo(BaseModel):
+#     spkinfo_id = PrimaryKeyField()
+#     info_id = ForeignKeyField(Info, "info_id", "spkinfos", on_delete='CASCADE')
+#     spkinfo_name = CharField()
+#     spkinfo_score = FloatField()
+#
+#     class Meta:
+#         table_name = 'spkinfo_tbl'
 
 
 class AuthorizationInfo(BaseModel):
@@ -105,38 +107,37 @@ def get_authorizationinfo(company: Optional[str] = None, app: Optional[str] = No
 
 
 def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
-    # 下面的查询是chatGPT写的
-    # 都说先进的科技乍一看和魔法无异，想来这就是了
+    subquery = (
+        Info
+        .select(
+            Info.info_id,
+            fn.row_number().over(order_by=[Info.info_id]).alias('row_number')
+        )
+        .where(
+            (Info.info_is_del == 0) &
+            (Info.dataset_id == dataset_id)
+        )
+        .order_by(Info.info_id)
+        .alias('subquery')
+    )
+
     query = (Info
     .select(
-        Info.info_id.alias('index'),
+        subquery.c.row_number.alias('index'),
         Info.info_id,
         Info.info_text,
-        fn.COALESCE(
-            SpkInfo.spkinfo_name,
-            Info.info_speaker).alias('speaker'),
-        # SQL('(CASE WHEN info_file_path = "" OR info_file_path IS NULL THEN 0 ELSE 1 END)').alias('is_separate_file')
+        Info.info_speaker,
+        Info.info_shibie_speaker,
     )
-    .join(
-        SpkInfo,
-        JOIN.LEFT_OUTER,
-        on=(Info.info_id == SpkInfo.info_id)
-    )
+    .join(subquery, on=(Info.info_id == subquery.c.info_id))
     .where(
         (Info.info_is_del == 0) &
         (Info.dataset_id == dataset_id)
     )
-    .group_by(
-        Info.info_id
-    )
     .order_by(
         Info.info_id.asc()
     ))
-
     total_count = query.count()
-    # print(total_count)
-
-    # 分页
     query = query.paginate(page_number, page_size)
     # todo 待优化 目前搜索范围外的数据时会出现空白页
 
@@ -144,11 +145,49 @@ def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
     # 我发现这里的查询好像会查询很多次数据库，不过也还好吧，应该不会有人存几百万条数据进去
     results = list(query.dicts())
     return total_count, results
-    #
-    # # 显示结果
-    # for i, result in enumerate(results, start=1):
-    #     print(
-    #         f"{i + (page_number - 1) * page_size} {result['info_id']} {result['info_text']} {result['speaker']} {result['is_separate_file']}")
+
+
+# def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
+#     # 下面的查询是chatGPT写的
+#     # 都说先进的科技乍一看和魔法无异，想来这就是了
+#     # 整复杂了 重来
+#     query = (Info
+#     .select(
+#         Info.info_id.alias('index'),
+#         Info.info_id,
+#         Info.info_text,
+#         fn.COALESCE(
+#             SpkInfo.spkinfo_name,
+#             Info.info_speaker).alias('speaker'),
+#         # SQL('(CASE WHEN info_file_path = "" OR info_file_path IS NULL THEN 0 ELSE 1 END)').alias('is_separate_file')
+#     )
+#     .join(
+#         SpkInfo,
+#         JOIN.LEFT_OUTER,
+#         on=(Info.info_id == SpkInfo.info_id)
+#     )
+#     .where(
+#         (Info.info_is_del == 0) &
+#         (Info.dataset_id == dataset_id)
+#     )
+#     .group_by(
+#         Info.info_id
+#     )
+#     .order_by(
+#         Info.info_id.asc()
+#     ))
+#
+#     total_count = query.count()
+#     # print(total_count)
+#
+#     # 分页
+#     query = query.paginate(page_number, page_size)
+#     # todo 待优化 目前搜索范围外的数据时会出现空白页
+#
+#     # 执行查询
+#     # 我发现这里的查询好像会查询很多次数据库，不过也还好吧，应该不会有人存几百万条数据进去
+#     results = list(query.dicts())
+#     return total_count, results
 
 
 def get_speakers(dataset_id):
@@ -156,33 +195,48 @@ def get_speakers(dataset_id):
     获取所有speaker值
 
     """
-    # query = (Info
-    #          .select(Info.info_speaker, SpkInfo.spkinfo_name.alias('spk_name'))
-    #          .join(SpkInfo, JOIN.LEFT_OUTER)
-    #          .where(
-    #              (Info.info_is_del == 0) &
-    #              (Info.dataset_id == dataset_id)
-    #          )
-    #          .order_by(Info.info_id))
     query = (Info
-             .select(Info.info_speaker, SpkInfo.spkinfo_name)
-             .join(SpkInfo, JOIN.LEFT_OUTER)
-             .where(
+    .select(Info.info_speaker, Info.info_shibie_speaker)
+    .where(
+        (Info.info_is_del == 0) &
+        (Info.dataset_id == dataset_id)
+    ))
+    result_list = []
+    for row in query.dicts():
+        if row["info_shibie_speaker"] is not None:
+            row_result = (row["info_shibie_speaker"], "shibie_spk")
+        else:
+            row_result = (row["info_speaker"], "spk")
+        if result_list.count(row_result) == 0:
+            result_list.append(row_result)
+    return result_list
+
+
+def get_output_info(dataset_id, spk_info):
+    query = (Info
+    .select(
+        Info.info_id,
+        Info.info_text,
+        Info.info_raw_file_path,
+        Info.info_start_time,
+        Info.info_end_time,
+    )
+    .where(
         (Info.info_is_del == 0) &
         (Info.dataset_id == dataset_id)
     )
-             .order_by(Info.info_id))
-    result_list = []
-    for row in query.dicts():
-        if row["spkinfo_name"] is not None:
-            row_result = (row["spkinfo_name"], "spkinfo")
-        else:
-            row_result = (row["info_speaker"], "info")
-        if result_list.count(row_result) == 0:
-            result_list.append(row_result)
+    .order_by(
+        Info.info_id.asc()
+    ))
+    if spk_info[1] == "shibie_spk":
+        query = query.where(Info.info_shibie_speaker == spk_info[0])
+    else:
+        query = query.where(Info.info_speaker == spk_info[0])
 
-    print(result_list)
-    return result_list
+    result = list(query.dicts())
+    # print(result)
+    return result
+
 
 
 def insert_info_many(data_list, batch_size=1000):
@@ -235,10 +289,10 @@ def add_fake_data():
     Info.create(dataset_id=1, info_text="你好世界18", info_speaker="说话人1", )
     Info.create(dataset_id=1, info_text="你好世界19", )
     Info.create(dataset_id=1, info_text="你好世界20", info_speaker="说话人1", )
-    SpkInfo.create(info_id=2, spkinfo_name="说话人a", spkinfo_score=0.89)
-    SpkInfo.create(info_id=2, spkinfo_name="说话人b", spkinfo_score=0.81)
-    SpkInfo.create(info_id=2, spkinfo_name="说话人c", spkinfo_score=0.19)
-    SpkInfo.create(info_id=3, spkinfo_name="说话人a", spkinfo_score=0.89)
+    # SpkInfo.create(info_id=2, spkinfo_name="说话人a", spkinfo_score=0.89)
+    # SpkInfo.create(info_id=2, spkinfo_name="说话人b", spkinfo_score=0.81)
+    # SpkInfo.create(info_id=2, spkinfo_name="说话人c", spkinfo_score=0.19)
+    # SpkInfo.create(info_id=3, spkinfo_name="说话人a", spkinfo_score=0.89)
 
 
 if __name__ == "__main__":

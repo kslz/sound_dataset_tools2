@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDialog, QGroupBox,
-    QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QStackedWidget, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog,
+    QGroupBox, QLabel, QLineEdit, QPushButton,
+    QSizePolicy, QStackedWidget, QWidget)
 
 class Ui_OutPutSpeakerDialog(object):
     def setupUi(self, OutPutSpeakerDialog):
@@ -29,13 +29,9 @@ class Ui_OutPutSpeakerDialog(object):
         OutPutSpeakerDialog.setFont(font)
         self.stackedWidget = QStackedWidget(OutPutSpeakerDialog)
         self.stackedWidget.setObjectName(u"stackedWidget")
-        self.stackedWidget.setGeometry(QRect(20, 10, 511, 321))
+        self.stackedWidget.setGeometry(QRect(20, 10, 511, 351))
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.pushButton_save_preinstall = QPushButton(self.page)
-        self.pushButton_save_preinstall.setObjectName(u"pushButton_save_preinstall")
-        self.pushButton_save_preinstall.setGeometry(QRect(320, 50, 161, 24))
-        self.pushButton_save_preinstall.setFont(font)
         self.label_2 = QLabel(self.page)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setGeometry(QRect(20, 131, 131, 16))
@@ -48,9 +44,6 @@ class Ui_OutPutSpeakerDialog(object):
         self.label_3 = QLabel(self.page)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setGeometry(QRect(20, 171, 131, 16))
-        self.comboBox_preinstall = QComboBox(self.page)
-        self.comboBox_preinstall.setObjectName(u"comboBox_preinstall")
-        self.comboBox_preinstall.setGeometry(QRect(20, 50, 231, 22))
         self.label = QLabel(self.page)
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(20, 90, 221, 20))
@@ -59,10 +52,35 @@ class Ui_OutPutSpeakerDialog(object):
         self.lineEdit_qianzhui.setGeometry(QRect(290, 130, 191, 21))
         self.label_9 = QLabel(self.page)
         self.label_9.setObjectName(u"label_9")
-        self.label_9.setGeometry(QRect(20, 210, 131, 16))
+        self.label_9.setGeometry(QRect(20, 250, 131, 16))
         self.comboBox_speaker = QComboBox(self.page)
         self.comboBox_speaker.setObjectName(u"comboBox_speaker")
-        self.comboBox_speaker.setGeometry(QRect(290, 210, 191, 22))
+        self.comboBox_speaker.setGeometry(QRect(290, 250, 191, 22))
+        self.groupBox_2 = QGroupBox(self.page)
+        self.groupBox_2.setObjectName(u"groupBox_2")
+        self.groupBox_2.setGeometry(QRect(10, 10, 491, 71))
+        self.pushButton_read_preinstall = QPushButton(self.groupBox_2)
+        self.pushButton_read_preinstall.setObjectName(u"pushButton_read_preinstall")
+        self.pushButton_read_preinstall.setGeometry(QRect(280, 30, 111, 24))
+        self.pushButton_read_preinstall.setFont(font)
+        self.comboBox_preinstall = QComboBox(self.groupBox_2)
+        self.comboBox_preinstall.setObjectName(u"comboBox_preinstall")
+        self.comboBox_preinstall.setGeometry(QRect(10, 30, 211, 22))
+        self.label_4 = QLabel(self.page)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setGeometry(QRect(20, 211, 131, 16))
+        self.comboBox_channel = QComboBox(self.page)
+        self.comboBox_channel.addItem("")
+        self.comboBox_channel.addItem("")
+        self.comboBox_channel.setObjectName(u"comboBox_channel")
+        self.comboBox_channel.setGeometry(QRect(290, 210, 191, 22))
+        self.checkBox_auto_skip = QCheckBox(self.page)
+        self.checkBox_auto_skip.setObjectName(u"checkBox_auto_skip")
+        self.checkBox_auto_skip.setGeometry(QRect(290, 290, 111, 20))
+        self.checkBox_auto_skip.setChecked(True)
+        self.label_5 = QLabel(self.page)
+        self.label_5.setObjectName(u"label_5")
+        self.label_5.setGeometry(QRect(20, 290, 201, 16))
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
@@ -112,13 +130,20 @@ class Ui_OutPutSpeakerDialog(object):
 
     def retranslateUi(self, OutPutSpeakerDialog):
         OutPutSpeakerDialog.setWindowTitle(QCoreApplication.translate("OutPutSpeakerDialog", u"\u5bfc\u51fa\u6570\u636e\u96c6", None))
-        self.pushButton_save_preinstall.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u4fdd\u5b58\u5f53\u524d\u9009\u9879\u4e3a\u9884\u8bbe", None))
         self.label_2.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u6dfb\u52a0\u97f3\u9891\u6587\u4ef6\u524d\u7f00", None))
         self.lineEdit_sample_rate.setText("")
         self.label_3.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u97f3\u9891\u6587\u4ef6\u91c7\u6837\u7387", None))
         self.label.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u8f93\u51fa\u6587\u4ef6\u5c42\u7ea7\u548c\u6807\u6ce8\u6587\u4ef6\u683c\u5f0f", None))
         self.lineEdit_qianzhui.setText("")
         self.label_9.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u53d1\u97f3\u4eba", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("OutPutSpeakerDialog", u"\u9884\u8bbe", None))
+        self.pushButton_read_preinstall.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u8bfb\u53d6\u6240\u9009\u9884\u8bbe", None))
+        self.label_4.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u58f0\u9053\u6570", None))
+        self.comboBox_channel.setItemText(0, QCoreApplication.translate("OutPutSpeakerDialog", u"1", None))
+        self.comboBox_channel.setItemText(1, QCoreApplication.translate("OutPutSpeakerDialog", u"2", None))
+
+        self.checkBox_auto_skip.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u662f", None))
+        self.label_5.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u81ea\u52a8\u8df3\u8fc7\u542b\u6709\u975e\u4e2d\u6587\u7684\u6570\u636e", None))
         self.groupBox.setTitle(QCoreApplication.translate("OutPutSpeakerDialog", u"\u9884\u89c8", None))
         self.label_cengji.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"sounds\n"
 "    - 1.wav\n"

@@ -11,16 +11,25 @@ import string
 import subprocess
 
 import ffmpeg
+import pypinyin
 import pysrt
 from pysrt import SubRipTime
 
 from utils import global_obj
 from utils.peewee_orm import *
+from utils.log import *
 
 if os.path.isfile(os.path.join("./lib/ffmpeg/", "ffmpeg.exe")):
     ffmpeg_path = "./lib/ffmpeg/"
 else:
     ffmpeg_path = ""
+
+
+class GeshiStr():
+    aishell3 = "aishell3"
+    default = "default"
+    vits = "vits"
+    sovits = "sovits"
 
 
 def file_r(path):
@@ -46,6 +55,169 @@ def file_w(path, text, mode, encoding="UTF-8"):
     """
     with open(path, mode, encoding=encoding) as f:
         f.write(text)
+
+
+def del_file_end_blank_line(file_path):
+    with open(file_path, 'r', encoding="UTF-8") as f:
+        lines = f.readlines()
+
+    # 判断最后一行是否为空行
+    while lines[-1] == '\n':
+        lines.pop()
+
+    if lines[-1].endswith("\n"):
+        lines[-1] = lines[-1][:-1]
+
+    # 写回txt文件
+    with open(file_path, 'w', encoding="UTF-8") as f:
+        f.writelines(lines)
+
+
+def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate, channels):
+    codec = 'pcm_s16le'
+
+    # 将毫秒转换为ffmpeg需要的时间格式
+    duration = (end_time - start_time) / 1000
+    start_time = start_time / 1000
+
+    # 从长音频文件中提取指定时间段的音频
+    (
+        ffmpeg
+        .input(wav_path, ss=start_time, t=duration)
+        .output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec)
+        .run(quiet=True)
+    )
+
+
+def output_like_aishell3(qianzhui, sample_rate, channels, results, output_path, is_auto_skip):
+    """
+    将数据集模仿aishell3格式导出
+    data_aishell3/
+      -train/
+        -wav/
+          -speaker1/
+            -1.wav
+            -2.wav
+            ...
+        -content.txt
+          -1.wav    你 ni3 好 hao3 世 shi4 界 jie4
+           2.wav...
+
+    """
+    output_path = os.path.join(output_path, "data_aishell3", "train")
+    os.makedirs(output_path, exist_ok=True)
+    label_path = os.path.join(output_path, "content.txt")
+    os.makedirs(os.path.join(output_path, "wav"), exist_ok=True)
+
+    name_index = 1
+    for result in results:
+        try:
+            raw_path = result["info_raw_file_path"]
+            info_text = result["info_text"]
+            if is_auto_skip:
+                is_ok = True
+                for c in info_text:
+                    if c.isascii():
+                        is_ok = False
+                        break
+                if not is_ok:
+                    continue
+            start = result["info_start_time"]
+            end = result["info_end_time"]
+            line_name = f"{qianzhui}{str(name_index)}.wav"
+            output_file = os.path.join(output_path, "wav", line_name)
+            line_text = f"{line_name}\t{text_to_aishell3_like(info_text)}\n"
+            file_w(label_path, line_text, "a")
+            output_wav_file(raw_path, start, end, output_file, sample_rate, channels)
+            name_index += 1
+        except:
+            guilogger.error(f"id为 {result['info_id']} 的数据导出失败")
+    return name_index - 1
+
+
+def output_like_default(qianzhui, sample_rate, channels, results, output_path, is_auto_skip):
+    """
+    将数据集按照默认格式导出,相对简明
+    -wavs/
+      -1.wav
+      -2.wav
+      ...
+    -labels.txt
+      -1.wav|你好世界
+      -2.wav...
+
+    """
+    wavs_path = os.path.join(output_path, "wavs")
+    os.makedirs(wavs_path, exist_ok=True)
+    label_path = os.path.join(output_path, "labels.txt")
+
+    name_index = 1
+    for result in results:
+        try:
+            raw_path = result["info_raw_file_path"]
+            info_text = result["info_text"]
+            if is_auto_skip:
+                is_ok = True
+                for c in info_text:
+                    if c.isascii():
+                        is_ok = False
+                        break
+                if not is_ok:
+                    continue
+            start = result["info_start_time"]
+            end = result["info_end_time"]
+            line_name = f"{qianzhui}{str(name_index)}.wav"
+            output_file = os.path.join(output_path, "wavs", line_name)
+            line_text = f"{line_name}|{info_text}\n"
+            file_w(label_path, line_text, "a")
+            output_wav_file(raw_path, start, end, output_file, sample_rate, channels)
+            name_index += 1
+        except:
+            guilogger.error(f"id为 {result['info_id']} 的数据导出失败")
+    return name_index - 1
+
+
+def output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_auto_skip):
+    """
+    将数据集按照默认格式导出,相对简明
+    -wavs/
+      -1.wav
+      -2.wav
+      ...
+    -labels.txt
+      -1.wav|你好世界
+      -2.wav...
+
+    """
+    wavs_path = os.path.join(output_path, "wavs")
+    os.makedirs(wavs_path, exist_ok=True)
+    label_path = os.path.join(output_path, "list.txt")
+
+    name_index = 1
+    for result in results:
+        try:
+            raw_path = result["info_raw_file_path"]
+            info_text = result["info_text"]
+            if is_auto_skip:
+                is_ok = True
+                for c in info_text:
+                    if c.isascii():
+                        is_ok = False
+                        break
+                if not is_ok:
+                    continue
+            start = result["info_start_time"]
+            end = result["info_end_time"]
+            line_name = f"{qianzhui}{str(name_index)}.wav"
+            output_file = os.path.join(output_path, "wavs", line_name)
+            line_text = f"wavs/{line_name}|{info_text}\n"
+            file_w(label_path, line_text, "a")
+            output_wav_file(raw_path, start, end, output_file, sample_rate, channels)
+            name_index += 1
+        except:
+            guilogger.error(f"id为 {result['info_id']} 的数据导出失败")
+    del_file_end_blank_line(label_path)
+    return name_index - 1
 
 
 def copy_file_to_workspace(raw_path, to_path):
@@ -229,6 +401,30 @@ def huanhang(text: str, num=30):
     return formatted_text
 
 
+def text_to_aishell3_like(text):
+    """
+    将汉字转换成汉字+拼音 例：【疯狂地叫着】→【疯 feng1 狂 kuang2 地 de5 叫 jiao4 着 zhe5】
+
+    """
+    # 将整个文本转换为拼音列表
+    pinyin_list = pypinyin.pinyin(text, style=pypinyin.TONE3, neutral_tone_with_five=True)
+
+    # 将每个汉字的拼音和汉字组合成需要的格式
+    result = []
+    for i, char in enumerate(text):
+        # 获取该汉字的拼音
+        pinyin = pinyin_list[i][0]
+        # 判断是否有轻声
+        # if "5" in pinyin:
+        #     pinyin = pinyin.replace("5", "") + "5"
+        # 按照格式拼接汉字和拼音
+        result.append(f"{char} {pinyin}")
+
+    # 输出结果
+    output = " ".join(result)
+    return output
+
+
 def read_ini_config(ini_path="conf/config.ini"):
     config = ConfigParserWithFile()
     config.read(ini_path)
@@ -252,7 +448,7 @@ def init_database(database_path):
     db.init(database_path)
     db.connect()
     db.pragma('foreign_keys', 'on')
-    db.create_tables([Workspace, Dataset, Info, SpkInfo, AuthorizationInfo])
+    db.create_tables([Workspace, Dataset, Info, AuthorizationInfo])
     global_obj.set_value("peewee_db", db)
 
 
@@ -267,6 +463,7 @@ def inti_workspace(workspace_path):
     os.makedirs(workspace_path, exist_ok=True)
     os.makedirs(os.path.join(workspace_path, "db"), exist_ok=True)
     os.makedirs(os.path.join(workspace_path, "sounds"), exist_ok=True)
+    os.makedirs(os.path.join(workspace_path, "output"), exist_ok=True)
     # mydb = MyDB(os.path.join(workspace_path, "db/workspace.db"))
     # global_obj.set_value("mydb", mydb)
 

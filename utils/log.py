@@ -36,6 +36,9 @@ def creatlogger(logname):
 
     return logger
 
+
+guilogger = creatlogger("guilogger")
+
 if __name__ == '__main__':
     logger = creatlogger("testlog")
     # 6、进行日志输出

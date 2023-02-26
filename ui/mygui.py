@@ -18,18 +18,17 @@ from ui.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
 from ui.ui_select_dataset import Ui_MainWindow
 from ui.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
 from ui.ui_select_workspace import Ui_Form
-from utils.log import creatlogger
+from utils.log import *
 from utils.request_tools import get_biaobei_token
 from utils.tools import *
 
 global config
 
-guilogger = creatlogger("guilogger")
-
 
 def getconfig():
     global config
     config = global_obj.get_value("config")
+
 
 class OutPutSpeaker(QDialog):
     def __init__(self, parent, dataset_id):
@@ -41,19 +40,54 @@ class OutPutSpeaker(QDialog):
         self.dataset_id = dataset_id
         self.add_info()
 
+        # 绑定信号和槽
+        self.ui.pushButton_next.clicked.connect(self.output_info)
+
     def add_info(self):
         """
         添加speaker和文件层级
 
         """
-        self.ui.comboBox_geshi.addItem(f"默认", "default")
+        self.ui.comboBox_geshi.addItem(f"默认", GeshiStr.default)
+        self.ui.comboBox_geshi.addItem(f"AISHELL-3", GeshiStr.aishell3)
+        self.ui.comboBox_geshi.addItem(f"VITS", GeshiStr.vits)
         result_list = get_speakers(self.dataset_id)
         for line in result_list:
-            if line[1]=="spkinfo":
+            if line[1] == "shibie_spk":
                 text = f"{line[0]}-已识别"
             else:
                 text = f"{line[0]}-未识别"
             self.ui.comboBox_speaker.addItem(text, line)
+            self.ui.checkBox_auto_skip.setEnabled(False)
+
+    def output_info(self):
+        geshi = self.ui.comboBox_geshi.currentData()
+        qianzhui = self.ui.lineEdit_qianzhui.text()
+        sample_rate = self.ui.lineEdit_sample_rate.text()
+        channels = self.ui.comboBox_channel.currentText()
+        speaker = self.ui.comboBox_speaker.currentData()
+        results = get_output_info(self.dataset_id, speaker)
+        is_auto_skip = self.ui.checkBox_auto_skip.isChecked()
+
+        now = datetime.now()
+        formatted_time = now.strftime("%Y-%m-%d_%H-%M-%S")
+        workspace_path = global_obj.get_value("workspace_path")
+        output_path = os.path.join(workspace_path, "output", formatted_time)
+
+        if geshi == GeshiStr.default:
+            out_num = output_like_default(qianzhui, sample_rate, channels, results, output_path, is_auto_skip)
+        if geshi == GeshiStr.aishell3:
+            out_num = output_like_aishell3(qianzhui, sample_rate, channels, results, output_path, is_auto_skip)
+        if geshi == GeshiStr.vits:
+            out_num = output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_auto_skip)
+
+        QMessageBox.information(
+            self.parent(),
+            '导出成功',
+            f'已导出{out_num}条数据\n存放位置：{os.path.abspath(output_path)}')
+        guilogger.info(f'已导出{out_num}条数据\n存放位置：{os.path.abspath(output_path)}')
+
+        self.close()
 
 
 class AddAuthentication(QDialog):
@@ -312,7 +346,7 @@ class DatasetWindow(QMainWindow):
         self.refresh_authorization_table()
 
     def open_output_speaker_dialog(self):
-        output_speaker_dialog = OutPutSpeaker(self,self.dataset_id)
+        output_speaker_dialog = OutPutSpeaker(self, self.dataset_id)
         output_speaker_dialog.exec_()
 
     def refresh_authorization_table(self):
@@ -371,7 +405,10 @@ class DatasetWindow(QMainWindow):
             index = i + (page_number - 1) * page_size
             info_id = result['info_id']
             info_text = result['info_text']
-            speaker = result['speaker']
+            if result['info_shibie_speaker'] != None:
+                speaker = result['info_shibie_speaker']
+            else:
+                speaker = result['info_speaker']
             # is_separate_file = result['is_separate_file']
             row = self.ui.tableWidget.rowCount()
             self.ui.tableWidget.insertRow(row)

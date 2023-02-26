@@ -24,31 +24,13 @@
      <x>20</x>
      <y>10</y>
      <width>511</width>
-     <height>321</height>
+     <height>351</height>
     </rect>
    </property>
    <property name="currentIndex">
     <number>0</number>
    </property>
    <widget class="QWidget" name="page">
-    <widget class="QPushButton" name="pushButton_save_preinstall">
-     <property name="geometry">
-      <rect>
-       <x>320</x>
-       <y>50</y>
-       <width>161</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>保存当前选项为预设</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
@@ -98,16 +80,6 @@
       <string>音频文件采样率</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox_preinstall">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>50</y>
-       <width>231</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
@@ -138,7 +110,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>210</y>
+       <y>250</y>
        <width>131</width>
        <height>16</height>
       </rect>
@@ -151,10 +123,113 @@
      <property name="geometry">
       <rect>
        <x>290</x>
+       <y>250</y>
+       <width>191</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>491</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>预设</string>
+     </property>
+     <widget class="QPushButton" name="pushButton_read_preinstall">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>30</y>
+        <width>111</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>读取所选预设</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox_preinstall">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>211</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>211</y>
+       <width>131</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>声道数</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_channel">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
        <y>210</y>
        <width>191</width>
        <height>22</height>
       </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>2</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_auto_skip">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>290</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>是</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>290</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>自动跳过含有非中文的数据</string>
      </property>
     </widget>
    </widget>
