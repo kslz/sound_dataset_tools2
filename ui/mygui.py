@@ -14,6 +14,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QTableWidgetItem, QPushButto
 import ui.ui_dataset_view
 from ui.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.ui_add_dataset import Ui_Dialog
+from ui.ui_edit_info import Ui_EditInfoDialog
 from ui.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
 from ui.ui_select_dataset import Ui_MainWindow
 from ui.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
@@ -28,6 +29,17 @@ global config
 def getconfig():
     global config
     config = global_obj.get_value("config")
+
+
+class EditInfo(QDialog):
+    def __init__(self, parent, info_id):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = Ui_EditInfoDialog()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.info_id = info_id
+        # self.add_info()
 
 
 class OutPutSpeaker(QDialog):
@@ -595,6 +607,8 @@ class SelectDatasetWindow(QMainWindow):
 
     def openDatasetWindow(self, dataset_id):
         self.hide()
+        self.update_dataset_dataset_last_use_time(dataset_id)
+        self.add_dataset_data()
         self.dataset_window = DatasetWindow(dataset_id)
         self.dataset_window.show()
         self.dataset_window.reopen.connect(self.show)
@@ -607,6 +621,11 @@ class SelectDatasetWindow(QMainWindow):
         # self.add_window.setModal(True)
         # self.add_window.show()
         self.edit_window.exec_()
+
+    def update_dataset_dataset_last_use_time(self, dataset_id):
+        Dataset.update(dataset_last_use_time=datetime.now().replace(microsecond=0)).where(
+            Dataset.dataset_id == dataset_id).execute()
+        # User.update(age=20).where(User.username=="charlie").execute()
 
     def del_dataset(self, dataset_id, dataset_name):
         """
