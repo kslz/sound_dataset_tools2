@@ -41,6 +41,9 @@ def pingce_biaobei(file_path, text, access_token):
     with open(file_path, "rb") as f:
         base64_data = base64.b64encode(f.read()).decode("utf-8")
 
+    print(base64_data)
+    quit()
+
     headers = {
         'Content-Type': 'application/json',
         'Host': 'openapi.data-baker.com'
