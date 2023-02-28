@@ -18,6 +18,7 @@ from pysrt import SubRipTime
 from utils import global_obj
 from utils.peewee_orm import *
 from utils.log import *
+from utils.request_tools import get_biaobei_token
 
 if os.path.isfile(os.path.join("./lib/ffmpeg/", "ffmpeg.exe")):
     ffmpeg_path = "./lib/ffmpeg/"
@@ -55,6 +56,17 @@ def file_w(path, text, mode, encoding="UTF-8"):
     """
     with open(path, mode, encoding=encoding) as f:
         f.write(text)
+
+
+def refresh_biaobei_token(authorizationinfo_id):
+    authorizationinfo = AuthorizationInfo.get_by_id(authorizationinfo_id)
+    token = get_biaobei_token(authorizationinfo.authorizationinfo_APIKey,authorizationinfo.authorizationinfo_APISecret)
+    if token:
+        AuthorizationInfo.update(authorizationinfo_token=token).where(
+            AuthorizationInfo.authorizationinfo_id == authorizationinfo_id).execute()
+        return token
+    else:
+        return False
 
 
 def del_file_end_blank_line(file_path):

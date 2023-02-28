@@ -4,11 +4,12 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-
+import ffmpeg
 import requests
 import base64
 
-def get_biaobei_token(client_id,client_secret):
+
+def get_biaobei_token(client_id, client_secret):
     url = 'https://openapi.data-baker.com/oauth/2.0/token'
 
     payload = {
@@ -26,7 +27,8 @@ def get_biaobei_token(client_id,client_secret):
     else:
         return False
 
-def pingce_biaobei(file_path, text, access_token):
+
+def pingce_biaobei(file_path, text, access_token, start_time, end_time):
     """
     通过标贝接口进行音频评测，并将返回的json文件保存到本地，需自行填入鉴权信息
     注意：只支持采样率16k、位长16bit、单声道的pcm音频。
@@ -36,13 +38,22 @@ def pingce_biaobei(file_path, text, access_token):
     :param file_path: 音频文件路径
     :param text: 音频对应文本
     :param access_token: 鉴权信息（请参考文档获取）
+    :parap start_time: 开始时间（毫秒）
+    :parap end_time: 结束时间（毫秒）
     """
 
-    with open(file_path, "rb") as f:
-        base64_data = base64.b64encode(f.read()).decode("utf-8")
+    duration = (end_time - start_time) / 1000
+    start_time = start_time / 1000
 
-    print(base64_data)
-    quit()
+    # 从长音频文件中提取指定时间段的音频
+    output = (
+        ffmpeg
+        .input(file_path, ss=start_time, t=duration)
+        .output('pipe:', format='s16le', acodec='pcm_s16le')
+        .run(capture_stdout=True)
+    )
+
+    base64_data = base64.b64encode(output[0]).decode("utf-8")
 
     headers = {
         'Content-Type': 'application/json',
