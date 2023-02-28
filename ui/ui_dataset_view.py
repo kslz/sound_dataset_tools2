@@ -104,6 +104,9 @@ class Ui_DatasetMainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.widget = QWidget(self.tab_2)
         self.widget.setObjectName(u"widget")
+        self.pushButton_biaobei_pingce = QPushButton(self.widget)
+        self.pushButton_biaobei_pingce.setObjectName(u"pushButton_biaobei_pingce")
+        self.pushButton_biaobei_pingce.setGeometry(QRect(20, 20, 211, 51))
 
         self.verticalLayout.addWidget(self.widget)
 
@@ -227,6 +230,7 @@ class Ui_DatasetMainWindow(object):
         self.pushButton_add_wav_srt.setText(QCoreApplication.translate("DatasetMainWindow", u"\u4ece\u6587\u4ef6\u5bfc\u5165\uff08\u97f3\u9891+\u5b57\u5e55\uff09", None))
         self.pushButton_output_speaker.setText(QCoreApplication.translate("DatasetMainWindow", u"\u5bfc\u51fa\u6570\u636e\u96c6\uff08\u5355\u53d1\u97f3\u4eba\uff09", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u96c6\u6982\u89c8", None))
+        self.pushButton_biaobei_pingce.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6807\u8d1d\u8bed\u97f3\u8bc4\u6d4b", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u5904\u7406", None))
         self.label.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6ce8\u610f\uff1a\u672c\u9875\u8bbe\u7f6e\u5728\u672c\u5de5\u4f5c\u533a\u4e0b\u901a\u7528", None))
         self.groupBox.setTitle(QCoreApplication.translate("DatasetMainWindow", u"\u6807\u8d1d", None))

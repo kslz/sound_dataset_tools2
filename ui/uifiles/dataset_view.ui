@@ -200,7 +200,21 @@
      </attribute>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QWidget" name="widget" native="true"/>
+       <widget class="QWidget" name="widget" native="true">
+        <widget class="QPushButton" name="pushButton_biaobei_pingce">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>20</y>
+           <width>211</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>标贝语音评测</string>
+         </property>
+        </widget>
+       </widget>
       </item>
      </layout>
     </widget>
