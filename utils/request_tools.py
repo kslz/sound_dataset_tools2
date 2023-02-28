@@ -4,6 +4,8 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+import json
+
 import ffmpeg
 import requests
 import base64
@@ -49,7 +51,7 @@ def pingce_biaobei(file_path, text, access_token, start_time, end_time):
     output = (
         ffmpeg
         .input(file_path, ss=start_time, t=duration)
-        .output('pipe:', format='s16le', acodec='pcm_s16le')
+        .output('pipe:', format='s16le', acodec='pcm_s16le', ac=1, ar=16000)
         .run(capture_stdout=True)
     )
 
@@ -70,5 +72,9 @@ def pingce_biaobei(file_path, text, access_token, start_time, end_time):
 
     response = requests.post('https://openapi.data-baker.com/cap/getCapScore', headers=headers, json=json_data)
 
-    response_json = response.content.decode("utf-8")
+    response_json = response.json()
     print(response_json)
+    print(response_json["err_no"])
+
+    # response_json = response.content.decode("utf-8")
+    # print(response_json)
