@@ -9,6 +9,7 @@ import json
 import os
 import string
 import subprocess
+import time
 
 import ffmpeg
 import pypinyin
@@ -97,7 +98,7 @@ def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate, chann
         ffmpeg
         .input(wav_path, ss=start_time, t=duration)
         .output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec)
-        .run(quiet=True)
+        .run_async(quiet=True)
     )
 
 
@@ -182,6 +183,7 @@ def output_like_default(qianzhui, sample_rate, channels, results, output_path, i
             output_file = os.path.join(output_path, "wavs", line_name)
             line_text = f"{line_name}|{info_text}\n"
             file_w(label_path, line_text, "a")
+
             output_wav_file(raw_path, start, end, output_file, sample_rate, channels)
             name_index += 1
         except:
