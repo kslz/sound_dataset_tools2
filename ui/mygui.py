@@ -11,14 +11,16 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QMainWindow, QWidget, QTableWidgetItem, QPushButton, QHBoxLayout, \
     QDialog, QMessageBox, QFileDialog
 
-import ui.ui_dataset_view
-from ui.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
-from ui.ui_add_dataset import Ui_Dialog
-from ui.ui_edit_info import Ui_EditInfoDialog
-from ui.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
-from ui.ui_select_dataset import Ui_MainWindow
-from ui.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
-from ui.ui_select_workspace import Ui_Form
+import ui.pyuic.ui_dataset_view
+from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
+from ui.pyuic.ui_add_dataset import Ui_Dialog
+from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
+from ui.pyuic.ui_edit_info import Ui_EditInfoDialog
+from ui.pyuic.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
+from ui.pyuic.ui_select_dataset import Ui_MainWindow
+from ui.pyuic.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
+from ui.pyuic.ui_select_workspace import Ui_Form
+from ui.pyuic.ui_dataset_view import Ui_DatasetMainWindow
 from utils.log import *
 from utils.request_tools import get_biaobei_token
 from utils.tools import *
@@ -40,6 +42,42 @@ class EditInfo(QDialog):
         self.ui.setupUi(self)
         self.info_id = info_id
         # self.add_info()
+
+class BiaobeiPingce(QDialog):
+    def __init__(self, parent, dataset_id):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = Ui_BiaobeiPingceDialog()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.dataset_id = dataset_id
+        self.ui.checkBox_2.setEnabled(False)
+        self.ui.pushButton_queding.clicked.connect(self.start_pingce)
+
+    def add_authorizationinfo(self):
+        results = get_authorizationinfo(DbStr.BiaoBei,DbStr.PingCe)
+        for result in results:
+            self.ui.comboBox.addItem(result.authorizationinfo_name, result.authorizationinfo_id)
+
+
+
+    def start_pingce(self):
+        is_skip_done = self.ui.checkBox.isChecked()
+        is_skip_ascii = self.ui.checkBox_2.isChecked()
+        authorizationinfo_id = self.ui.comboBox.currentData()
+        if authorizationinfo_id == None:
+            self.ui.label_error.setText("没有可选的授权信息，请在设置页面添加")
+            return
+        token = get_token(authorizationinfo_id)
+
+        if is_skip_ascii:
+            results = get_pingce_info(self.dataset_id, is_skip_done)
+
+
+
+
+        else:
+            pass
 
 
 class OutPutSpeaker(QDialog):
@@ -302,7 +340,7 @@ class DatasetWindow(QMainWindow):
     def __init__(self, dataset_id):
         super().__init__()
         # 使用ui文件导入定义界面类
-        self.ui = ui.ui_dataset_view.Ui_DatasetMainWindow()
+        self.ui = Ui_DatasetMainWindow()
         # 初始化界面
         self.ui.setupUi(self)
         self.set_table_style()
@@ -318,6 +356,7 @@ class DatasetWindow(QMainWindow):
         self.ui.pushButton_add_biaobei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.BiaoBei))
         self.ui.pushButton_add_xunfei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.XunFei))
         self.ui.pushButton_output_speaker.clicked.connect(self.open_output_speaker_dialog)
+        self.ui.pushButton_biaobei_pingce.clicked.connect(self.open_biaobei_pingce)
 
     def set_table_style(self):
 
@@ -450,6 +489,10 @@ class DatasetWindow(QMainWindow):
 
         self.ui.comboBox.setCurrentIndex(page_number - 1)
         self.ui.comboBox.blockSignals(False)
+
+    def open_biaobei_pingce(self):
+        biaobei_pingce = BiaobeiPingce(self,self.dataset_id)
+        biaobei_pingce.exec_()
 
     def closeEvent(self, event):
         self.reopen.emit()

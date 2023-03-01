@@ -52,10 +52,25 @@ def pingce_biaobei(file_path, text, access_token, start_time, end_time):
         ffmpeg
         .input(file_path, ss=start_time, t=duration)
         .output('pipe:', format='s16le', acodec='pcm_s16le', ac=1, ar=16000)
-        .run(capture_stdout=True)
+        .run(capture_stdout=True,quiet=True)
     )
+    output = output[0]
 
-    base64_data = base64.b64encode(output[0]).decode("utf-8")
+    if duration < 3.1:
+        # 因为标贝要求音频不能短于3s 所以如果不足3.1s就会生成静音段将音频补到3.1s
+        # 这段写了一个小时，我现在已经完全了解一切
+        silence_duration = 3.1 - duration
+
+        silence = (
+            ffmpeg
+            .input('anullsrc', f='lavfi', t=silence_duration)
+            .output('pipe:', format='s16le', acodec='pcm_s16le', ac=1, ar=16000)
+            .run(capture_stdout=True,quiet=True)
+        )
+
+        output = output + silence[0]
+
+    base64_data = base64.b64encode(output).decode("utf-8")
 
     headers = {
         'Content-Type': 'application/json',
@@ -78,3 +93,7 @@ def pingce_biaobei(file_path, text, access_token, start_time, end_time):
 
     # response_json = response.content.decode("utf-8")
     # print(response_json)
+
+
+def test_biaobei_pingce():
+    pass
