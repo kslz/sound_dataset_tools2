@@ -92,6 +92,23 @@ class AuthorizationInfo(BaseModel):
         table_name = 'authorizationinfo_tbl'
 
 
+def get_token(authorizationinfo_id):
+    query = AuthorizationInfo.select().where(AuthorizationInfo.authorizationinfo_id == authorizationinfo_id)
+    results = query.execute()
+    return results[0].authorizationinfo_token
+
+
+def get_pingce_info(dataset_id, is_skip_done):
+    query = Info.select()
+    if is_skip_done:
+        query = query.where(Info.info_all_score.is_null(False), Info.dataset_id == dataset_id)
+    else:
+        query = query.where(Info.dataset_id == dataset_id)
+
+    results = query.execute()
+    return list(results)
+
+
 def get_authorizationinfo(company: Optional[str] = None, app: Optional[str] = None):
     query = AuthorizationInfo.select()
 
@@ -236,7 +253,6 @@ def get_output_info(dataset_id, spk_info):
     result = list(query.dicts())
     # print(result)
     return result
-
 
 
 def insert_info_many(data_list, batch_size=1000):
