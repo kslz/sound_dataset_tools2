@@ -92,7 +92,7 @@ class AuthorizationInfo(BaseModel):
         table_name = 'authorizationinfo_tbl'
 
 
-def get_token(authorizationinfo_id):
+def get_authorizationinfo_by_id(authorizationinfo_id):
     query = AuthorizationInfo.select().where(AuthorizationInfo.authorizationinfo_id == authorizationinfo_id)
     results = query.execute()
     return results[0].authorizationinfo_token

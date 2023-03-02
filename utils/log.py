@@ -38,6 +38,7 @@ def creatlogger(logname):
 
 
 guilogger = creatlogger("guilogger")
+requsetlogger = creatlogger("requsetlogger")
 
 if __name__ == '__main__':
     logger = creatlogger("testlog")

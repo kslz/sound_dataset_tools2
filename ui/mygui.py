@@ -22,7 +22,7 @@ from ui.pyuic.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
 from ui.pyuic.ui_select_workspace import Ui_Form
 from ui.pyuic.ui_dataset_view import Ui_DatasetMainWindow
 from utils.log import *
-from utils.request_tools import get_biaobei_token
+from utils.request_tools import get_biaobei_token, test_biaobei_pingce
 from utils.tools import *
 
 global config
@@ -68,7 +68,12 @@ class BiaobeiPingce(QDialog):
         if authorizationinfo_id == None:
             self.ui.label_error.setText("没有可选的授权信息，请在设置页面添加")
             return
-        token = get_token(authorizationinfo_id)
+        result_a = get_authorizationinfo_by_id(authorizationinfo_id)
+        token = result_a[0].authorizationinfo_token
+        if test_biaobei_pingce(token):
+            requsetlogger.warning("token校验失败，正在尝试重新获取")
+
+
 
         if is_skip_ascii:
             results = get_pingce_info(self.dataset_id, is_skip_done)
@@ -170,9 +175,21 @@ class AddAuthentication(QDialog):
         appid = self.ui.lineEdit_appid.text()
         apisecret = self.ui.lineEdit_apisecret.text()
         apikey = self.ui.lineEdit_apikey.text()
+        if name == "":
+            self.ui.label_error.setText("请填写名称字段")
+            return
+        if appid == "":
+            self.ui.label_error.setText("请填写appid字段")
+            return
+        if apisecret == "":
+            self.ui.label_error.setText("请填写apisecret字段")
+            return
+        if apikey == "":
+            self.ui.label_error.setText("请填写apikey字段")
+            return
         token = get_biaobei_token(apikey, apisecret)
         app = self.ui.comboBox_app.currentText()
-        if token is not None:
+        if token:
             AuthorizationInfo.insert({
                 "authorizationinfo_name": name,
                 "authorizationinfo_APPID": appid,

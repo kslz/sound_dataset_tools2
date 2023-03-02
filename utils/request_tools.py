@@ -10,6 +10,8 @@ import ffmpeg
 import requests
 import base64
 
+from utils.log import requsetlogger
+
 
 def get_biaobei_token(client_id, client_secret):
     url = 'https://openapi.data-baker.com/oauth/2.0/token'
@@ -95,5 +97,34 @@ def pingce_biaobei(file_path, text, access_token, start_time, end_time):
     # print(response_json)
 
 
-def test_biaobei_pingce():
-    pass
+def test_biaobei_pingce(access_token):
+    text = "你好世界，"
+    silence = (
+        ffmpeg
+        .input('anullsrc', f='lavfi', t=3.1)
+        .output('pipe:', format='s16le', acodec='pcm_s16le', ac=1, ar=16000)
+        .run(capture_stdout=True, quiet=True)
+    )
+    # with open("test.wav", "wb") as f:
+    #     f.write(silence[0])
+    base64_data = base64.b64encode(silence[0]).decode("utf-8")
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Host': 'openapi.data-baker.com'
+    }
+
+    json_data = {
+        'access_token': access_token,
+        'format': 'pcm',
+        'txt': text,
+        'lan': 'cn',
+        'audio': base64_data,
+    }
+
+    response = requests.post('https://openapi.data-baker.com/cap/getCapScore', headers=headers, json=json_data)
+
+    response_json = response.json()
+    if response_json["err_no"] == 50001 or response_json["err_no"] == 50002:
+        return False
+    return True
