@@ -7,6 +7,7 @@
 import configparser
 import json
 import os
+import re
 import string
 import subprocess
 import time
@@ -58,6 +59,9 @@ def file_w(path, text, mode, encoding="UTF-8"):
     with open(path, mode, encoding=encoding) as f:
         f.write(text)
 
+def is_all_chinese(text):
+    pattern = re.compile(r'^[\u4e00-\u9fa5]+$')
+    return bool(pattern.match(text))
 
 def refresh_biaobei_token(authorizationinfo_id):
     authorizationinfo = AuthorizationInfo.get_by_id(authorizationinfo_id)

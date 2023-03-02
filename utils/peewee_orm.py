@@ -62,6 +62,7 @@ class Info(BaseModel):
     info_int_score = FloatField(null=True, )
     info_all_score = FloatField(null=True, )
     info_file_path = TextField(null=True, )
+    info_mfa = TextField(null=True, )
     info_is_del = BooleanField(default=False)
 
     class Meta:
@@ -95,16 +96,22 @@ class AuthorizationInfo(BaseModel):
 def get_authorizationinfo_by_id(authorizationinfo_id):
     query = AuthorizationInfo.select().where(AuthorizationInfo.authorizationinfo_id == authorizationinfo_id)
     results = query.execute()
-    return results[0].authorizationinfo_token
+    return results
 
 
 def get_pingce_info(dataset_id, is_skip_done):
     query = Info.select()
     if is_skip_done:
-        query = query.where(Info.info_all_score.is_null(False), Info.dataset_id == dataset_id)
+        query = query.where(
+            Info.info_all_score.is_null(True),
+            Info.dataset_id == dataset_id,
+            # 我有一句绝佳的SQL可以用在这里，但是我该睡觉了....
+            # SELECT * FROM "info_tbl" WHERE info_text not GLOB '*[! -~]*';
+        )
     else:
-        query = query.where(Info.dataset_id == dataset_id)
-
+        query = query.where(
+            Info.dataset_id == dataset_id,
+        )
     results = query.execute()
     return list(results)
 

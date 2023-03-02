@@ -90,8 +90,10 @@ def pingce_biaobei(file_path, text, access_token, start_time, end_time):
     response = requests.post('https://openapi.data-baker.com/cap/getCapScore', headers=headers, json=json_data)
 
     response_json = response.json()
-    print(response_json)
-    print(response_json["err_no"])
+    if response_json["err_no"] == 90000:
+        return response_json
+    requsetlogger.error(f"标贝评测请求失败，错误码: {response_json['err_no']} 错误信息： {response_json['err_msg']}")
+    return False
 
     # response_json = response.content.decode("utf-8")
     # print(response_json)

@@ -22,7 +22,7 @@ from ui.pyuic.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
 from ui.pyuic.ui_select_workspace import Ui_Form
 from ui.pyuic.ui_dataset_view import Ui_DatasetMainWindow
 from utils.log import *
-from utils.request_tools import get_biaobei_token, test_biaobei_pingce
+from utils.request_tools import get_biaobei_token, test_biaobei_pingce, pingce_biaobei
 from utils.tools import *
 
 global config
@@ -43,6 +43,7 @@ class EditInfo(QDialog):
         self.info_id = info_id
         # self.add_info()
 
+
 class BiaobeiPingce(QDialog):
     def __init__(self, parent, dataset_id):
         super().__init__(parent)
@@ -52,14 +53,13 @@ class BiaobeiPingce(QDialog):
         self.ui.setupUi(self)
         self.dataset_id = dataset_id
         self.ui.checkBox_2.setEnabled(False)
+        self.add_authorizationinfo()
         self.ui.pushButton_queding.clicked.connect(self.start_pingce)
 
     def add_authorizationinfo(self):
-        results = get_authorizationinfo(DbStr.BiaoBei,DbStr.PingCe)
+        results = get_authorizationinfo(DbStr.BiaoBei, DbStr.PingCe)
         for result in results:
             self.ui.comboBox.addItem(result.authorizationinfo_name, result.authorizationinfo_id)
-
-
 
     def start_pingce(self):
         is_skip_done = self.ui.checkBox.isChecked()
@@ -70,17 +70,47 @@ class BiaobeiPingce(QDialog):
             return
         result_a = get_authorizationinfo_by_id(authorizationinfo_id)
         token = result_a[0].authorizationinfo_token
-        if test_biaobei_pingce(token):
+        if not test_biaobei_pingce(token):
             requsetlogger.warning("token校验失败，正在尝试重新获取")
-
-
-
+            token = get_biaobei_token(result_a[0].authorizationinfo_APIKey, result_a[0].authorizationinfo_APISecret)
+            if not token:
+                requsetlogger.error("token重新获取失败，重新输入认证信息")
+                return
+            else:
+                AuthorizationInfo.update(authorizationinfo_token=token).where(
+                    AuthorizationInfo.authorizationinfo_id == result_a[0].authorizationinfo_id).execute()
+                requsetlogger.warning("token重新获取成功")
+        requsetlogger.warning("token校验通过")
         if is_skip_ascii:
             results = get_pingce_info(self.dataset_id, is_skip_done)
 
+            for result in results:
+                result: Info
+                id = result.info_id
+                start = result.info_start_time
+                end = result.info_end_time
+                text = result.info_text
+                file_path = result.info_raw_file_path
+                if is_all_chinese(text):
+                    response_json = pingce_biaobei(file_path, text, token, start, end)
+                    if response_json:
+                        acc_score = response_json["result"]["acc_score"]
+                        flu_score = response_json["result"]["flu_score"]
+                        int_score = response_json["result"]["int_score"]
+                        all_score = response_json["result"]["all_score"]
+                        mfa_info = {"biaobei": response_json["result"]["word"]}
 
+                        Info.update(
+                            info_acc_score=acc_score,
+                            info_flu_score=flu_score,
+                            info_int_score=int_score,
+                            info_all_score=all_score,
+                            info_mfa=mfa_info
+                        ).where(Info.info_id==id).execute()
 
-
+                    # print(text)
+                    # print(response_json)
+                    # return
         else:
             pass
 
@@ -508,7 +538,7 @@ class DatasetWindow(QMainWindow):
         self.ui.comboBox.blockSignals(False)
 
     def open_biaobei_pingce(self):
-        biaobei_pingce = BiaobeiPingce(self,self.dataset_id)
+        biaobei_pingce = BiaobeiPingce(self, self.dataset_id)
         biaobei_pingce.exec_()
 
     def closeEvent(self, event):
