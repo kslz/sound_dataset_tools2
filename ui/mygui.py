@@ -99,6 +99,7 @@ class BiaobeiPingce(QDialog):
                         int_score = response_json["result"]["int_score"]
                         all_score = response_json["result"]["all_score"]
                         mfa_info = {"biaobei": response_json["result"]["word"]}
+                        # requsetlogger.info(f"标贝评测成功，文本：{text}，准确度得分：{acc_score}，流利度得分：{flu_score}，完整度得分：{int_score}，总分：{all_score}，")
 
                         Info.update(
                             info_acc_score=acc_score,

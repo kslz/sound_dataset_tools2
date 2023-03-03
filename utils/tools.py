@@ -59,13 +59,28 @@ def file_w(path, text, mode, encoding="UTF-8"):
     with open(path, mode, encoding=encoding) as f:
         f.write(text)
 
+
+def file_wb(path, text, mode="wb"):
+    """
+    用于向文件中写入
+
+    :param path: 文件路径
+    :param text: 要写入的数据
+    :param mode: 写入模式
+
+    """
+    with open(path, mode) as f:
+        f.write(text)
+
+
 def is_all_chinese(text):
     pattern = re.compile(r'^[\u4e00-\u9fa5]+$')
     return bool(pattern.match(text))
 
+
 def refresh_biaobei_token(authorizationinfo_id):
     authorizationinfo = AuthorizationInfo.get_by_id(authorizationinfo_id)
-    token = get_biaobei_token(authorizationinfo.authorizationinfo_APIKey,authorizationinfo.authorizationinfo_APISecret)
+    token = get_biaobei_token(authorizationinfo.authorizationinfo_APIKey, authorizationinfo.authorizationinfo_APISecret)
     if token:
         AuthorizationInfo.update(authorizationinfo_token=token).where(
             AuthorizationInfo.authorizationinfo_id == authorizationinfo_id).execute()
@@ -250,7 +265,7 @@ def copy_file_to_workspace(raw_path, to_path):
         ffmpeg
         .input(raw_path)
         .output(new_path, codec="flac", compression_level=5)
-        .run()
+        .run(quiet=True)
     )
 
     # shutil.copyfile(raw_path, new_path)
@@ -325,7 +340,8 @@ def play_by_ffmpeg(wav_path, start_time, end_time):
     output = (
         ffmpeg
         .input(wav_path, ss=start_time, t=duration)
-        .output('pipe:', format='wav')
+        # .filter("loudnorm", I="-23", dual_mono="true")  # 归一化
+        .output('pipe:', format='wav', ar=44100)
         .run(capture_stdout=True)
     )
 

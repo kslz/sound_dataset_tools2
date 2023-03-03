@@ -107,6 +107,7 @@ def get_pingce_info(dataset_id, is_skip_done):
             Info.dataset_id == dataset_id,
             # 我有一句绝佳的SQL可以用在这里，但是我该睡觉了....
             # SELECT * FROM "info_tbl" WHERE info_text not GLOB '*[! -~]*';
+            # 第二天没起来，迟到了，干，都怪chatGPT写不好peewee
         )
     else:
         query = query.where(
