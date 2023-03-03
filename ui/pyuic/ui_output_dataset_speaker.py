@@ -23,13 +23,13 @@ class Ui_OutPutSpeakerDialog(object):
     def setupUi(self, OutPutSpeakerDialog):
         if not OutPutSpeakerDialog.objectName():
             OutPutSpeakerDialog.setObjectName(u"OutPutSpeakerDialog")
-        OutPutSpeakerDialog.resize(540, 400)
+        OutPutSpeakerDialog.resize(540, 431)
         font = QFont()
         font.setPointSize(12)
         OutPutSpeakerDialog.setFont(font)
         self.stackedWidget = QStackedWidget(OutPutSpeakerDialog)
         self.stackedWidget.setObjectName(u"stackedWidget")
-        self.stackedWidget.setGeometry(QRect(20, 10, 511, 351))
+        self.stackedWidget.setGeometry(QRect(20, 10, 511, 371))
         self.page = QWidget()
         self.page.setObjectName(u"page")
         self.label_2 = QLabel(self.page)
@@ -81,6 +81,13 @@ class Ui_OutPutSpeakerDialog(object):
         self.label_5 = QLabel(self.page)
         self.label_5.setObjectName(u"label_5")
         self.label_5.setGeometry(QRect(20, 290, 201, 16))
+        self.label_guiyihua = QLabel(self.page)
+        self.label_guiyihua.setObjectName(u"label_guiyihua")
+        self.label_guiyihua.setGeometry(QRect(20, 330, 261, 41))
+        self.label_guiyihua.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
+        self.lineEdit_guiyihua = QLineEdit(self.page)
+        self.lineEdit_guiyihua.setObjectName(u"lineEdit_guiyihua")
+        self.lineEdit_guiyihua.setGeometry(QRect(290, 330, 191, 21))
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
@@ -115,10 +122,10 @@ class Ui_OutPutSpeakerDialog(object):
         self.stackedWidget.addWidget(self.page_2)
         self.pushButton_next = QPushButton(OutPutSpeakerDialog)
         self.pushButton_next.setObjectName(u"pushButton_next")
-        self.pushButton_next.setGeometry(QRect(430, 360, 75, 24))
+        self.pushButton_next.setGeometry(QRect(430, 390, 75, 24))
         self.pushButton_back = QPushButton(OutPutSpeakerDialog)
         self.pushButton_back.setObjectName(u"pushButton_back")
-        self.pushButton_back.setGeometry(QRect(320, 360, 75, 24))
+        self.pushButton_back.setGeometry(QRect(320, 390, 75, 24))
 
         self.retranslateUi(OutPutSpeakerDialog)
 
@@ -144,6 +151,9 @@ class Ui_OutPutSpeakerDialog(object):
 
         self.checkBox_auto_skip.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u662f", None))
         self.label_5.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u81ea\u52a8\u8df3\u8fc7\u542b\u6709\u975e\u4e2d\u6587\u7684\u6570\u636e", None))
+        self.label_guiyihua.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u5f52\u4e00\u5316\uff08\u7559\u7a7a\u4e3a\u4e0d\u8fdb\u884c\u5f52\u4e00\u5316\uff09\n"
+"\u8303\u56f4\u4e3a-70~-5", None))
+        self.lineEdit_guiyihua.setText("")
         self.groupBox.setTitle(QCoreApplication.translate("OutPutSpeakerDialog", u"\u9884\u89c8", None))
         self.label_cengji.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"sounds\n"
 "    - 1.wav\n"

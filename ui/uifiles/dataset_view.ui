@@ -190,6 +190,19 @@
           <string>导出数据集（单发音人）</string>
          </property>
         </widget>
+        <widget class="QPushButton" name="pushButton_add_long_wav">
+         <property name="geometry">
+          <rect>
+           <x>230</x>
+           <y>490</y>
+           <width>231</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>从文件导入（长音频）</string>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>400</height>
+    <height>431</height>
    </rect>
   </property>
   <property name="font">
@@ -24,7 +24,7 @@
      <x>20</x>
      <y>10</y>
      <width>511</width>
-     <height>351</height>
+     <height>371</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -232,6 +232,36 @@
       <string>自动跳过含有非中文的数据</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_guiyihua">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>330</y>
+       <width>261</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>归一化（留空为不进行归一化）
+范围为-70~-5</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_guiyihua">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>330</y>
+       <width>191</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="page_2">
     <widget class="QGroupBox" name="groupBox">
@@ -355,7 +385,7 @@ labels.txt</string>
    <property name="geometry">
     <rect>
      <x>430</x>
-     <y>360</y>
+     <y>390</y>
      <width>75</width>
      <height>24</height>
     </rect>
@@ -368,7 +398,7 @@ labels.txt</string>
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>360</y>
+     <y>390</y>
      <width>75</width>
      <height>24</height>
     </rect>
