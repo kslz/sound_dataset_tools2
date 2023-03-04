@@ -5,6 +5,7 @@
     @Url : https://github.com/kslz
 """
 import configparser
+import io
 import json
 import os
 import re
@@ -105,23 +106,77 @@ def del_file_end_blank_line(file_path):
         f.writelines(lines)
 
 
-def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate, channels):
+def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate, channels, normalization):
     codec = 'pcm_s16le'
 
     # 将毫秒转换为ffmpeg需要的时间格式
     duration = (end_time - start_time) / 1000
     start_time = start_time / 1000
 
-    # 从长音频文件中提取指定时间段的音频
-    (
-        ffmpeg
-        .input(wav_path, ss=start_time, t=duration)
-        .output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec)
-        .run_async(quiet=True)
-    )
+    # 从长音频文件中提取指定时间段的音频并先转为单声道音频，再进行归一化
+    # 注意：如果直接将双声道音频转换为单声道，并进行归一化，会导致单声道音频的输出结果偏低（相当于降低了3）
+    # 换句话说，如果你用一个双声道音频分别转为双声道I=-16和单声道I=-16，输出的结果中双声道音频的响度比单声道音频高3LUFS 也就是单声道的响度为-19
+    # 如果你将两者放入AU中进行响度匹配至-16，你会发现单声道音频的音量会被放大，而双声道音频将不会受影响
+    # 我在这里卡了超过24小时，熬了一个大夜，太坑了，耽误我做锅包肉了
+    # 这里的逻辑过于复杂，我又不想在导入数据集时就把音频转为单声道，所以我目前限制导出只能为单声道，简化这里的逻辑待日后修改
+
+    if normalization:
+        output_audio = (
+            ffmpeg
+            .input(wav_path, ss=start_time, t=duration)
+            .output("pipe:", format='wav', ac=channels, ar=sample_rate, acodec=codec)
+            .run(capture_stdout=True, quiet=True)
+        )
+        output_audio = output_audio[0]
+        audio_io = io.BytesIO(output_audio)
+        audio_input = ffmpeg.input('pipe:').filter("loudnorm", I=normalization, TP=-1, LRA=11, linear="true")
+        audio = (
+            ffmpeg
+            .output(audio_input, new_path, ac=channels, ar=sample_rate, acodec=codec)
+            .overwrite_output()
+            .run_async(pipe_stdin=True, pipe_stdout=True, quiet=True)
+        )
+        audio.communicate(input=audio_io.read())
+    else:
+        (
+            ffmpeg
+            .input(wav_path, ss=start_time, t=duration)
+            .output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec)
+            .run_async(quiet=True)
+        )
 
 
-def output_like_aishell3(qianzhui, sample_rate, channels, results, output_path, is_auto_skip):
+
+
+
+
+
+    # result = ffmpeg.input(wav_path, ss=start_time, t=duration)
+    # if normalization:
+    #     result = result.filter("loudnorm", I=normalization, TP=-1, LRA=11, linear="true")  # 归一化
+    #
+    # result = result.output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec).run_async()
+
+    # codec = 'pcm_s16le'
+    # output_audio = (
+    #     ffmpeg
+    #     .input(wav_path)
+    #     .output("pipe:", format='wav', ac=1, ar=44100, acodec=codec)
+    #     .run(capture_stdout=True)
+    # )
+    # output_audio = output_audio[0]
+    # audio_io = io.BytesIO(output_audio)
+    # audio_input = ffmpeg.input('pipe:').filter("loudnorm", I=-16, TP=-1, LRA=11, linear="true")
+    # audio = (
+    #     ffmpeg
+    #     .output(audio_input, output_file)
+    #     .overwrite_output()
+    #     .run_async(pipe_stdin=True, pipe_stdout=True, quiet=True)
+    # )
+    # audio.communicate(input=audio_io.read())
+
+
+def output_like_aishell3(qianzhui, sample_rate, channels, results, output_path, is_auto_skip, normalization):
     """
     将数据集模仿aishell3格式导出
     data_aishell3/
@@ -160,14 +215,14 @@ def output_like_aishell3(qianzhui, sample_rate, channels, results, output_path, 
             output_file = os.path.join(output_path, "wav", line_name)
             line_text = f"{line_name}\t{text_to_aishell3_like(info_text)}\n"
             file_w(label_path, line_text, "a")
-            output_wav_file(raw_path, start, end, output_file, sample_rate, channels)
+            output_wav_file(raw_path, start, end, output_file, sample_rate, channels, normalization)
             name_index += 1
         except:
             guilogger.error(f"id为 {result['info_id']} 的数据导出失败")
     return name_index - 1
 
 
-def output_like_default(qianzhui, sample_rate, channels, results, output_path, is_auto_skip):
+def output_like_default(qianzhui, sample_rate, channels, results, output_path, is_auto_skip, normalization):
     """
     将数据集按照默认格式导出,相对简明
     -wavs/
@@ -203,14 +258,14 @@ def output_like_default(qianzhui, sample_rate, channels, results, output_path, i
             line_text = f"{line_name}|{info_text}\n"
             file_w(label_path, line_text, "a")
 
-            output_wav_file(raw_path, start, end, output_file, sample_rate, channels)
+            output_wav_file(raw_path, start, end, output_file, sample_rate, channels, normalization)
             name_index += 1
         except:
             guilogger.error(f"id为 {result['info_id']} 的数据导出失败")
     return name_index - 1
 
 
-def output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_auto_skip):
+def output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_auto_skip, normalization):
     """
     将数据集按照默认格式导出,相对简明
     -wavs/
@@ -245,7 +300,7 @@ def output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_a
             output_file = os.path.join(output_path, "wavs", line_name)
             line_text = f"wavs/{line_name}|{info_text}\n"
             file_w(label_path, line_text, "a")
-            output_wav_file(raw_path, start, end, output_file, sample_rate, channels)
+            output_wav_file(raw_path, start, end, output_file, sample_rate, channels, normalization)
             name_index += 1
         except:
             guilogger.error(f"id为 {result['info_id']} 的数据导出失败")

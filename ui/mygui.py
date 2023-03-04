@@ -107,7 +107,7 @@ class BiaobeiPingce(QDialog):
                             info_int_score=int_score,
                             info_all_score=all_score,
                             info_mfa=mfa_info
-                        ).where(Info.info_id==id).execute()
+                        ).where(Info.info_id == id).execute()
 
                     # print(text)
                     # print(response_json)
@@ -154,6 +154,16 @@ class OutPutSpeaker(QDialog):
         speaker = self.ui.comboBox_speaker.currentData()
         results = get_output_info(self.dataset_id, speaker)
         is_auto_skip = self.ui.checkBox_auto_skip.isChecked()
+        normalization = self.ui.lineEdit_guiyihua.text()
+        if normalization == "":
+            normalization = False
+        else:
+            try:
+                f = float(normalization)
+                if f < -70 or f > -5:
+                    raise Exception('归一化目标值错误')
+            except:
+                self.ui.label_error("归一化目标值错误")
 
         now = datetime.now()
         formatted_time = now.strftime("%Y-%m-%d_%H-%M-%S")
@@ -161,11 +171,14 @@ class OutPutSpeaker(QDialog):
         output_path = os.path.join(workspace_path, "output", formatted_time)
 
         if geshi == GeshiStr.default:
-            out_num = output_like_default(qianzhui, sample_rate, channels, results, output_path, is_auto_skip)
+            out_num = output_like_default(qianzhui, sample_rate, channels, results, output_path, is_auto_skip,
+                                          normalization)
         if geshi == GeshiStr.aishell3:
-            out_num = output_like_aishell3(qianzhui, sample_rate, channels, results, output_path, is_auto_skip)
+            out_num = output_like_aishell3(qianzhui, sample_rate, channels, results, output_path, is_auto_skip,
+                                           normalization)
         if geshi == GeshiStr.vits:
-            out_num = output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_auto_skip)
+            out_num = output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_auto_skip,
+                                       normalization)
 
         QMessageBox.information(
             self.parent(),

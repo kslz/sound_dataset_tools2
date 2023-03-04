@@ -259,7 +259,7 @@
       </rect>
      </property>
      <property name="text">
-      <string/>
+      <string>-23</string>
      </property>
     </widget>
    </widget>
@@ -405,6 +405,27 @@ labels.txt</string>
    </property>
    <property name="text">
     <string>上一步</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_error">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>390</y>
+     <width>271</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:red</string>
+   </property>
+   <property name="text">
+    <string/>
    </property>
   </widget>
  </widget>

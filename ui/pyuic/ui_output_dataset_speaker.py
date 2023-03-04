@@ -126,6 +126,11 @@ class Ui_OutPutSpeakerDialog(object):
         self.pushButton_back = QPushButton(OutPutSpeakerDialog)
         self.pushButton_back.setObjectName(u"pushButton_back")
         self.pushButton_back.setGeometry(QRect(320, 390, 75, 24))
+        self.label_error = QLabel(OutPutSpeakerDialog)
+        self.label_error.setObjectName(u"label_error")
+        self.label_error.setGeometry(QRect(40, 390, 271, 16))
+        self.label_error.setFont(font)
+        self.label_error.setStyleSheet(u"color:red")
 
         self.retranslateUi(OutPutSpeakerDialog)
 
@@ -153,7 +158,7 @@ class Ui_OutPutSpeakerDialog(object):
         self.label_5.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u81ea\u52a8\u8df3\u8fc7\u542b\u6709\u975e\u4e2d\u6587\u7684\u6570\u636e", None))
         self.label_guiyihua.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u5f52\u4e00\u5316\uff08\u7559\u7a7a\u4e3a\u4e0d\u8fdb\u884c\u5f52\u4e00\u5316\uff09\n"
 "\u8303\u56f4\u4e3a-70~-5", None))
-        self.lineEdit_guiyihua.setText("")
+        self.lineEdit_guiyihua.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"-23", None))
         self.groupBox.setTitle(QCoreApplication.translate("OutPutSpeakerDialog", u"\u9884\u89c8", None))
         self.label_cengji.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"sounds\n"
 "    - 1.wav\n"
@@ -169,5 +174,6 @@ class Ui_OutPutSpeakerDialog(object):
         self.label_file_num.setText("")
         self.pushButton_next.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u4e0b\u4e00\u6b65", None))
         self.pushButton_back.setText(QCoreApplication.translate("OutPutSpeakerDialog", u"\u4e0a\u4e00\u6b65", None))
+        self.label_error.setText("")
     # retranslateUi
 
