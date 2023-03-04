@@ -128,6 +128,8 @@ class OutPutSpeaker(QDialog):
 
         # 绑定信号和槽
         self.ui.pushButton_next.clicked.connect(self.output_info)
+        self.ui.pushButton_read_preinstall.clicked.connect(self.use_preinstall)
+        self.ui.pushButton_back.clicked.connect(self.close)
 
     def add_info(self):
         """
@@ -137,6 +139,10 @@ class OutPutSpeaker(QDialog):
         self.ui.comboBox_geshi.addItem(f"默认", GeshiStr.default)
         self.ui.comboBox_geshi.addItem(f"AISHELL-3", GeshiStr.aishell3)
         self.ui.comboBox_geshi.addItem(f"VITS", GeshiStr.vits)
+        self.ui.comboBox_preinstall.addItem(f"AISHELL-3", GeshiStr.aishell3)
+        self.ui.comboBox_preinstall.addItem(f"VITS", GeshiStr.vits)
+        self.ui.comboBox_preinstall.setCurrentText(GeshiStr.vits)
+        self.use_preinstall()
         result_list = get_speakers(self.dataset_id)
         for line in result_list:
             if line[1] == "shibie_spk":
@@ -146,11 +152,30 @@ class OutPutSpeaker(QDialog):
             self.ui.comboBox_speaker.addItem(text, line)
             self.ui.checkBox_auto_skip.setEnabled(False)
 
+    def use_preinstall(self):
+        pre_name = self.ui.comboBox_preinstall.currentText()
+        if pre_name == GeshiStr.vits:
+            self.ui.comboBox_geshi.setCurrentText(GeshiStr.vits)
+            self.ui.lineEdit_sample_rate.setText("22050")
+            self.ui.comboBox_channel.setCurrentText("1")
+            self.ui.lineEdit_guiyihua.setText("-23")
+        elif pre_name == GeshiStr.aishell3:
+            self.ui.comboBox_geshi.setCurrentText(GeshiStr.aishell3)
+            self.ui.lineEdit_sample_rate.setText("44100")
+            self.ui.comboBox_channel.setCurrentText("1")
+            self.ui.lineEdit_guiyihua.setText("-23")
+
+
+
+
+
+        pass
+
     def output_info(self):
         geshi = self.ui.comboBox_geshi.currentData()
         qianzhui = self.ui.lineEdit_qianzhui.text()
         sample_rate = self.ui.lineEdit_sample_rate.text()
-        channels = self.ui.comboBox_channel.currentText()
+        channels = int(self.ui.comboBox_channel.currentText())
         speaker = self.ui.comboBox_speaker.currentData()
         results = get_output_info(self.dataset_id, speaker)
         is_auto_skip = self.ui.checkBox_auto_skip.isChecked()
@@ -159,8 +184,8 @@ class OutPutSpeaker(QDialog):
             normalization = False
         else:
             try:
-                f = float(normalization)
-                if f < -70 or f > -5:
+                normalization = float(normalization)
+                if normalization < -70 or normalization > -5:
                     raise Exception('归一化目标值错误')
             except:
                 self.ui.label_error("归一化目标值错误")
@@ -169,6 +194,8 @@ class OutPutSpeaker(QDialog):
         formatted_time = now.strftime("%Y-%m-%d_%H-%M-%S")
         workspace_path = global_obj.get_value("workspace_path")
         output_path = os.path.join(workspace_path, "output", formatted_time)
+
+        start_time = time.time()
 
         if geshi == GeshiStr.default:
             out_num = output_like_default(qianzhui, sample_rate, channels, results, output_path, is_auto_skip,
@@ -180,11 +207,14 @@ class OutPutSpeaker(QDialog):
             out_num = output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_auto_skip,
                                        normalization)
 
+        end_time = time.time()
+        duration = end_time - start_time
+
         QMessageBox.information(
             self.parent(),
             '导出成功',
             f'已导出{out_num}条数据\n存放位置：{os.path.abspath(output_path)}')
-        guilogger.info(f'已导出{out_num}条数据\n存放位置：{os.path.abspath(output_path)}')
+        guilogger.info(f'已导出{out_num}条数据，耗时{duration:.2f} 秒\n存放位置：{os.path.abspath(output_path)}')
 
         self.close()
 
@@ -396,7 +426,7 @@ class PlaySoundBTN(QPushButton):
 
 class DatasetWindow(QMainWindow):
     reopen = Signal()
-    refresh_authorization_table = Signal(object)
+    # refresh_authorization_table = Signal(object)
 
     def __init__(self, dataset_id):
         super().__init__()

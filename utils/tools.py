@@ -30,10 +30,13 @@ else:
 
 
 class GeshiStr():
-    aishell3 = "aishell3"
-    default = "default"
-    vits = "vits"
+    aishell3 = "AISHELL-3"
+    default = "默认"
+    vits = "VITS"
     sovits = "sovits"
+
+
+channels_dict = {}
 
 
 def file_r(path):
@@ -79,6 +82,18 @@ def is_all_chinese(text):
     return bool(pattern.match(text))
 
 
+def get_wav_channels(wav_path):
+    c = channels_dict.get(wav_path)
+    if c is not None:
+        return c
+    probe = ffmpeg.probe(wav_path)
+    # 从元数据信息中获取音频流的信息
+    audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
+    c = audio_stream['channels']
+    channels_dict[wav_path] = c
+    return c
+
+
 def refresh_biaobei_token(authorizationinfo_id):
     authorizationinfo = AuthorizationInfo.get_by_id(authorizationinfo_id)
     token = get_biaobei_token(authorizationinfo.authorizationinfo_APIKey, authorizationinfo.authorizationinfo_APISecret)
@@ -108,48 +123,54 @@ def del_file_end_blank_line(file_path):
 
 def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate, channels, normalization):
     codec = 'pcm_s16le'
+    if sample_rate == "":
+        sample_rate = 44100
 
     # 将毫秒转换为ffmpeg需要的时间格式
     duration = (end_time - start_time) / 1000
     start_time = start_time / 1000
 
+    result = ffmpeg.input(wav_path, ss=start_time, t=duration)
+
+    raw_channels = get_wav_channels(wav_path)
+    if normalization:
+        if raw_channels > channels == 1:
+            normalization += 3
+        result = result.filter("loudnorm", I=normalization, TP=-1, LRA=11, linear="true")
+        result.output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec).run_async(quiet=True)
+
     # 从长音频文件中提取指定时间段的音频并先转为单声道音频，再进行归一化
     # 注意：如果直接将双声道音频转换为单声道，并进行归一化，会导致单声道音频的输出结果偏低（相当于降低了3）
     # 换句话说，如果你用一个双声道音频分别转为双声道I=-16和单声道I=-16，输出的结果中双声道音频的响度比单声道音频高3LUFS 也就是单声道的响度为-19
     # 如果你将两者放入AU中进行响度匹配至-16，你会发现单声道音频的音量会被放大，而双声道音频将不会受影响
-    # 我在这里卡了超过24小时，熬了一个大夜，太坑了，耽误我做锅包肉了
+    # 我在这里卡了超过24小时，熬了一个大夜，太坑了，耽误我做锅包肉了（做好了，嘎嘎香
     # 这里的逻辑过于复杂，我又不想在导入数据集时就把音频转为单声道，所以我目前限制导出只能为单声道，简化这里的逻辑待日后修改
+    # 日后到了 优化好了
 
-    if normalization:
-        output_audio = (
-            ffmpeg
-            .input(wav_path, ss=start_time, t=duration)
-            .output("pipe:", format='wav', ac=channels, ar=sample_rate, acodec=codec)
-            .run(capture_stdout=True, quiet=True)
-        )
-        output_audio = output_audio[0]
-        audio_io = io.BytesIO(output_audio)
-        audio_input = ffmpeg.input('pipe:').filter("loudnorm", I=normalization, TP=-1, LRA=11, linear="true")
-        audio = (
-            ffmpeg
-            .output(audio_input, new_path, ac=channels, ar=sample_rate, acodec=codec)
-            .overwrite_output()
-            .run_async(pipe_stdin=True, pipe_stdout=True, quiet=True)
-        )
-        audio.communicate(input=audio_io.read())
-    else:
-        (
-            ffmpeg
-            .input(wav_path, ss=start_time, t=duration)
-            .output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec)
-            .run_async(quiet=True)
-        )
-
-
-
-
-
-
+    # if normalization:
+    #     output_audio = (
+    #         ffmpeg
+    #         .input(wav_path, ss=start_time, t=duration)
+    #         .output("pipe:", format='wav', ac=channels, ar=sample_rate, acodec=codec)
+    #         .run(capture_stdout=True, quiet=True)
+    #     )
+    #     output_audio = output_audio[0]
+    #     audio_io = io.BytesIO(output_audio)
+    #     audio_input = ffmpeg.input('pipe:').filter("loudnorm", I=normalization, TP=-1, LRA=11, linear="true")
+    #     audio = (
+    #         ffmpeg
+    #         .output(audio_input, new_path, ac=channels, ar=sample_rate, acodec=codec)
+    #         .overwrite_output()
+    #         .run_async(pipe_stdin=True, pipe_stdout=True, quiet=True)
+    #     )
+    #     audio.communicate(input=audio_io.read())
+    # else:
+    #     (
+    #         ffmpeg
+    #         .input(wav_path, ss=start_time, t=duration)
+    #         .output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec)
+    #         .run_async(quiet=True)
+    #     )
 
     # result = ffmpeg.input(wav_path, ss=start_time, t=duration)
     # if normalization:
