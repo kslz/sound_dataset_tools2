@@ -6,6 +6,7 @@
 """
 
 import peewee
+import requests
 from PySide6 import QtCore, QtGui
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QMainWindow, QWidget, QTableWidgetItem, QPushButton, QHBoxLayout, \
@@ -18,6 +19,7 @@ from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
 from ui.pyuic.ui_edit_info import Ui_EditInfoDialog
 from ui.pyuic.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
 from ui.pyuic.ui_select_dataset import Ui_MainWindow
+from ui.pyuic.ui_select_file_long_wav import Ui_select_file_long_wav_Dialog
 from ui.pyuic.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
 from ui.pyuic.ui_select_workspace import Ui_Form
 from ui.pyuic.ui_dataset_view import Ui_DatasetMainWindow
@@ -70,17 +72,22 @@ class BiaobeiPingce(QDialog):
             return
         result_a = get_authorizationinfo_by_id(authorizationinfo_id)
         token = result_a[0].authorizationinfo_token
-        if not test_biaobei_pingce(token):
-            requsetlogger.warning("token校验失败，正在尝试重新获取")
-            token = get_biaobei_token(result_a[0].authorizationinfo_APIKey, result_a[0].authorizationinfo_APISecret)
-            if not token:
-                requsetlogger.error("token重新获取失败，重新输入认证信息")
-                return
-            else:
-                AuthorizationInfo.update(authorizationinfo_token=token).where(
-                    AuthorizationInfo.authorizationinfo_id == result_a[0].authorizationinfo_id).execute()
-                requsetlogger.warning("token重新获取成功")
-        requsetlogger.warning("token校验通过")
+        try:
+            if not test_biaobei_pingce(token):
+                requsetlogger.warning("token校验失败，正在尝试重新获取")
+                token = get_biaobei_token(result_a[0].authorizationinfo_APIKey, result_a[0].authorizationinfo_APISecret)
+                if not token:
+                    requsetlogger.error("token重新获取失败，重新输入认证信息")
+                    return
+                else:
+                    AuthorizationInfo.update(authorizationinfo_token=token).where(
+                        AuthorizationInfo.authorizationinfo_id == result_a[0].authorizationinfo_id).execute()
+                    requsetlogger.warning("token重新获取成功")
+            requsetlogger.warning("token校验通过")
+        except requests.exceptions.SSLError:
+            self.ui.label_error.setText("SSLError 请关闭代理在尝试进行评测")
+            requsetlogger.error("SSLError 请关闭代理在尝试进行评测")
+
         if is_skip_ascii:
             results = get_pingce_info(self.dataset_id, is_skip_done)
 
@@ -99,7 +106,8 @@ class BiaobeiPingce(QDialog):
                         int_score = response_json["result"]["int_score"]
                         all_score = response_json["result"]["all_score"]
                         mfa_info = {"biaobei": response_json["result"]["word"]}
-                        # requsetlogger.info(f"标贝评测成功，文本：{text}，准确度得分：{acc_score}，流利度得分：{flu_score}，完整度得分：{int_score}，总分：{all_score}，")
+                        requsetlogger.info(
+                            f"标贝评测成功，文本：{text}，准确度得分：{acc_score}，流利度得分：{flu_score}，完整度得分：{int_score}，总分：{all_score}，")
 
                         Info.update(
                             info_acc_score=acc_score,
@@ -164,10 +172,6 @@ class OutPutSpeaker(QDialog):
             self.ui.lineEdit_sample_rate.setText("44100")
             self.ui.comboBox_channel.setCurrentText("1")
             self.ui.lineEdit_guiyihua.setText("-23")
-
-
-
-
 
         pass
 
@@ -278,6 +282,64 @@ class AddAuthentication(QDialog):
             self.ui.label_error.setText("获取token失败，请检查网络或输入是否有误")
 
 
+class SelectLongWavFile(QDialog):
+    def __init__(self, parent, dataset_id):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = Ui_select_file_long_wav_Dialog()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.ui.lineEdit_wav.setReadOnly(True)
+        self.file_paths = {}
+        self.dataset_id = dataset_id
+        self.ui.pushButton_select_wav.clicked.connect(self.select_file_wav)
+        self.ui.pushButton_submit.clicked.connect(self.save_to_dataset)
+        self.ui.pushButton_back.clicked.connect(self.close)
+        self.ui.lineEdit_min_silence_len.setText(str(600))
+        self.ui.lineEdit_non_silence_thresh.setText(str(-35))
+
+    def select_file_wav(self):
+        filePath, _ = QFileDialog.getOpenFileName(
+            self,  # 父窗口对象
+            "选择你要导入的音频文件",  # 标题
+            r"./",  # 起始目录
+            "音频文件 (*)"  # 选择类型过滤项，过滤内容在括号中
+        )
+        self.file_paths["wav"] = filePath
+        self.ui.lineEdit_wav.setText(filePath)
+
+    def save_to_dataset(self):
+        wav_path = self.file_paths["wav"]
+        workspace_path = global_obj.get_value("workspace_path")
+        wav_path = copy_file_to_workspace(wav_path, os.path.join(workspace_path, "sounds"))
+        speaker = self.ui.lineEdit_spk.text()
+        min_silence_len = int(self.ui.lineEdit_min_silence_len.text())
+        non_silent_ranges = int(self.ui.lineEdit_non_silence_thresh.text())
+        # is_better = self.ui.checkBox.isChecked()
+        is_better = True
+        seek_step = 10
+
+        if wav_path.strip() == "" or None:
+            self.ui.error_lable.setText("输入音频路径为空")
+            return
+        if speaker.strip() == "" or None:
+            self.ui.error_lable.setText("输入发音人为空")
+            return
+
+        if os.path.isfile(wav_path):
+            try:
+                duration = get_audio_duration(wav_path)
+            except:
+                self.ui.error_lable.setText("音频文件解析失败，请检查所选文件是否正确")
+                guilogger.error(f"音频文件 {wav_path} 解析失败，请检查所选文件是否正确")
+                return
+            sound = AudioSegment.from_file(wav_path)
+            if add_info_by_file_long_wav(self.dataset_id, wav_path, speaker, min_silence_len, non_silent_ranges,
+                                         seek_step, is_better,sound):
+                self.parent().refresh_table()
+                self.close()
+
+
 class SelectWavSrtFile(QDialog):
     def __init__(self, parent, dataset_id):
         super().__init__(parent)
@@ -354,7 +416,9 @@ class SelectWavSrtFile(QDialog):
                 self.ui.error_lable.setText(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 guilogger.error(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 return
-            if add_info_by_file_wav_srt(self.dataset_id, wav_path, srt_path, speaker):
+            # if add_info_by_file_wav_srt(self.dataset_id, wav_path, srt_path, speaker):
+            sound = AudioSegment.from_file(wav_path)
+            if add_info_by_file_wav_srt_better(self.dataset_id, wav_path, srt_path, speaker, sound):
                 self.parent().refresh_table()
                 self.close()
 
@@ -426,6 +490,7 @@ class PlaySoundBTN(QPushButton):
 
 class DatasetWindow(QMainWindow):
     reopen = Signal()
+
     # refresh_authorization_table = Signal(object)
 
     def __init__(self, dataset_id):
@@ -444,6 +509,7 @@ class DatasetWindow(QMainWindow):
         # 连接信号
         self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
         self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
+        self.ui.pushButton_add_long_wav.clicked.connect(self.add_from_file_long_wav)
         self.ui.pushButton_add_biaobei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.BiaoBei))
         self.ui.pushButton_add_xunfei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.XunFei))
         self.ui.pushButton_output_speaker.clicked.connect(self.open_output_speaker_dialog)
@@ -592,6 +658,11 @@ class DatasetWindow(QMainWindow):
     def add_from_file_wav_srt(self):
         add_wav_srt_window = SelectWavSrtFile(self, self.dataset_id)
         add_wav_srt_window.exec_()
+
+    def add_from_file_long_wav(self):
+        add_long_wav_window = SelectLongWavFile(self, self.dataset_id)
+        add_long_wav_window.exec_()
+
 
     def edit_info(self, info_id):
         pass
@@ -787,6 +858,7 @@ class SelectDatasetWindow(QMainWindow):
                 dataset = Dataset.get(Dataset.dataset_id == dataset_id)
                 name = dataset.dataset_name
                 dataset.delete_instance()
+                del_file_by_dataset_id(dataset_id)
 
             except Exception as e:
                 guilogger.error(f"删除数据集 id={dataset_id} 失败")

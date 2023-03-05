@@ -14,8 +14,11 @@ import subprocess
 import time
 
 import ffmpeg
+import pydub
 import pypinyin
 import pysrt
+from pydub import AudioSegment
+from pydub.silence import detect_nonsilent
 from pysrt import SubRipTime
 
 from utils import global_obj
@@ -119,6 +122,27 @@ def del_file_end_blank_line(file_path):
     # 写回txt文件
     with open(file_path, 'w', encoding="UTF-8") as f:
         f.writelines(lines)
+
+def del_file_by_dataset_id(dataset_id):
+
+    query_list = get_file_raw_path_by_dataset_id(dataset_id)
+    for row in query_list:
+        file_path = row.info_raw_file_path
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                guilogger.warning(f"文件 {file_path} 已被删除")
+            except:
+                guilogger.error(f"文件 {file_path} 删除失败")
+
+
+
+    # print(query_list[0].info_raw_file_path)
+    # print(query_list[1].info_raw_file_path)
+    # print(query_list)
+
+
+    pass
 
 
 def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate, channels, normalization):
@@ -362,6 +386,81 @@ def add_info_by_file_wav_srt(dataset_id, wav_path, srt_path, speaker, is_merge=T
         line_data["info_raw_file_path"] = wav_path
         line_data["info_start_time"] = line.start.ordinal
         line_data["info_end_time"] = line.end.ordinal
+        data_list.append(line_data)
+
+    insert_info_many(data_list)
+
+    return True
+
+def add_info_by_file_wav_srt_better(dataset_id, wav_path, srt_path, speaker,sound, is_merge=True):
+    subs = pysrt.open(srt_path)
+    if is_merge:
+        subs = merge_srt(subs)
+    data_list = []
+    for line in subs:
+        line: pysrt.srtitem.SubRipItem
+        start = line.start.ordinal
+        end = line.end.ordinal
+        start, end = cut_wav_better(sound, start, end)
+        line_data = {}
+        line_data["dataset_id"] = dataset_id
+        line_data["info_text"] = line.text
+        line_data["info_speaker"] = speaker
+        line_data["info_raw_file_path"] = wav_path
+        line_data["info_start_time"] = start
+        line_data["info_end_time"] = end
+        data_list.append(line_data)
+
+    insert_info_many(data_list)
+
+    return True
+
+
+def cut_wav_better(sound, start, end,step=50):
+    start = max(0, start)
+    end = min(end, len(sound))
+
+    # 向前寻找响度更小的start
+    current_start = start - step
+    volume = sound[start:start + step].dBFS
+    while current_start >= 0:
+        current_end = current_start + step
+        current_segment = sound[current_start:current_end]
+        current_volume = current_segment.dBFS
+        if current_volume > volume:
+            break
+        volume = current_volume
+        start = current_start
+        current_start -= step
+
+    # 向后寻找响度更小的end
+    current_end = end + step
+    volume = sound[current_end - step:current_end].dBFS
+    while current_end <= len(sound):
+        current_start = current_end - step
+        current_segment = sound[current_start:current_end]
+        current_volume = current_segment.dBFS
+        if current_volume > volume:
+            break
+        volume = current_volume
+        end = current_end
+        current_end += step
+
+    return start, end
+
+
+def add_info_by_file_long_wav(dataset_id, wav_path, speaker, min_silence_len, non_silent_ranges, seek_step, is_better,sound):
+    data_list = []
+    nonsilent_times = detect_nonsilent(sound,min_silence_len, non_silent_ranges, seek_step)
+    for start, end in nonsilent_times:
+        if is_better:
+            start, end = cut_wav_better(sound, start, end)
+        line_data = {}
+        line_data["dataset_id"] = dataset_id
+        line_data["info_speaker"] = speaker
+        line_data["info_raw_file_path"] = wav_path
+        line_data["info_start_time"] = start
+        line_data["info_end_time"] = end
         data_list.append(line_data)
 
     insert_info_many(data_list)
