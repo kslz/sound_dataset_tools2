@@ -123,8 +123,8 @@ def del_file_end_blank_line(file_path):
     with open(file_path, 'w', encoding="UTF-8") as f:
         f.writelines(lines)
 
-def del_file_by_dataset_id(dataset_id):
 
+def del_file_by_dataset_id(dataset_id):
     query_list = get_file_raw_path_by_dataset_id(dataset_id)
     for row in query_list:
         file_path = row.info_raw_file_path
@@ -135,12 +135,9 @@ def del_file_by_dataset_id(dataset_id):
             except:
                 guilogger.error(f"文件 {file_path} 删除失败")
 
-
-
     # print(query_list[0].info_raw_file_path)
     # print(query_list[1].info_raw_file_path)
     # print(query_list)
-
 
     pass
 
@@ -246,6 +243,8 @@ def output_like_aishell3(qianzhui, sample_rate, channels, results, output_path, 
         try:
             raw_path = result["info_raw_file_path"]
             info_text = result["info_text"]
+            if info_text is None:
+                info_text = ""
             if is_auto_skip:
                 is_ok = True
                 for c in info_text:
@@ -288,6 +287,8 @@ def output_like_default(qianzhui, sample_rate, channels, results, output_path, i
         try:
             raw_path = result["info_raw_file_path"]
             info_text = result["info_text"]
+            if info_text is None:
+                info_text = ""
             if is_auto_skip:
                 is_ok = True
                 for c in info_text:
@@ -331,6 +332,8 @@ def output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_a
         try:
             raw_path = result["info_raw_file_path"]
             info_text = result["info_text"]
+            if info_text is None:
+                info_text = ""
             if is_auto_skip:
                 is_ok = True
                 for c in info_text:
@@ -347,8 +350,9 @@ def output_like_vits(qianzhui, sample_rate, channels, results, output_path, is_a
             file_w(label_path, line_text, "a")
             output_wav_file(raw_path, start, end, output_file, sample_rate, channels, normalization)
             name_index += 1
-        except:
+        except Exception as e:
             guilogger.error(f"id为 {result['info_id']} 的数据导出失败")
+            print(e)
     del_file_end_blank_line(label_path)
     return name_index - 1
 
@@ -392,7 +396,8 @@ def add_info_by_file_wav_srt(dataset_id, wav_path, srt_path, speaker, is_merge=T
 
     return True
 
-def add_info_by_file_wav_srt_better(dataset_id, wav_path, srt_path, speaker,sound, is_merge=True):
+
+def add_info_by_file_wav_srt_better(dataset_id, wav_path, srt_path, speaker, sound, is_merge=True):
     subs = pysrt.open(srt_path)
     if is_merge:
         subs = merge_srt(subs)
@@ -416,7 +421,7 @@ def add_info_by_file_wav_srt_better(dataset_id, wav_path, srt_path, speaker,soun
     return True
 
 
-def cut_wav_better(sound, start, end,step=50):
+def cut_wav_better(sound, start, end, step=50):
     start = max(0, start)
     end = min(end, len(sound))
 
@@ -449,9 +454,10 @@ def cut_wav_better(sound, start, end,step=50):
     return start, end
 
 
-def add_info_by_file_long_wav(dataset_id, wav_path, speaker, min_silence_len, non_silent_ranges, seek_step, is_better,sound):
+def add_info_by_file_long_wav(dataset_id, wav_path, speaker, min_silence_len, non_silent_ranges, seek_step, is_better,
+                              sound):
     data_list = []
-    nonsilent_times = detect_nonsilent(sound,min_silence_len, non_silent_ranges, seek_step)
+    nonsilent_times = detect_nonsilent(sound, min_silence_len, non_silent_ranges, seek_step)
     for start, end in nonsilent_times:
         if is_better:
             start, end = cut_wav_better(sound, start, end)
