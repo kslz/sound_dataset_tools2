@@ -126,7 +126,7 @@ def del_file_by_dataset_id(dataset_id):
         if os.path.exists(file_path):
             try:
                 os.remove(file_path)
-                guilogger.warning(f"文件 {file_path} 已被删除")
+                guilogger.info(f"文件 {file_path} 已被删除")
             except:
                 guilogger.error(f"文件 {file_path} 删除失败")
 
@@ -363,7 +363,7 @@ def copy_file_to_workspace(raw_path, to_path):
     (
         ffmpeg
         .input(raw_path)
-        .output(new_path, codec="flac", compression_level=5)
+        .output(new_path, codec="flac", compression_level=5, sample_fmt='s16', bits_per_raw_sample=16)
         .run(quiet=True)
     )
 
@@ -533,19 +533,22 @@ def get_audio_duration(file_path):
     :param file_path:
     :return:
     """
-    # 构造 ffprobe 命令行
-    ffprobe_cmd = [
-        os.path.join(ffmpeg_path, 'ffprobe'), '-v', 'quiet', '-print_format', 'json', '-show_format', file_path
-    ]
+    # 构造 ffprobe 命令行 都什么年代了，还在用传统命令行
+    # ffprobe_cmd = [
+    #     os.path.join(ffmpeg_path, 'ffprobe'), '-v', 'quiet', '-print_format', 'json', '-show_format', file_path
+    # ]
+    #
+    # # 执行命令行并解析 JSON 输出
+    # process = subprocess.Popen(ffprobe_cmd, stdout=subprocess.PIPE)
+    # output, error = process.communicate()
+    # output = output.decode('utf-8')
+    # metadata = json.loads(output)
 
-    # 执行命令行并解析 JSON 输出
-    process = subprocess.Popen(ffprobe_cmd, stdout=subprocess.PIPE)
-    output, error = process.communicate()
-    output = output.decode('utf-8')
-    metadata = json.loads(output)
+    probe = ffmpeg.probe(file_path)
+    audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
+    duration = float(audio_stream['duration'])
+    duration = round(duration * 1000)
 
-    # 提取音频文件长度
-    duration = float(metadata['format']['duration'])
     return duration
 
 
