@@ -1,0 +1,1 @@
+pyinstaller main.py -F -n sound_dataset_tools2
