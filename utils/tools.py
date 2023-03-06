@@ -639,6 +639,15 @@ def text_to_aishell3_like(text):
 
 
 def read_ini_config(ini_path="conf/config.ini"):
+    if not os.path.exists(ini_path):
+        # 如果不存在，则创建一个默认配置文件
+        os.makedirs(os.path.dirname(ini_path), exist_ok=True)
+        info = """[program_configs]
+default_workspace = .\workspace
+
+"""
+        with open(ini_path, 'w') as f:
+            f.write(info)
     config = ConfigParserWithFile()
     config.read(ini_path)
     global_obj.set_value("config", config)

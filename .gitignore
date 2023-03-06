@@ -4,3 +4,7 @@ venv
 logs
 workspace
 lib
+build
+dist
+imgs
+*.spec
