@@ -340,8 +340,8 @@ class SelectLongWavFile(QDialog):
         self.ui.pushButton_select_wav.clicked.connect(self.select_file_wav)
         self.ui.pushButton_submit.clicked.connect(self.save_to_dataset)
         self.ui.pushButton_back.clicked.connect(self.close)
-        self.ui.lineEdit_min_silence_len.setText(str(600))
-        self.ui.lineEdit_non_silence_thresh.setText(str(-35))
+        self.ui.lineEdit_min_silence_len.setText(str(1000))
+        self.ui.lineEdit_non_silence_thresh.setText(str(-40))
 
     def select_file_wav(self):
         filePath, _ = QFileDialog.getOpenFileName(
