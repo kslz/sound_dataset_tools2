@@ -238,7 +238,7 @@ def get_speakers(dataset_id):
     return result_list
 
 def get_file_raw_path_by_dataset_id(dataset_id):
-    query = Info.select(Info.info_raw_file_path).distinct().where(Info.dataset_id == 1)
+    query = Info.select(Info.info_raw_file_path).distinct().where(Info.dataset_id == dataset_id)
     return list(query)
 
 
@@ -272,6 +272,10 @@ def insert_info_many(data_list, batch_size=1000):
     for i in range(0, len(data_list), batch_size):
         with db.atomic():
             Info.insert_many(data_list[i:i + batch_size]).execute()
+
+def del_info_by_raw_file_path(file_path):
+    query = Info.delete().where(Info.info_raw_file_path == file_path)
+    query.execute()
 
 
 class Course(BaseModel):

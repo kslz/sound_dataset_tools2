@@ -97,6 +97,9 @@ class Ui_DatasetMainWindow(object):
         self.pushButton_add_long_wav = QPushButton(self.widget_2)
         self.pushButton_add_long_wav.setObjectName(u"pushButton_add_long_wav")
         self.pushButton_add_long_wav.setGeometry(QRect(230, 490, 231, 31))
+        self.pushButton_del_by_raw_wav = QPushButton(self.widget_2)
+        self.pushButton_del_by_raw_wav.setObjectName(u"pushButton_del_by_raw_wav")
+        self.pushButton_del_by_raw_wav.setGeometry(QRect(580, 440, 231, 31))
 
         self.verticalLayout_2.addWidget(self.widget_2)
 
@@ -233,6 +236,7 @@ class Ui_DatasetMainWindow(object):
         self.pushButton_add_wav_srt.setText(QCoreApplication.translate("DatasetMainWindow", u"\u4ece\u6587\u4ef6\u5bfc\u5165\uff08\u97f3\u9891+\u5b57\u5e55\uff09", None))
         self.pushButton_output_speaker.setText(QCoreApplication.translate("DatasetMainWindow", u"\u5bfc\u51fa\u6570\u636e\u96c6\uff08\u5355\u53d1\u97f3\u4eba\uff09", None))
         self.pushButton_add_long_wav.setText(QCoreApplication.translate("DatasetMainWindow", u"\u4ece\u6587\u4ef6\u5bfc\u5165\uff08\u957f\u97f3\u9891\uff09", None))
+        self.pushButton_del_by_raw_wav.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6839\u636e\u6e90\u97f3\u9891\u5220\u9664\u6570\u636e", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u96c6\u6982\u89c8", None))
         self.pushButton_biaobei_pingce.setText(QCoreApplication.translate("DatasetMainWindow", u"\u6807\u8d1d\u8bed\u97f3\u8bc4\u6d4b", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("DatasetMainWindow", u"\u6570\u636e\u5904\u7406", None))

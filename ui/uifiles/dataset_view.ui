@@ -203,6 +203,19 @@
           <string>从文件导入（长音频）</string>
          </property>
         </widget>
+        <widget class="QPushButton" name="pushButton_del_by_raw_wav">
+         <property name="geometry">
+          <rect>
+           <x>580</x>
+           <y>440</y>
+           <width>231</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>根据源音频删除数据</string>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>

@@ -16,6 +16,7 @@ import ui.pyuic.ui_dataset_view
 from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.pyuic.ui_add_dataset import Ui_Dialog
 from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
+from ui.pyuic.ui_del_info_wav import Ui_del_info_wav_Dialog
 from ui.pyuic.ui_edit_info import Ui_EditInfoDialog
 from ui.pyuic.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
 from ui.pyuic.ui_select_dataset import Ui_MainWindow
@@ -281,6 +282,50 @@ class AddAuthentication(QDialog):
         else:
             self.ui.label_error.setText("获取token失败，请检查网络或输入是否有误")
 
+class DelInfoByWav(QDialog):
+    def __init__(self, parent, dataset_id):
+        super().__init__(parent)
+        # 使用ui文件导入定义界面类
+        self.ui = Ui_del_info_wav_Dialog()
+        # 初始化界面
+        self.ui.setupUi(self)
+        self.dataset_id = dataset_id
+        self.add_file_select()
+        self.ui.pushButton_submit.clicked.connect(self.del_info_and_file)
+        self.ui.pushButton_back.clicked.connect(self.close)
+
+    def add_file_select(self):
+        self.ui.comboBox_files.clear()
+        results = get_file_raw_path_by_dataset_id(self.dataset_id)
+        for result in results:
+            file_path = result.info_raw_file_path
+            file_name = os.path.basename(file_path)
+            file_name = os.path.splitext(file_name)[0]
+            self.ui.comboBox_files.addItem(file_name, file_path)
+
+
+    def del_info_and_file(self):
+        file_path = self.ui.comboBox_files.currentData()
+        print(f"删除{file_path}")
+        try:
+            del_info_by_raw_file_path(file_path)
+        except:
+            guilogger.error(f"文件 {file_path} 关联的数据删除失败")
+        else:
+            guilogger.info(f"文件 {file_path} 关联的数据已被删除")
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                    guilogger.info(f"文件 {file_path} 已被删除")
+                except:
+                    guilogger.error(f"文件 {file_path} 删除失败")
+        self.add_file_select()
+        self.parent().refresh_table()
+        self.close()
+
+
+
+
 
 class SelectLongWavFile(QDialog):
     def __init__(self, parent, dataset_id):
@@ -329,9 +374,10 @@ class SelectLongWavFile(QDialog):
         if os.path.isfile(wav_path):
             try:
                 duration = get_audio_duration(wav_path)
-            except:
+            except Exception as e:
                 self.ui.error_lable.setText("音频文件解析失败，请检查所选文件是否正确")
                 guilogger.error(f"音频文件 {wav_path} 解析失败，请检查所选文件是否正确")
+                print(e)
                 return
             sound = AudioSegment.from_file(wav_path)
             if add_info_by_file_long_wav(self.dataset_id, wav_path, speaker, min_silence_len, non_silent_ranges,
@@ -505,6 +551,8 @@ class DatasetWindow(QMainWindow):
         self.page_size = 15
         self.refresh_table()
         self.refresh_authorization_table()
+        self.ui.tabWidget.setTabVisible(1, False)
+        self.ui.tabWidget.setTabVisible(2, False)
 
         # 连接信号
         self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
@@ -514,6 +562,7 @@ class DatasetWindow(QMainWindow):
         self.ui.pushButton_add_xunfei.clicked.connect(lambda: self.open_add_authorization_dialog(DbStr.XunFei))
         self.ui.pushButton_output_speaker.clicked.connect(self.open_output_speaker_dialog)
         self.ui.pushButton_biaobei_pingce.clicked.connect(self.open_biaobei_pingce)
+        self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
 
     def set_table_style(self):
 
@@ -556,6 +605,10 @@ class DatasetWindow(QMainWindow):
     def open_output_speaker_dialog(self):
         output_speaker_dialog = OutPutSpeaker(self, self.dataset_id)
         output_speaker_dialog.exec_()
+
+    def open_del_info_by_wav_dialog(self):
+        del_info_by_wav = DelInfoByWav(self, self.dataset_id)
+        del_info_by_wav.exec_()
 
     def refresh_authorization_table(self):
         self.ui.tableWidget_biaobei.setRowCount(0)
