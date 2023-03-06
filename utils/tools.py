@@ -26,11 +26,6 @@ from utils.peewee_orm import *
 from utils.log import *
 from utils.request_tools import get_biaobei_token
 
-if os.path.isfile(os.path.join("./lib/ffmpeg/", "ffmpeg.exe")):
-    ffmpeg_path = "./lib/ffmpeg/"
-else:
-    ffmpeg_path = ""
-
 
 class GeshiStr():
     aishell3 = "AISHELL-3"

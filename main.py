@@ -4,6 +4,7 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+import utils.add_path
 import configparser
 
 from utils import global_obj
