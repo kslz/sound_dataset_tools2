@@ -153,7 +153,7 @@ def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate, chann
         if raw_channels > channels == 1:
             normalization += 3
         result = result.filter("loudnorm", I=normalization, TP=-1, LRA=11, linear="true")
-        result.output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec).run_async(quiet=True)
+    result.output(new_path, format='wav', ac=channels, ar=sample_rate, acodec=codec).run_async(quiet=True)
 
     # 从长音频文件中提取指定时间段的音频并先转为单声道音频，再进行归一化
     # 注意：如果直接将双声道音频转换为单声道，并进行归一化，会导致单声道音频的输出结果偏低（相当于降低了3）
