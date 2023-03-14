@@ -139,6 +139,7 @@ class OutPutSpeaker(QDialog):
         self.ui.pushButton_next.clicked.connect(self.output_info)
         self.ui.pushButton_read_preinstall.clicked.connect(self.use_preinstall)
         self.ui.pushButton_back.clicked.connect(self.close)
+        self.ui.comboBox_geshi.currentIndexChanged.connect(self.auto_skip_change_enable)
 
     def add_info(self):
         """
@@ -152,6 +153,7 @@ class OutPutSpeaker(QDialog):
         self.ui.comboBox_preinstall.addItem(f"VITS", GeshiStr.vits)
         self.ui.comboBox_preinstall.setCurrentText(GeshiStr.vits)
         self.use_preinstall()
+        self.auto_skip_change_enable()
         result_list = get_speakers(self.dataset_id)
         for line in result_list:
             if line[1] == "shibie_spk":
@@ -159,7 +161,16 @@ class OutPutSpeaker(QDialog):
             else:
                 text = f"{line[0]}-未识别"
             self.ui.comboBox_speaker.addItem(text, line)
+            # self.ui.checkBox_auto_skip.setEnabled(False)
+
+    def auto_skip_change_enable(self):
+        self.ui.checkBox_auto_skip.setEnabled(True)
+        self.ui.checkBox_auto_skip.setChecked(False)
+        now_geshi = self.ui.comboBox_geshi.currentData()
+        if now_geshi == GeshiStr.aishell3:
+            self.ui.checkBox_auto_skip.setChecked(True)
             self.ui.checkBox_auto_skip.setEnabled(False)
+
 
     def use_preinstall(self):
         pre_name = self.ui.comboBox_preinstall.currentText()

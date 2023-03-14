@@ -8,3 +8,4 @@ build
 dist
 imgs
 *.spec
+out
