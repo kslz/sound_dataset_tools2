@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>250</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>600</width>
-    <height>250</height>
+    <height>300</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>600</width>
-    <height>250</height>
+    <height>300</height>
    </size>
   </property>
   <property name="font">
@@ -125,7 +125,7 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>200</y>
+     <y>210</y>
      <width>81</width>
      <height>24</height>
     </rect>
@@ -138,7 +138,7 @@
    <property name="geometry">
     <rect>
      <x>390</x>
-     <y>200</y>
+     <y>210</y>
      <width>81</width>
      <height>24</height>
     </rect>
@@ -151,7 +151,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>170</y>
+     <y>190</y>
      <width>541</width>
      <height>16</height>
     </rect>
@@ -192,6 +192,19 @@
    </property>
    <property name="text">
     <string>发音人：</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_ismerge">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>160</y>
+     <width>421</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动将相离过近的字幕合为一个（剪映字幕建议勾选）</string>
    </property>
   </widget>
  </widget>

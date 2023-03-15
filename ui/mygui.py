@@ -171,7 +171,6 @@ class OutPutSpeaker(QDialog):
             self.ui.checkBox_auto_skip.setChecked(True)
             self.ui.checkBox_auto_skip.setEnabled(False)
 
-
     def use_preinstall(self):
         pre_name = self.ui.comboBox_preinstall.currentText()
         if pre_name == GeshiStr.vits:
@@ -293,6 +292,7 @@ class AddAuthentication(QDialog):
         else:
             self.ui.label_error.setText("获取token失败，请检查网络或输入是否有误")
 
+
 class DelInfoByWav(QDialog):
     def __init__(self, parent, dataset_id):
         super().__init__(parent)
@@ -314,7 +314,6 @@ class DelInfoByWav(QDialog):
             file_name = os.path.splitext(file_name)[0]
             self.ui.comboBox_files.addItem(file_name, file_path)
 
-
     def del_info_and_file(self):
         file_path = self.ui.comboBox_files.currentData()
         print(f"删除{file_path}")
@@ -333,9 +332,6 @@ class DelInfoByWav(QDialog):
         self.add_file_select()
         self.parent().refresh_table()
         self.close()
-
-
-
 
 
 class SelectLongWavFile(QDialog):
@@ -392,7 +388,7 @@ class SelectLongWavFile(QDialog):
                 return
             sound = AudioSegment.from_file(wav_path)
             if add_info_by_file_long_wav(self.dataset_id, wav_path, speaker, min_silence_len, non_silent_ranges,
-                                         seek_step, is_better,sound):
+                                         seek_step, is_better, sound):
                 self.parent().refresh_table()
                 self.close()
 
@@ -439,6 +435,8 @@ class SelectWavSrtFile(QDialog):
         wav_path = copy_file_to_workspace(wav_path, os.path.join(workspace_path, "sounds"))
         srt_path = self.file_paths["srt"]
         speaker = self.ui.lineEdit_spk.text()
+        is_merge_srt = self.ui.checkBox_ismerge.isChecked()
+
         if wav_path.strip() == "" or None:
             self.ui.error_lable.setText("输入音频路径为空")
             return
@@ -475,7 +473,7 @@ class SelectWavSrtFile(QDialog):
                 return
             # if add_info_by_file_wav_srt(self.dataset_id, wav_path, srt_path, speaker):
             sound = AudioSegment.from_file(wav_path)
-            if add_info_by_file_wav_srt_better(self.dataset_id, wav_path, srt_path, speaker, sound):
+            if add_info_by_file_wav_srt_better(self.dataset_id, wav_path, srt_path, speaker, sound, is_merge_srt):
                 self.parent().refresh_table()
                 self.close()
 
@@ -726,7 +724,6 @@ class DatasetWindow(QMainWindow):
     def add_from_file_long_wav(self):
         add_long_wav_window = SelectLongWavFile(self, self.dataset_id)
         add_long_wav_window.exec_()
-
 
     def edit_info(self, info_id):
         pass
