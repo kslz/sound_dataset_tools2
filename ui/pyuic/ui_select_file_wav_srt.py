@@ -15,16 +15,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QLabel, QLineEdit,
-    QPushButton, QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QLabel,
+    QLineEdit, QPushButton, QSizePolicy, QWidget)
 
 class Ui_select_file_wav_srt_Dialog(object):
     def setupUi(self, select_file_wav_srt_Dialog):
         if not select_file_wav_srt_Dialog.objectName():
             select_file_wav_srt_Dialog.setObjectName(u"select_file_wav_srt_Dialog")
-        select_file_wav_srt_Dialog.resize(600, 250)
-        select_file_wav_srt_Dialog.setMinimumSize(QSize(600, 250))
-        select_file_wav_srt_Dialog.setMaximumSize(QSize(600, 250))
+        select_file_wav_srt_Dialog.resize(600, 300)
+        select_file_wav_srt_Dialog.setMinimumSize(QSize(600, 300))
+        select_file_wav_srt_Dialog.setMaximumSize(QSize(600, 300))
         font = QFont()
         font.setPointSize(12)
         select_file_wav_srt_Dialog.setFont(font)
@@ -51,13 +51,13 @@ class Ui_select_file_wav_srt_Dialog(object):
         self.pushButton_select_srt.setGeometry(QRect(500, 99, 81, 23))
         self.pushButton_back = QPushButton(select_file_wav_srt_Dialog)
         self.pushButton_back.setObjectName(u"pushButton_back")
-        self.pushButton_back.setGeometry(QRect(500, 200, 81, 24))
+        self.pushButton_back.setGeometry(QRect(500, 210, 81, 24))
         self.pushButton_submit = QPushButton(select_file_wav_srt_Dialog)
         self.pushButton_submit.setObjectName(u"pushButton_submit")
-        self.pushButton_submit.setGeometry(QRect(390, 200, 81, 24))
+        self.pushButton_submit.setGeometry(QRect(390, 210, 81, 24))
         self.error_lable = QLabel(select_file_wav_srt_Dialog)
         self.error_lable.setObjectName(u"error_lable")
-        self.error_lable.setGeometry(QRect(30, 170, 541, 16))
+        self.error_lable.setGeometry(QRect(30, 190, 541, 16))
         self.error_lable.setFont(font)
         self.error_lable.setStyleSheet(u"color: red;")
         self.lineEdit_spk = QLineEdit(select_file_wav_srt_Dialog)
@@ -66,6 +66,9 @@ class Ui_select_file_wav_srt_Dialog(object):
         self.label_4 = QLabel(select_file_wav_srt_Dialog)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setGeometry(QRect(30, 130, 81, 16))
+        self.checkBox_ismerge = QCheckBox(select_file_wav_srt_Dialog)
+        self.checkBox_ismerge.setObjectName(u"checkBox_ismerge")
+        self.checkBox_ismerge.setGeometry(QRect(30, 160, 421, 20))
 
         self.retranslateUi(select_file_wav_srt_Dialog)
 
@@ -86,5 +89,6 @@ class Ui_select_file_wav_srt_Dialog(object):
         self.error_lable.setText("")
         self.lineEdit_spk.setText("")
         self.label_4.setText(QCoreApplication.translate("select_file_wav_srt_Dialog", u"\u53d1\u97f3\u4eba\uff1a", None))
+        self.checkBox_ismerge.setText(QCoreApplication.translate("select_file_wav_srt_Dialog", u"\u81ea\u52a8\u5c06\u76f8\u79bb\u8fc7\u8fd1\u7684\u5b57\u5e55\u5408\u4e3a\u4e00\u4e2a\uff08\u526a\u6620\u5b57\u5e55\u5efa\u8bae\u52fe\u9009\uff09", None))
     # retranslateUi
 
