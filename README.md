@@ -97,7 +97,9 @@ python main.py
 
 导入后的界面如图所示，你可以在左侧的下拉框中选择翻页，也可以点击试听音频段
 
-![image-20230306191943292](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230306191943292.png)
+![image-20230325203520340](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230325203520340.png)
+
+点击快速导出后会将当前音频导出至 `.\workspace\output\fastoutput\` 目录下
 
 ##### 从文件导入（长音频）
 
