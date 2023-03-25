@@ -137,7 +137,7 @@ def del_file_by_dataset_id(dataset_id):
     pass
 
 
-def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate, channels, normalization):
+def output_wav_file(wav_path, start_time, end_time, new_path, sample_rate="", channels="", normalization=""):
     codec = 'pcm_s16le'
     if sample_rate == "":
         sample_rate = 44100
@@ -505,6 +505,16 @@ def merge_srt(subs, min_time=35):
                 subs2.append(line)
                 break
     return subs2
+
+
+def fast_output_sound(wav_path, start_time, end_time, output_name):
+    workspace_path = global_obj.get_value("workspace_path")
+    output_path = os.path.join(workspace_path, "output", "fastoutput")
+    os.makedirs(output_path, exist_ok=True)
+    output_path = os.path.join(output_path, output_name)
+    output_wav_file(wav_path, start_time, end_time, output_path)
+    guilogger.info(f"快速导出音频文件文件 {output_path}")
+
 
 
 def play_by_ffmpeg(wav_path, start_time, end_time):

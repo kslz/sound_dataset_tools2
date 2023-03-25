@@ -489,6 +489,26 @@ class SelectWavSrtFile(QDialog):
         self.close()
 
 
+class FastOutputSoundBTN(QPushButton):
+    def __init__(self, text, info_id, parent):
+        super().__init__(text, parent)
+        self.info_id = info_id
+        self.clicked.connect(self.fast_output_sound)
+        # self.setText("快速导出")
+        # info = Info.get_by_id(self.info_id)
+        # wav_path = info.info_raw_file_path
+        # start_time = info.info_start_time
+        # end_time = info.info_end_time
+
+    def fast_output_sound(self):
+        info = Info.get_by_id(self.info_id)
+        wav_path = info.info_raw_file_path
+        start_time = info.info_start_time
+        end_time = info.info_end_time
+        output_name = str(self.info_id) + ".wav"
+        fast_output_sound(wav_path, start_time, end_time, output_name)
+
+
 class PlaySoundBTN(QPushButton):
     class PlaySoundThread(QtCore.QThread):
         update_signal = Signal(str, bool)
@@ -693,12 +713,18 @@ class DatasetWindow(QMainWindow):
             # self.ui.tableWidget.setItem(row, 5, QTableWidgetItem(str(info_id) + "一些操作"))
 
             btn_shiting = PlaySoundBTN('试听', info_id, self)
+            btn_shiting.setMinimumWidth(50)
+            btn_fastoutput = FastOutputSoundBTN('快速导出', info_id, self)
+            btn_fastoutput.setMinimumWidth(80)
             btn_bianji = QPushButton('编辑', self)
-            btn_shiting.clicked.connect(lambda: self.edit_info(info_id))
+            btn_bianji.setMinimumWidth(50)
+            btn_bianji.clicked.connect(lambda: self.edit_info(info_id))
             self.btn_dict[f"{row}_shiting"] = btn_shiting
+            self.btn_dict[f"{row}_fastoutput"] = btn_fastoutput
             self.btn_dict[f"{row}_bianji"] = btn_bianji
             layout = QHBoxLayout()
             layout.addWidget(self.btn_dict[f"{row}_shiting"])
+            layout.addWidget(self.btn_dict[f"{row}_fastoutput"])
             layout.addWidget(self.btn_dict[f"{row}_bianji"])
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(1)
