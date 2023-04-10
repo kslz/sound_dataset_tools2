@@ -70,19 +70,6 @@
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>290</x>
-     <y>20</y>
-     <width>91</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>试听</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
@@ -94,16 +81,6 @@
    </property>
    <property name="text">
     <string>发音人：</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="comboBox">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>80</y>
-     <width>231</width>
-     <height>22</height>
-    </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_2">
@@ -130,6 +107,71 @@
    </property>
    <property name="text">
     <string>确定</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_info_speaker">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>80</y>
+     <width>231</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>数据id</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>开始时间(ms)：</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>结束时间(ms)：</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_info_starttime">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>110</y>
+     <width>231</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_info_endtime">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>140</y>
+     <width>231</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
    </property>
   </widget>
  </widget>
