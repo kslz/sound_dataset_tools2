@@ -4,8 +4,10 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+from PySide6.QtCore import QRect
 from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog
 
+from ui.mywidget import *
 from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
 from ui.pyuic.ui_del_info_wav import Ui_del_info_wav_Dialog
@@ -28,6 +30,17 @@ class EditInfo(QDialog):
         self.ui.setupUi(self)
         self.info_id = info_id
         # self.add_info()
+
+    def add_info(self):
+        info = Info.get_by_id(self.info_id)
+        wav_path = info.info_raw_file_path
+        start_time = info.info_start_time
+        end_time = info.info_end_time
+        self.btn_shiting = PlayNowSoundBTN('试听', self)
+        self.btn_shiting.setGeometry(QRect(290, 20, 91, 24))
+
+
+
 
 
 class BiaobeiPingce(QDialog):
