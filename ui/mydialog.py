@@ -7,7 +7,7 @@
 from PySide6.QtCore import QRect
 from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog
 
-from ui.mywidget import *
+from ui.mywidget import PlayNowSoundBTN
 from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
 from ui.pyuic.ui_del_info_wav import Ui_del_info_wav_Dialog
@@ -29,13 +29,24 @@ class EditInfo(QDialog):
         # 初始化界面
         self.ui.setupUi(self)
         self.info_id = info_id
-        # self.add_info()
+        self.add_info()
 
     def add_info(self):
+        print(self.info_id)
         info = Info.get_by_id(self.info_id)
         wav_path = info.info_raw_file_path
-        start_time = info.info_start_time
-        end_time = info.info_end_time
+        start_time = str(info.info_start_time)
+        end_time = str(info.info_end_time)
+        text = info.info_text
+        info_id = str(info.info_id)
+        speaker = info.info_speaker
+
+        self.ui.lineEdit_info_text.setText(text)
+        self.ui.lineEdit_info_starttime.setText(start_time)
+        self.ui.lineEdit_info_endtime.setText(end_time)
+        self.ui.label_info_id.setText(info_id)
+        self.ui.label_info_speaker.setText(speaker)
+
         self.btn_shiting = PlayNowSoundBTN('试听', self)
         self.btn_shiting.setGeometry(QRect(290, 20, 91, 24))
 

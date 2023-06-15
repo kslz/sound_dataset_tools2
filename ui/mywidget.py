@@ -128,3 +128,15 @@ class PlayNowSoundBTN(QPushButton):
     def set_text(self, text, is_enabled):
         self.setText(text)
         # self.setEnabled(is_enabled)
+
+
+class BianJiBTN(QPushButton):
+
+    on_clicked = Signal(int)
+    def __init__(self, text, info_id):
+        super().__init__(text=text)
+        self.info_id = info_id
+        self.clicked.connect(self.button_clicked)
+
+    def button_clicked(self):
+        self.on_clicked.emit(self.info_id)

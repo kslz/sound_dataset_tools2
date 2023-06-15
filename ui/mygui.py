@@ -178,9 +178,9 @@ class DatasetWindow(QMainWindow):
             btn_shiting.setMinimumWidth(50)
             btn_fastoutput = FastOutputSoundBTN('快速导出', info_id, self)
             btn_fastoutput.setMinimumWidth(80)
-            btn_bianji = QPushButton('编辑', self)
+            btn_bianji = BianJiBTN('编辑', info_id)
             btn_bianji.setMinimumWidth(50)
-            btn_bianji.clicked.connect(lambda: self.edit_info(info_id))
+            btn_bianji.on_clicked.connect(self.edit_info)
             self.btn_dict[f"{row}_shiting"] = btn_shiting
             self.btn_dict[f"{row}_fastoutput"] = btn_fastoutput
             self.btn_dict[f"{row}_bianji"] = btn_bianji
@@ -188,6 +188,7 @@ class DatasetWindow(QMainWindow):
             layout.addWidget(self.btn_dict[f"{row}_shiting"])
             layout.addWidget(self.btn_dict[f"{row}_fastoutput"])
             layout.addWidget(self.btn_dict[f"{row}_bianji"])
+            self.btn_dict = {}
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(1)
             caozuo_widget = QWidget()
@@ -214,6 +215,13 @@ class DatasetWindow(QMainWindow):
         add_long_wav_window.exec_()
 
     def edit_info(self, info_id):
+        print("触发编辑")
+        print(info_id)
+        edit_info_window = EditInfo(self,info_id)
+        edit_info_window.exec_()
+
+        # add_long_wav_window = SelectLongWavFile(self, self.dataset_id)
+        # add_long_wav_window.exec_()
         pass
 
 
