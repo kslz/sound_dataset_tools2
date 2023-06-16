@@ -5,7 +5,7 @@
     @Url : https://github.com/kslz
 """
 from PySide6 import QtCore
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QThread
 from PySide6.QtWidgets import QPushButton
 
 from utils.tools import *
@@ -131,8 +131,8 @@ class PlayNowSoundBTN(QPushButton):
 
 
 class BianJiBTN(QPushButton):
-
     on_clicked = Signal(int)
+
     def __init__(self, text, info_id):
         super().__init__(text=text)
         self.info_id = info_id
@@ -140,3 +140,58 @@ class BianJiBTN(QPushButton):
 
     def button_clicked(self):
         self.on_clicked.emit(self.info_id)
+
+
+class AudioButton(QPushButton):
+    def __init__(self, wav_path, start_time, end_time, parent=None):
+        super().__init__(parent)
+        self.setText("试听")
+        self.audio_thread = None
+        self.wav_path = wav_path
+        self.start_time = start_time
+        self.end_time = end_time
+
+        # 连接按钮点击事件的槽函数
+        self.clicked.connect(self.on_button_clicked)
+
+    def on_button_clicked(self):
+        if self.audio_thread is not None and self.audio_thread.is_playing:
+            # 如果音频正在播放，停止播放
+            print("停止播放")
+            self.audio_thread.exit()
+            self.audio_thread = None
+            self.setText("试听")
+        else:
+            # 如果音频没有在播放，开始播放
+            self.audio_thread = AudioThread(self.wav_path,self.start_time,self.end_time)
+            self.audio_thread.finished.connect(self.on_audio_finished)
+            self.audio_thread.start()
+            self.setText("停止")
+
+    def on_audio_finished(self):
+        self.audio_thread = None
+        self.setText("试听")
+
+
+# 自定义的音频播放线程
+class AudioThread(QThread):
+    finished = Signal()  # 定义一个信号，用于通知播放完成
+
+    def __init__(self, wav_path, start_time, end_time, parent=None):
+        super().__init__(parent)
+        self.is_playing = False
+        self.wav_path = wav_path
+        self.start_time = start_time
+        self.end_time = end_time
+
+    def run(self):
+        # 在这里实现你的音频播放函数
+        self.is_playing = True
+        # 播放音频的代码
+        # ...
+
+        # 模拟音频播放时间
+        play_by_ffmpeg(self.wav_path, self.start_time, self.end_time)
+
+        self.is_playing = False
+        self.finished.emit()  # 发送播放完成的信号

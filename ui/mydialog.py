@@ -7,7 +7,7 @@
 from PySide6.QtCore import QRect
 from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog
 
-from ui.mywidget import PlayNowSoundBTN
+from ui.mywidget import PlayNowSoundBTN, AudioButton
 from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
 from ui.pyuic.ui_del_info_wav import Ui_del_info_wav_Dialog
@@ -32,7 +32,6 @@ class EditInfo(QDialog):
         self.add_info()
 
     def add_info(self):
-        print(self.info_id)
         info = Info.get_by_id(self.info_id)
         wav_path = info.info_raw_file_path
         start_time = str(info.info_start_time)
@@ -47,11 +46,9 @@ class EditInfo(QDialog):
         self.ui.label_info_id.setText(info_id)
         self.ui.label_info_speaker.setText(speaker)
 
-        self.btn_shiting = PlayNowSoundBTN('试听', self)
+        # self.btn_shiting = PlayNowSoundBTN('试听', self)
+        self.btn_shiting = AudioButton(wav_path, int(start_time), int(end_time), self)
         self.btn_shiting.setGeometry(QRect(290, 20, 91, 24))
-
-
-
 
 
 class BiaobeiPingce(QDialog):
@@ -494,4 +491,3 @@ class SelectWavSrtFile(QDialog):
 
     def go_back(self):
         self.close()
-
