@@ -85,51 +85,6 @@ class PlaySoundBTN(QPushButton):
         # self.setEnabled(is_enabled)
 
 
-class PlayNowSoundBTN(QPushButton):
-    class PlaySoundThread(QtCore.QThread):
-        update_signal = Signal(str, bool)
-
-        # stop_thread_signal = Signal()
-
-        def __init__(self, wav_path, start_time, end_time):
-            super().__init__()
-            # self.stop_flag = False
-            # self.stop_thread_signal.connect(self.stop_thread)
-            self.wav_path = wav_path
-            self.start_time = start_time
-            self.end_time = end_time
-
-        def run(self):
-            self.update_signal.emit("播放中", False)
-            play_by_ffmpeg(self.wav_path, self.start_time, self.end_time)
-            self.update_signal.emit("试听", True)
-
-        # def stop_thread(self):
-        #     self.stop_flag = True
-        #     print("收到停止信号")
-        #     self.wait()
-
-    def __init__(self, text, parent):
-        super().__init__(text, parent)
-
-    def play_or_stop_sound(self, wav_path, start_time, end_time):
-        # 多线程避免阻塞界面
-        if self.text() == "试听":
-            self.play_thread = self.PlaySoundThread(wav_path, start_time, end_time)  # 实例化线程类
-            self.play_thread.update_signal.connect(lambda text, is_enabled: self.set_text(text, is_enabled))
-            self.play_thread.start()
-        else:
-            # 终止播放失败
-            # self.play_thread.stop_thread_signal.emit()
-            # self.play_thread.exit()
-            # self.set_text("试听", True)
-            pass
-
-    def set_text(self, text, is_enabled):
-        self.setText(text)
-        # self.setEnabled(is_enabled)
-
-
 class BianJiBTN(QPushButton):
     on_clicked = Signal(int)
 
@@ -157,8 +112,9 @@ class AudioButton(QPushButton):
     def on_button_clicked(self):
         if self.audio_thread is not None and self.audio_thread.is_playing:
             # 如果音频正在播放，停止播放
-            print("停止播放")
-            self.audio_thread.exit()
+            # print("停止播放")
+            self.audio_thread.stop()
+            self.audio_thread.wait()
             self.audio_thread = None
             self.setText("试听")
         else:
@@ -185,13 +141,35 @@ class AudioThread(QThread):
         self.end_time = end_time
 
     def run(self):
-        # 在这里实现你的音频播放函数
         self.is_playing = True
-        # 播放音频的代码
-        # ...
 
-        # 模拟音频播放时间
-        play_by_ffmpeg(self.wav_path, self.start_time, self.end_time)
+        # play_by_ffmpeg(self.wav_path, self.start_time, self.end_time)
+        # 如果用函数形式调用，执行self.audio_thread.terminate()的时候声音就会卡几秒才停，直接写代码就可以秒停，原因未知
+        wav_path = self.wav_path
+        start_time = self.start_time
+        end_time = self.end_time
+
+        duration = (end_time - start_time) / 1000
+        start_time = start_time / 1000
+
+        # 从长音频文件中提取指定时间段的音频
+        output = (
+            ffmpeg
+            .input(wav_path, ss=start_time, t=duration)
+            # .filter("loudnorm", I="-23", dual_mono="true")  # 归一化
+            .output('pipe:', format='wav', ar=44100)
+            .run(capture_stdout=True)
+        )
+
+        # 播放输出的音频
+        self.process = subprocess.Popen(['ffplay', "-nodisp", "-autoexit", '-'], stdin=subprocess.PIPE)
+        self.process.communicate(output[0])
+
 
         self.is_playing = False
         self.finished.emit()  # 发送播放完成的信号
+
+    def stop(self):
+        if self.process and self.process.poll() is None:  # 检查子进程是否在运行
+            self.process.terminate()  # 终止子进程
+

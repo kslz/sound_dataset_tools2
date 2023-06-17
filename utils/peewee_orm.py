@@ -154,6 +154,9 @@ def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
         Info.info_text,
         Info.info_speaker,
         Info.info_shibie_speaker,
+        Info.info_start_time,
+        Info.info_end_time,
+        Info.info_raw_file_path,
     )
     .join(subquery, on=(Info.info_id == subquery.c.info_id))
     .where(

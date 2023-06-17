@@ -157,6 +157,9 @@ class DatasetWindow(QMainWindow):
             index = i + (page_number - 1) * page_size
             info_id = result['info_id']
             info_text = result['info_text']
+            info_start_time = result['info_start_time']
+            info_end_time = result['info_end_time']
+            info_file_path = result['info_raw_file_path']
             if result['info_shibie_speaker'] != None:
                 speaker = result['info_shibie_speaker']
             else:
@@ -174,7 +177,8 @@ class DatasetWindow(QMainWindow):
             # self.ui.tableWidget.setItem(row, 3, QTableWidgetItem(is_separate_file))
             # self.ui.tableWidget.setItem(row, 5, QTableWidgetItem(str(info_id) + "一些操作"))
 
-            btn_shiting = PlaySoundBTN('试听', info_id, self)
+            # btn_shiting = PlaySoundBTN('试听', info_id, self)
+            btn_shiting = AudioButton(info_file_path, info_start_time, info_end_time, self)
             btn_shiting.setMinimumWidth(50)
             btn_fastoutput = FastOutputSoundBTN('快速导出', info_id, self)
             btn_fastoutput.setMinimumWidth(80)

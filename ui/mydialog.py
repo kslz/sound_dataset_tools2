@@ -7,7 +7,7 @@
 from PySide6.QtCore import QRect
 from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog
 
-from ui.mywidget import PlayNowSoundBTN, AudioButton
+from ui.mywidget import AudioButton
 from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
 from ui.pyuic.ui_del_info_wav import Ui_del_info_wav_Dialog
