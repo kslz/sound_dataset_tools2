@@ -119,7 +119,7 @@ class AudioButton(QPushButton):
             self.setText("试听")
         else:
             # 如果音频没有在播放，开始播放
-            self.audio_thread = AudioThread(self.wav_path,self.start_time,self.end_time)
+            self.audio_thread = AudioThread(self.wav_path, self.start_time, self.end_time)
             self.audio_thread.finished.connect(self.on_audio_finished)
             self.audio_thread.start()
             self.setText("停止")
@@ -165,7 +165,6 @@ class AudioThread(QThread):
         self.process = subprocess.Popen(['ffplay', "-nodisp", "-autoexit", '-'], stdin=subprocess.PIPE)
         self.process.communicate(output[0])
 
-
         self.is_playing = False
         self.finished.emit()  # 发送播放完成的信号
 
@@ -173,3 +172,14 @@ class AudioThread(QThread):
         if self.process and self.process.poll() is None:  # 检查子进程是否在运行
             self.process.terminate()  # 终止子进程
 
+
+class AudioNowButton(AudioButton):
+    def __init__(self, wav_path, start_time, end_time, parent=None):
+        super().__init__(wav_path, start_time, end_time, parent)
+        self.clicked.disconnect(super().on_button_clicked)
+
+    def on_button_clicked_new(self, start_time, end_time):
+        self.start_time = int(start_time)
+        self.end_time = int(end_time)
+
+        self.on_button_clicked()

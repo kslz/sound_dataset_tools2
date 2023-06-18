@@ -219,13 +219,9 @@ class DatasetWindow(QMainWindow):
         add_long_wav_window.exec_()
 
     def edit_info(self, info_id):
-        # print("触发编辑")
-        # print(info_id)
         edit_info_window = EditInfo(self,info_id)
+        edit_info_window.windowClosed.connect(self.refresh_table)
         edit_info_window.exec_()
-
-        # add_long_wav_window = SelectLongWavFile(self, self.dataset_id)
-        # add_long_wav_window.exec_()
         pass
 
 

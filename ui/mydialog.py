@@ -4,10 +4,10 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-from PySide6.QtCore import QRect
+from PySide6.QtCore import QRect, Signal
 from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog
 
-from ui.mywidget import AudioButton
+from ui.mywidget import AudioButton, AudioNowButton
 from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
 from ui.pyuic.ui_del_info_wav import Ui_del_info_wav_Dialog
@@ -22,6 +22,8 @@ from utils.tools import *
 
 
 class EditInfo(QDialog):
+    windowClosed = Signal()
+
     def __init__(self, parent, info_id):
         super().__init__(parent)
         # 使用ui文件导入定义界面类
@@ -30,6 +32,8 @@ class EditInfo(QDialog):
         self.ui.setupUi(self)
         self.info_id = info_id
         self.add_info()
+        self.ui.pushButton_3.clicked.connect(self.update_info)
+        self.ui.pushButton_2.clicked.connect(self.close)
 
     def add_info(self):
         info = Info.get_by_id(self.info_id)
@@ -47,8 +51,26 @@ class EditInfo(QDialog):
         self.ui.label_info_speaker.setText(speaker)
 
         # self.btn_shiting = PlayNowSoundBTN('试听', self)
-        self.btn_shiting = AudioButton(wav_path, int(start_time), int(end_time), self)
+        self.btn_shiting = AudioNowButton(wav_path, int(start_time), int(end_time), self)
+        self.btn_shiting.clicked.connect(self.shiting)
+        # btn_sc.clicked.connect(lambda: self.del_dataset(dataset_id, dataset_name))
         self.btn_shiting.setGeometry(QRect(290, 20, 91, 24))
+
+    def shiting(self):
+        start_time = self.ui.lineEdit_info_starttime.text()
+        end_time = self.ui.lineEdit_info_endtime.text()
+        self.btn_shiting.on_button_clicked_new(start_time, end_time)
+
+    def update_info(self):
+        text = self.ui.lineEdit_info_text.text()
+        start_time = self.ui.lineEdit_info_starttime.text()
+        end_time = self.ui.lineEdit_info_endtime.text()
+        update_info(text, start_time, end_time, self.info_id)
+        self.close()
+
+    def closeEvent(self, event):
+        self.windowClosed.emit()
+        super().closeEvent(event)
 
 
 class BiaobeiPingce(QDialog):
