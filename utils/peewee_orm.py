@@ -57,10 +57,10 @@ class Info(BaseModel):
     info_raw_file_path = TextField(null=True, )
     info_start_time = IntegerField(null=True, )
     info_end_time = IntegerField(null=True, )
-    info_acc_score = FloatField(null=True, )
-    info_flu_score = FloatField(null=True, )
-    info_int_score = FloatField(null=True, )
-    info_all_score = FloatField(null=True, )
+    # info_acc_score = FloatField(null=True, )
+    # info_flu_score = FloatField(null=True, )
+    # info_int_score = FloatField(null=True, )
+    # info_all_score = FloatField(null=True, )
     info_file_path = TextField(null=True, )
     info_mfa = TextField(null=True, )
     info_is_del = BooleanField(default=False)
@@ -91,6 +91,20 @@ class AuthorizationInfo(BaseModel):
 
     class Meta:
         table_name = 'authorizationinfo_tbl'
+
+class BiaoBeiPingCeInfo(BaseModel):
+    biaobeipingce_id = PrimaryKeyField()
+    info_id = ForeignKeyField(Info, "info_id", on_delete='CASCADE')
+    biaobeipingce_acc_score = IntegerField(null=True, )  # 句子准确度得分
+    biaobeipingce_flu_score = IntegerField(null=True, )  # 句子流利度得分
+    biaobeipingce_int_score = IntegerField(null=True, )  # 句子完整度得分
+    biaobeipingce_all_score = IntegerField(null=True, )  # 总得分
+    biaobeipingce_all_text = TextField(null=True)  # 完整返回数据
+
+
+
+    class Meta:
+        table_name = 'biaobeipingce_tbl'
 
 
 def get_authorizationinfo_by_id(authorizationinfo_id):
