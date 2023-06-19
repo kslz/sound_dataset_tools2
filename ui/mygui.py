@@ -42,8 +42,8 @@ class DatasetWindow(QMainWindow):
         self.page_size = 15
         self.refresh_table()
         self.refresh_authorization_table()
-        self.ui.tabWidget.setTabVisible(1, False)
-        self.ui.tabWidget.setTabVisible(2, False)
+        # self.ui.tabWidget.setTabVisible(1, False)
+        # self.ui.tabWidget.setTabVisible(2, False)
 
         # 连接信号
         self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)

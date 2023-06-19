@@ -680,7 +680,7 @@ def init_database(database_path):
     db.init(database_path)
     db.connect()
     db.pragma('foreign_keys', 'on')
-    db.create_tables([Workspace, Dataset, Info, AuthorizationInfo])
+    db.create_tables([Workspace, Dataset, Info, AuthorizationInfo, BiaoBeiPingCeInfo])
     global_obj.set_value("peewee_db", db)
 
 

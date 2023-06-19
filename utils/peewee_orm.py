@@ -57,10 +57,6 @@ class Info(BaseModel):
     info_raw_file_path = TextField(null=True, )
     info_start_time = IntegerField(null=True, )
     info_end_time = IntegerField(null=True, )
-    # info_acc_score = FloatField(null=True, )
-    # info_flu_score = FloatField(null=True, )
-    # info_int_score = FloatField(null=True, )
-    # info_all_score = FloatField(null=True, )
     info_file_path = TextField(null=True, )
     info_mfa = TextField(null=True, )
     info_is_del = BooleanField(default=False)
@@ -92,6 +88,7 @@ class AuthorizationInfo(BaseModel):
     class Meta:
         table_name = 'authorizationinfo_tbl'
 
+
 class BiaoBeiPingCeInfo(BaseModel):
     biaobeipingce_id = PrimaryKeyField()
     info_id = ForeignKeyField(Info, "info_id", on_delete='CASCADE')
@@ -100,8 +97,6 @@ class BiaoBeiPingCeInfo(BaseModel):
     biaobeipingce_int_score = IntegerField(null=True, )  # 句子完整度得分
     biaobeipingce_all_score = IntegerField(null=True, )  # 总得分
     biaobeipingce_all_text = TextField(null=True)  # 完整返回数据
-
-
 
     class Meta:
         table_name = 'biaobeipingce_tbl'
@@ -114,22 +109,47 @@ def get_authorizationinfo_by_id(authorizationinfo_id):
 
 
 def get_pingce_info(dataset_id, is_skip_done):
-    query = Info.select()
+    query = (BiaoBeiPingCeInfo
+             .select(BiaoBeiPingCeInfo.biaobeipingce_id,
+                     BiaoBeiPingCeInfo.info_id,
+                     BiaoBeiPingCeInfo.biaobeipingce_acc_score,
+                     BiaoBeiPingCeInfo.biaobeipingce_flu_score,
+                     BiaoBeiPingCeInfo.biaobeipingce_int_score,
+                     BiaoBeiPingCeInfo.biaobeipingce_all_score)
+             .join(Dataset)
+             .join(Info)
+             .where(Info.dataset_id == dataset_id)
+             )
+
     if is_skip_done:
-        query = query.where(
-            Info.info_all_score.is_null(True),
-            Info.dataset_id == dataset_id,
-            Info.info_text.is_null(False)
-            # 我有一句绝佳的SQL可以用在这里，但是我该睡觉了....
-            # SELECT * FROM "info_tbl" WHERE info_text not GLOB '*[! -~]*';
-            # 第二天没起来，迟到了，干，都怪chatGPT写不好peewee
-        )
-    else:
-        query = query.where(
-            Info.dataset_id == dataset_id,
-        )
+        query = query.where(~BiaoBeiPingCeInfo.biaobeipingce_all_score.is_null())
+
     results = query.execute()
     return list(results)
+
+    # query = (Colour
+    #          .select(Colour.color)
+    #          .join(Book)
+    #          .join(Author)
+    #          .where(Author.name == "John"))
+
+    # query = Info.select()
+    # if is_skip_done:
+    #     query = query.where(
+    #         Info.info_all_score.is_null(True),
+    #         Info.dataset_id == dataset_id,
+    #         Info.info_text.is_null(False)
+    #         # 我有一句绝佳的SQL可以用在这里，但是我该睡觉了....
+    #         # SELECT * FROM "info_tbl" WHERE info_text not GLOB '*[! -~]*';
+    #         # 第二天没起来，迟到了，干，都怪chatGPT写不好peewee
+    #     )
+    # else:
+    #     query = query.where(
+    #         Info.dataset_id == dataset_id,
+    #     )
+    # results = query.execute()
+    # return list(results)
+    pass
 
 
 def get_authorizationinfo(company: Optional[str] = None, app: Optional[str] = None):
