@@ -7,6 +7,7 @@
 from datetime import datetime
 from typing import Optional
 
+import peewee
 from peewee import *
 
 db = SqliteDatabase(None)
@@ -91,7 +92,7 @@ class AuthorizationInfo(BaseModel):
 
 class BiaoBeiPingCeInfo(BaseModel):
     biaobeipingce_id = PrimaryKeyField()
-    info_id = ForeignKeyField(Info, "info_id", on_delete='CASCADE')
+    info_id = ForeignKeyField(Info, "info_id", on_delete='CASCADE', unique=True)
     biaobeipingce_acc_score = IntegerField(null=True, )  # 句子准确度得分
     biaobeipingce_flu_score = IntegerField(null=True, )  # 句子流利度得分
     biaobeipingce_int_score = IntegerField(null=True, )  # 句子完整度得分
@@ -108,47 +109,41 @@ def get_authorizationinfo_by_id(authorizationinfo_id):
     return results
 
 
-def get_pingce_info(dataset_id, is_skip_done):
+def get_pingce_info2(dataset_id):
     query = (BiaoBeiPingCeInfo
-             .select(BiaoBeiPingCeInfo.biaobeipingce_id,
-                     BiaoBeiPingCeInfo.info_id,
-                     BiaoBeiPingCeInfo.biaobeipingce_acc_score,
-                     BiaoBeiPingCeInfo.biaobeipingce_flu_score,
-                     BiaoBeiPingCeInfo.biaobeipingce_int_score,
-                     BiaoBeiPingCeInfo.biaobeipingce_all_score)
-             .join(Dataset)
+             .select(Info.info_id, BiaoBeiPingCeInfo.biaobeipingce_all_score)
              .join(Info)
-             .where(Info.dataset_id == dataset_id)
-             )
-
-    if is_skip_done:
-        query = query.where(~BiaoBeiPingCeInfo.biaobeipingce_all_score.is_null())
+             .where(Info.dataset_id == dataset_id))
 
     results = query.execute()
-    return list(results)
+    for result in results:
+        info_id = result.info_id
+        biaobeipingce_all_score = result.biaobeipingce_all_score
+        print(f"Info ID: {info_id}, Score: {biaobeipingce_all_score}")
 
-    # query = (Colour
-    #          .select(Colour.color)
-    #          .join(Book)
-    #          .join(Author)
-    #          .where(Author.name == "John"))
 
-    # query = Info.select()
-    # if is_skip_done:
-    #     query = query.where(
-    #         Info.info_all_score.is_null(True),
-    #         Info.dataset_id == dataset_id,
-    #         Info.info_text.is_null(False)
-    #         # 我有一句绝佳的SQL可以用在这里，但是我该睡觉了....
-    #         # SELECT * FROM "info_tbl" WHERE info_text not GLOB '*[! -~]*';
-    #         # 第二天没起来，迟到了，干，都怪chatGPT写不好peewee
-    #     )
-    # else:
-    #     query = query.where(
-    #         Info.dataset_id == dataset_id,
-    #     )
-    # results = query.execute()
-    # return list(results)
+def get_pingce_info(dataset_id, is_skip_done):
+    query = (Info
+             .select(Info, BiaoBeiPingCeInfo.biaobeipingce_all_score)
+             .join(BiaoBeiPingCeInfo, JOIN.LEFT_OUTER)
+             .where(Info.dataset_id == dataset_id)
+             )
+    # for result in results:
+    #     info_id = result.info_id
+    #     biaobeipingce_all_score = result.biaobeipingceinfo.biaobeipingce_all_score if hasattr(result,
+    #                                                                                           'biaobeipingceinfo') else None
+    #     print(f"Info ID: {info_id}, Score: {biaobeipingce_all_score}")
+    # 注意：在左外连接中，如果右表中没有与左表关联的数据，则在查询结果中对应的列会显示为 NULL。这在原生 SQL 查询中是可以直接访问和处理的。
+    # 然而，在使用 Peewee ORM 进行查询时，它会尝试将查询结果映射到模型对象上，但如果某个字段在查询结果中为 NULL，Peewee 默认情况下不会为模型对象创建对应的属性。因此，在代码中直接访问不存在的属性时会引发 AttributeError。
+    # 为了解决这个问题，我们可以使用 hasattr() 函数进行存在性检查，如之前提供的代码示例所示。这样，即使某些记录在右表中没有对应的数据，我们可以避免引发异常并正确处理这种情况。
+
+    if is_skip_done:
+        query = query.where(BiaoBeiPingCeInfo.biaobeipingce_all_score.is_null())
+
+    results = query.execute()
+
+    return results
+
     pass
 
 
@@ -311,6 +306,30 @@ def update_info(text, start_time, end_time, info_id):
         .where(Info.info_id == info_id).execute()
     print(updated_row)
 
+def create_or_update_biaobeipingceinfo(info_id,acc_score,flu_score,int_score,all_score,all_text):
+    # info_id = ForeignKeyField(Info, "info_id", on_delete='CASCADE', unique=True)
+    # biaobeipingce_acc_score = IntegerField(null=True, )  # 句子准确度得分
+    # biaobeipingce_flu_score = IntegerField(null=True, )  # 句子流利度得分
+    # biaobeipingce_int_score = IntegerField(null=True, )  # 句子完整度得分
+    # biaobeipingce_all_score = IntegerField(null=True, )  # 总得分
+    # biaobeipingce_all_text = TextField(null=True)  # 完整返回数据
+
+    try:
+        BiaoBeiPingCeInfo.create(info_id=info_id,
+                                 biaobeipingce_acc_score=acc_score,
+                                 biaobeipingce_flu_score=flu_score,
+                                 biaobeipingce_int_score=int_score,
+                                 biaobeipingce_all_score=all_score,
+                                 biaobeipingce_all_text=all_text)
+    except peewee.IntegrityError:
+        BiaoBeiPingCeInfo.update(biaobeipingce_acc_score=acc_score,
+                                 biaobeipingce_flu_score=flu_score,
+                                 biaobeipingce_int_score=int_score,
+                                 biaobeipingce_all_score=all_score,
+                                 biaobeipingce_all_text=all_text).where(BiaoBeiPingCeInfo.info_id == info_id).execute()
+
+    pass
+
 
 def insert_info_many(data_list, batch_size=1000):
     for i in range(0, len(data_list), batch_size):
@@ -375,8 +394,13 @@ def add_fake_data():
 
 if __name__ == "__main__":
     db.init("../workspace/db/workspace.db")
+    try:
+        BiaoBeiPingCeInfo.create(info_id=312, biaobeipingce_all_score=90)
+    except peewee.IntegrityError:
+        BiaoBeiPingCeInfo.update(biaobeipingce_all_score=80).where(BiaoBeiPingCeInfo.info_id == 312).execute()
+
     # add_fake_data()
-    get_dataset_window_info()
+    # get_dataset_window_info()
     # init_peewee_db()
     # db1 = get_peewee_db()
     #
