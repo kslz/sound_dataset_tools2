@@ -94,6 +94,7 @@ class BiaobeiPingce(QDialog):
         is_skip_done = self.ui.checkBox.isChecked()
         is_skip_ascii = self.ui.checkBox_2.isChecked()
         authorizationinfo_id = self.ui.comboBox.currentData()
+        self.ui.label_error.setText("")
         if authorizationinfo_id == None:
             self.ui.label_error.setText("没有可选的授权信息，请在设置页面添加")
             return
@@ -117,6 +118,8 @@ class BiaobeiPingce(QDialog):
 
         if is_skip_ascii:
             results = get_pingce_info(self.dataset_id, is_skip_done)
+            self.ui.label_error.setText("正在运行中，窗口可能卡死，请勿关闭窗口")
+            requsetlogger.error("正在运行中，窗口可能卡死，请勿关闭窗口")
 
             for result in results:
                 result: Info
@@ -136,13 +139,15 @@ class BiaobeiPingce(QDialog):
                         requsetlogger.info(
                             f"标贝评测成功，文本：{text}，准确度得分：{acc_score}，流利度得分：{flu_score}，完整度得分：{int_score}，总分：{all_score}，")
 
-                        Info.update(
-                            info_acc_score=acc_score,
-                            info_flu_score=flu_score,
-                            info_int_score=int_score,
-                            info_all_score=all_score,
-                            info_mfa=mfa_info
-                        ).where(Info.info_id == id).execute()
+                        create_or_update_biaobeipingceinfo(id, acc_score, flu_score, int_score, all_score, response_json)
+
+                        # Info.update(
+                        #     info_acc_score=acc_score,
+                        #     info_flu_score=flu_score,
+                        #     info_int_score=int_score,
+                        #     info_all_score=all_score,
+                        #     info_mfa=mfa_info
+                        # ).where(Info.info_id == id).execute()
 
                     # print(text)
                     # print(response_json)

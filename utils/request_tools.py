@@ -54,7 +54,7 @@ def pingce_biaobei(file_path, text, access_token, start_time, end_time):
         ffmpeg
         .input(file_path, ss=start_time, t=duration)
         .output('pipe:', format='s16le', acodec='pcm_s16le', ac=1, ar=16000)
-        .run(capture_stdout=True,quiet=True)
+        .run(capture_stdout=True, quiet=True)
     )
     output = output[0]
 
@@ -67,7 +67,7 @@ def pingce_biaobei(file_path, text, access_token, start_time, end_time):
             ffmpeg
             .input('anullsrc', f='lavfi', t=silence_duration)
             .output('pipe:', format='s16le', acodec='pcm_s16le', ac=1, ar=16000)
-            .run(capture_stdout=True,quiet=True)
+            .run(capture_stdout=True, quiet=True)
         )
 
         output = output + silence[0]

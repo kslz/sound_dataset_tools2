@@ -306,14 +306,8 @@ def update_info(text, start_time, end_time, info_id):
         .where(Info.info_id == info_id).execute()
     print(updated_row)
 
-def create_or_update_biaobeipingceinfo(info_id,acc_score,flu_score,int_score,all_score,all_text):
-    # info_id = ForeignKeyField(Info, "info_id", on_delete='CASCADE', unique=True)
-    # biaobeipingce_acc_score = IntegerField(null=True, )  # 句子准确度得分
-    # biaobeipingce_flu_score = IntegerField(null=True, )  # 句子流利度得分
-    # biaobeipingce_int_score = IntegerField(null=True, )  # 句子完整度得分
-    # biaobeipingce_all_score = IntegerField(null=True, )  # 总得分
-    # biaobeipingce_all_text = TextField(null=True)  # 完整返回数据
 
+def create_or_update_biaobeipingceinfo(info_id, acc_score, flu_score, int_score, all_score, all_text):
     try:
         BiaoBeiPingCeInfo.create(info_id=info_id,
                                  biaobeipingce_acc_score=acc_score,
