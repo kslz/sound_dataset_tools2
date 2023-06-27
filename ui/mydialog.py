@@ -4,10 +4,10 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-from PySide6.QtCore import QRect, Signal
-from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog
+from PySide6.QtCore import QRect, Signal, QRunnable, QObject, QThreadPool
+from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog, QApplication
 
-from ui.mywidget import AudioButton, AudioNowButton
+from ui.mywidget import AudioNowButton
 from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
 from ui.pyuic.ui_biaobei_pingce import Ui_BiaobeiPingceDialog
 from ui.pyuic.ui_del_info_wav import Ui_del_info_wav_Dialog
@@ -16,31 +16,85 @@ from ui.pyuic.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
 from ui.pyuic.ui_pingce_jindutiao import Ui_PingcejinduDialog
 from ui.pyuic.ui_select_file_long_wav import Ui_select_file_long_wav_Dialog
 from ui.pyuic.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
-
-from utils.log import *
+from utils.qt_tools import ProgressUpdater
 from utils.request_tools import *
 from utils.tools import *
 
 
-class Pingcejiindu(QDialog):
+class Pingcejindu(QDialog):
     start = Signal()
     pause = Signal()
     stop = Signal()
-    def __init__(self, parent, dataset_id):
+
+    def __init__(self, parent, results, token, thread_count=2):
         super().__init__(parent)
         # 使用ui文件导入定义界面类
         self.ui = Ui_PingcejinduDialog()
         # 初始化界面
         self.ui.setupUi(self)
-        # self.ui.progressBar.setRange(0, 5)
-        # self.ui.progressBar.setValue(3)
         self.ui.progressBar.setStyleSheet('''
             QProgressBar {
                 text-align: center;
             }
             ''')
+        self.thread_count = thread_count
+        self.results = results
+        self.token = token
+        self.progress_updater = ProgressUpdater(self.ui.progressBar)
+        self.run_pingce()
 
-    def
+    def run_pingce(self):
+        class MyTask(QRunnable):
+            class SignalTool(QObject):
+                finished = Signal()
+                # 这段代码使我得了癌症
+
+            finished = Signal()
+
+            def __init__(self, task_result, token):
+                super().__init__()
+                self.tool = self.SignalTool()
+                self.task_result = task_result
+                self.token = token
+
+            def run(self):
+                # 执行任务逻辑
+                id = self.task_result.info_id
+                start = self.task_result.info_start_time
+                end = self.task_result.info_end_time
+                text = self.task_result.info_text
+                file_path = self.task_result.info_raw_file_path
+                if is_all_chinese(text):
+                    response_json = pingce_biaobei(file_path, text, self.token, start, end)
+                    if response_json:
+                        acc_score = response_json["result"]["acc_score"]
+                        flu_score = response_json["result"]["flu_score"]
+                        int_score = response_json["result"]["int_score"]
+                        all_score = response_json["result"]["all_score"]
+                        # mfa_info = {"biaobei": response_json["result"]["word"]}
+                        requsetlogger.info(
+                            f"标贝评测成功，文本：{text}，准确度得分：{acc_score}，流利度得分：{flu_score}，完整度得分：{int_score}，总分：{all_score}，")
+
+                        create_or_update_biaobeipingceinfo(id, acc_score, flu_score, int_score, all_score,
+                                                           response_json)
+
+                self.tool.finished.emit()
+
+        self.pool = QThreadPool.globalInstance()
+        self.pool.setMaxThreadCount(self.thread_count)
+        self.ui.progressBar.setMinimum(0)
+        self.ui.progressBar.setMaximum(len(self.results))
+        self.ui.progressBar.setValue(0)
+
+        for result in self.results:
+            task = MyTask(result, self.token)
+            task.tool.finished.connect(self.progress_updater.updateProgress)
+            self.pool.start(task)
+        #
+        # for i in range(10):
+        #     worker = MyTask(i + 1, self.progress_updater)
+        #     worker.tool.finished.connect(self.progress_updater.updateProgress)
+        #     self.pool.start(worker)
 
 
 class EditInfo(QDialog):
@@ -117,6 +171,9 @@ class BiaobeiPingce(QDialog):
         is_skip_ascii = self.ui.checkBox_2.isChecked()
         authorizationinfo_id = self.ui.comboBox.currentData()
         self.ui.label_error.setText("")
+        self.ui.label_error.setText("正在运行中，窗口可能卡死，请勿关闭窗口")
+        requsetlogger.info("正在运行中，窗口可能卡死，请勿关闭窗口")
+        QApplication.processEvents()  # 强制刷新UI
         if authorizationinfo_id == None:
             self.ui.label_error.setText("没有可选的授权信息，请在设置页面添加")
             return
@@ -132,39 +189,18 @@ class BiaobeiPingce(QDialog):
                 else:
                     AuthorizationInfo.update(authorizationinfo_token=token).where(
                         AuthorizationInfo.authorizationinfo_id == result_a[0].authorizationinfo_id).execute()
-                    requsetlogger.warning("token重新获取成功")
-            requsetlogger.warning("token校验通过")
+                    requsetlogger.info("token重新获取成功")
+            requsetlogger.info("token校验通过")
         except requests.exceptions.SSLError:
             self.ui.label_error.setText("SSLError 请关闭代理在尝试进行评测")
             requsetlogger.error("SSLError 请关闭代理在尝试进行评测")
 
         if is_skip_ascii:
             results = get_pingce_info(self.dataset_id, is_skip_done)
-            self.ui.label_error.setText("正在运行中，窗口可能卡死，请勿关闭窗口")
-            requsetlogger.error("正在运行中，窗口可能卡死，请勿关闭窗口")
-            output_speaker_dialog = Pingcejiindu(self, self.dataset_id)
+            results = get_all_chinese_results(results)
+
+            output_speaker_dialog = Pingcejindu(self, results, token)
             output_speaker_dialog.exec_()
-
-            for result in results:
-                result: Info
-                id = result.info_id
-                start = result.info_start_time
-                end = result.info_end_time
-                text = result.info_text
-                file_path = result.info_raw_file_path
-                if is_all_chinese(text):
-                    response_json = pingce_biaobei(file_path, text, token, start, end)
-                    if response_json:
-                        acc_score = response_json["result"]["acc_score"]
-                        flu_score = response_json["result"]["flu_score"]
-                        int_score = response_json["result"]["int_score"]
-                        all_score = response_json["result"]["all_score"]
-                        # mfa_info = {"biaobei": response_json["result"]["word"]}
-                        requsetlogger.info(
-                            f"标贝评测成功，文本：{text}，准确度得分：{acc_score}，流利度得分：{flu_score}，完整度得分：{int_score}，总分：{all_score}，")
-
-                        create_or_update_biaobeipingceinfo(id, acc_score, flu_score, int_score, all_score,
-                                                           response_json)
         else:
             pass
 

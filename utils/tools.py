@@ -79,6 +79,14 @@ def is_all_chinese(text):
     pattern = re.compile(r'^[\u4e00-\u9fa5]+$')
     return bool(pattern.match(text))
 
+def get_all_chinese_results(results):
+    new_list = []
+    for result in results:
+        if is_all_chinese(result.info_text):
+            new_list.append(result)
+
+    return new_list
+
 
 def get_wav_channels(wav_path):
     c = channels_dict.get(wav_path)
