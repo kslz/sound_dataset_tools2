@@ -4,7 +4,7 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-from PySide6.QtCore import QRect, Signal, QRunnable, QObject, QThreadPool
+from PySide6.QtCore import QRect, Signal, QRunnable, QObject, QThreadPool, QMutexLocker, QMutex, Qt
 from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog, QApplication
 
 from ui.mywidget import AudioNowButton
@@ -16,15 +16,16 @@ from ui.pyuic.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
 from ui.pyuic.ui_pingce_jindutiao import Ui_PingcejinduDialog
 from ui.pyuic.ui_select_file_long_wav import Ui_select_file_long_wav_Dialog
 from ui.pyuic.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
-from utils.qt_tools import ProgressUpdater
+from utils.qt_tools import ProgressUpdater, CustomThreadPool, SignalTool
 from utils.request_tools import *
 from utils.tools import *
 
 
 class Pingcejindu(QDialog):
-    start = Signal()
-    pause = Signal()
-    stop = Signal()
+    # start = Signal()
+    # pause = Signal()
+    # stop = Signal()
+    noTasksRunning = Signal()
 
     def __init__(self, parent, results, token, thread_count=2):
         super().__init__(parent)
@@ -41,24 +42,27 @@ class Pingcejindu(QDialog):
         self.results = results
         self.token = token
         self.progress_updater = ProgressUpdater(self.ui.progressBar)
+        self.ui.pushButton_stop.clicked.connect(self.stop_pool)
+        self.noTasksRunning.connect(self.close)
+        self.mutex = QMutex()
+        self.running_task = 0
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        # self.closeEvent = self.run_done
+
         self.run_pingce()
 
     def run_pingce(self):
         class MyTask(QRunnable):
-            class SignalTool(QObject):
-                finished = Signal()
-                # 这段代码使我得了癌症
-
-            finished = Signal()
 
             def __init__(self, task_result, token):
                 super().__init__()
-                self.tool = self.SignalTool()
+                self.tool = SignalTool()
                 self.task_result = task_result
                 self.token = token
 
             def run(self):
                 # 执行任务逻辑
+                self.tool.change_count.emit(1)
                 id = self.task_result.info_id
                 start = self.task_result.info_start_time
                 end = self.task_result.info_end_time
@@ -71,13 +75,12 @@ class Pingcejindu(QDialog):
                         flu_score = response_json["result"]["flu_score"]
                         int_score = response_json["result"]["int_score"]
                         all_score = response_json["result"]["all_score"]
-                        # mfa_info = {"biaobei": response_json["result"]["word"]}
                         requsetlogger.info(
                             f"标贝评测成功，文本：{text}，准确度得分：{acc_score}，流利度得分：{flu_score}，完整度得分：{int_score}，总分：{all_score}，")
 
                         create_or_update_biaobeipingceinfo(id, acc_score, flu_score, int_score, all_score,
                                                            response_json)
-
+                self.tool.change_count.emit(-1)
                 self.tool.finished.emit()
 
         self.pool = QThreadPool.globalInstance()
@@ -89,12 +92,43 @@ class Pingcejindu(QDialog):
         for result in self.results:
             task = MyTask(result, self.token)
             task.tool.finished.connect(self.progress_updater.updateProgress)
+            task.tool.finished.connect(self.taskFinished)
+            task.tool.change_count.connect(self.changeActiveTasks)
             self.pool.start(task)
+
+        # self.pool.waitForDone()
+
         #
         # for i in range(10):
         #     worker = MyTask(i + 1, self.progress_updater)
         #     worker.tool.finished.connect(self.progress_updater.updateProgress)
         #     self.pool.start(worker)
+
+    def changeActiveTasks(self, change):
+        with QMutexLocker(self.mutex):
+            self.running_task += change
+
+    def taskFinished(self):
+        with QMutexLocker(self.mutex):
+            if self.running_task == 0:
+                self.noTasksRunning.emit()
+
+    def stop_pool(self):
+        self.pool.clear()
+
+    def closeEvent(self, arg__1):
+        # self.pool.clear()
+        self.run_done()
+        super().closeEvent(arg__1)
+
+
+
+    def run_done(self,arg1=None):
+        done_task = self.ui.progressBar.value()+self.running_task
+        QMessageBox.information(
+            self.parent(),
+            '评测完成',
+            f'已评测{done_task}条数据')
 
 
 class EditInfo(QDialog):

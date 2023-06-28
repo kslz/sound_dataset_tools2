@@ -4,7 +4,7 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-from PySide6.QtCore import QMutex, Signal, QObject, QMutexLocker
+from PySide6.QtCore import QMutex, Signal, QObject, QMutexLocker, QRunnable, QThreadPool
 
 
 class ProgressUpdater(QObject):
@@ -28,4 +28,33 @@ class SignalTool(QObject):
     """
     这个类唯一的作用是用来帮发不出信号的物件发出信号
     """
+    started = Signal()
     finished = Signal()
+    change_count = Signal(int)
+
+
+
+class CustomThreadPool(QThreadPool):
+    noTasksRunning = Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.activeTasks = 0
+        self.mutex = QMutex()
+
+    def start(self, arg__1, priority=0):
+        self.changeActiveTasks(1)
+        super().start(arg__1, priority)
+        self.changeActiveTasks(-1)
+        self.taskFinished()
+
+
+    def changeActiveTasks(self,change):
+        with QMutexLocker(self.mutex):
+            self.activeTasks += change
+
+
+    def taskFinished(self):
+        with QMutexLocker(self.mutex):
+            if self.activeTasks == 0:
+                self.noTasksRunning.emit()
