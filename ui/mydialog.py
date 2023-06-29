@@ -96,14 +96,6 @@ class Pingcejindu(QDialog):
             task.tool.change_count.connect(self.changeActiveTasks)
             self.pool.start(task)
 
-        # self.pool.waitForDone()
-
-        #
-        # for i in range(10):
-        #     worker = MyTask(i + 1, self.progress_updater)
-        #     worker.tool.finished.connect(self.progress_updater.updateProgress)
-        #     self.pool.start(worker)
-
     def changeActiveTasks(self, change):
         with QMutexLocker(self.mutex):
             self.running_task += change
@@ -121,10 +113,8 @@ class Pingcejindu(QDialog):
         self.run_done()
         super().closeEvent(arg__1)
 
-
-
-    def run_done(self,arg1=None):
-        done_task = self.ui.progressBar.value()+self.running_task
+    def run_done(self, arg1=None):
+        done_task = self.ui.progressBar.value() + self.running_task
         QMessageBox.information(
             self.parent(),
             '评测完成',
@@ -194,6 +184,7 @@ class BiaobeiPingce(QDialog):
         self.ui.checkBox_2.setEnabled(False)
         self.add_authorizationinfo()
         self.ui.pushButton_queding.clicked.connect(self.start_pingce)
+        self.ui.pushButton_quxiao.clicked.connect(self.close)
 
     def add_authorizationinfo(self):
         results = get_authorizationinfo(DbStr.BiaoBei, DbStr.PingCe)
@@ -232,7 +223,10 @@ class BiaobeiPingce(QDialog):
         if is_skip_ascii:
             results = get_pingce_info(self.dataset_id, is_skip_done)
             results = get_all_chinese_results(results)
-
+            if len(results) == 0:
+                self.ui.label_error.setText("没有需要评测的数据")
+                return
+            print(results)
             output_speaker_dialog = Pingcejindu(self, results, token)
             output_speaker_dialog.exec_()
         else:
