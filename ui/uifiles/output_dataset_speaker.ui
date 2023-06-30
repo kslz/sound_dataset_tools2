@@ -452,13 +452,8 @@ labels.txt</string>
     <property name="placeholderText">
      <string/>
     </property>
-    <item>
-     <property name="text">
-      <string>不按评测分数过滤</string>
-     </property>
-    </item>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="label_score1">
     <property name="geometry">
      <rect>
       <x>240</x>
@@ -471,7 +466,7 @@ labels.txt</string>
      <string>准确度：</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_11">
+   <widget class="QLabel" name="label_score2">
     <property name="geometry">
      <rect>
       <x>240</x>
@@ -484,7 +479,7 @@ labels.txt</string>
      <string>流利度：</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_12">
+   <widget class="QLabel" name="label_score3">
     <property name="geometry">
      <rect>
       <x>240</x>
@@ -497,7 +492,7 @@ labels.txt</string>
      <string>完整度：</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_13">
+   <widget class="QLabel" name="label_score5">
     <property name="geometry">
      <rect>
       <x>370</x>
@@ -510,7 +505,7 @@ labels.txt</string>
      <string>总分：</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QSpinBox" name="spinBox_score1">
     <property name="geometry">
      <rect>
       <x>320</x>
@@ -526,7 +521,7 @@ labels.txt</string>
      <number>60</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox_2">
+   <widget class="QSpinBox" name="spinBox_score2">
     <property name="geometry">
      <rect>
       <x>320</x>
@@ -542,7 +537,7 @@ labels.txt</string>
      <number>60</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox_3">
+   <widget class="QSpinBox" name="spinBox_score3">
     <property name="geometry">
      <rect>
       <x>320</x>
@@ -558,7 +553,7 @@ labels.txt</string>
      <number>60</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox_4">
+   <widget class="QSpinBox" name="spinBox_score5">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -572,6 +567,35 @@ labels.txt</string>
     </property>
     <property name="value">
      <number>80</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_score4">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>80</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>完整度：</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_score4">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>80</y>
+      <width>42</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="value">
+     <number>60</number>
     </property>
    </widget>
   </widget>
