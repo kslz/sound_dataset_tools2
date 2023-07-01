@@ -4,7 +4,8 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
-from PySide6.QtCore import QMutex, Signal, QObject, QMutexLocker, QRunnable, QThreadPool
+from PySide6.QtCore import QMutex, Signal, QObject, QMutexLocker, QRunnable, QThreadPool, Qt
+from PySide6.QtWidgets import QWidget, QLabel, QSpinBox, QHBoxLayout
 
 
 class ProgressUpdater(QObject):
@@ -33,7 +34,6 @@ class SignalTool(QObject):
     change_count = Signal(int)
 
 
-
 class CustomThreadPool(QThreadPool):
     noTasksRunning = Signal()
 
@@ -48,13 +48,52 @@ class CustomThreadPool(QThreadPool):
         self.changeActiveTasks(-1)
         self.taskFinished()
 
-
-    def changeActiveTasks(self,change):
+    def changeActiveTasks(self, change):
         with QMutexLocker(self.mutex):
             self.activeTasks += change
-
 
     def taskFinished(self):
         with QMutexLocker(self.mutex):
             if self.activeTasks == 0:
                 self.noTasksRunning.emit()
+
+
+class ScoreWdiget(QWidget):
+    def __init__(self, name, k, v, parent):
+        super().__init__(parent)
+
+        self.k = k
+
+        # 创建标签和旋钮框
+        self.label = QLabel(name)
+        self.spinbox = QSpinBox()
+
+        font = self.label.font()
+        font.setPointSize(12)
+        self.label.setFont(font)
+        self.spinbox.setFont(font)
+
+        # 设置旋钮框的范围和初始值
+        self.spinbox.setMinimum(0)
+        self.spinbox.setMaximum(100)
+        self.spinbox.setValue(v)
+
+        # 创建水平布局
+        self.layout = QHBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)  # 这个布局的边框我找了2个小时才找出来，警钟长鸣
+
+        # 将标签和旋钮框添加到布局中
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.spinbox)
+
+        # 设置标签靠左，旋钮框靠右
+        self.layout.setAlignment(self.label, Qt.AlignLeft)
+        self.layout.setAlignment(self.spinbox, Qt.AlignRight)
+
+    def change_text(self, name, k, v):
+        self.label.setText(name)
+        self.k = k
+        self.spinbox.setValue(v)
+
+    def get_score(self, score_dict: dict):
+        score_dict[self.k] = self.spinbox.value()

@@ -34,6 +34,10 @@ class GeshiStr():
     sovits = "sovits"
 
 
+class ToolStr():
+    biaobei = "标贝"
+
+
 channels_dict = {}
 
 
@@ -78,6 +82,7 @@ def file_wb(path, text, mode="wb"):
 def is_all_chinese(text):
     pattern = re.compile(r'^[\u4e00-\u9fa5]+$')
     return bool(pattern.match(text))
+
 
 def get_all_chinese_results(results):
     new_list = []
@@ -522,7 +527,6 @@ def fast_output_sound(wav_path, start_time, end_time, output_name):
     output_path = os.path.join(output_path, output_name)
     output_wav_file(wav_path, start_time, end_time, output_path)
     guilogger.info(f"快速导出音频文件文件 {output_path}")
-
 
 
 def play_by_ffmpeg(wav_path, start_time, end_time):

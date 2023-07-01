@@ -5,7 +5,7 @@
     @Url : https://github.com/kslz
 """
 from PySide6.QtCore import QRect, Signal, QRunnable, QObject, QThreadPool, QMutexLocker, QMutex, Qt
-from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog, QApplication
+from PySide6.QtWidgets import QDialog, QMessageBox, QFileDialog, QApplication, QVBoxLayout, QWidget, QLayout, QLabel
 
 from ui.mywidget import AudioNowButton
 from ui.pyuic.ui_add_authorizationinfo import Ui_AddAuthenticationDialog
@@ -16,7 +16,7 @@ from ui.pyuic.ui_output_dataset_speaker import Ui_OutPutSpeakerDialog
 from ui.pyuic.ui_pingce_jindutiao import Ui_PingcejinduDialog
 from ui.pyuic.ui_select_file_long_wav import Ui_select_file_long_wav_Dialog
 from ui.pyuic.ui_select_file_wav_srt import Ui_select_file_wav_srt_Dialog
-from utils.qt_tools import ProgressUpdater, CustomThreadPool, SignalTool
+from utils.qt_tools import ProgressUpdater, CustomThreadPool, SignalTool, ScoreWdiget
 from utils.request_tools import *
 from utils.tools import *
 
@@ -243,11 +243,26 @@ class OutPutSpeaker(QDialog):
         self.dataset_id = dataset_id
         self.add_info()
 
+        self.ui.verticalLayout_left.setContentsMargins(0, 0, 0, 0)
+        self.ui.verticalLayout_right.setContentsMargins(0, 0, 0, 0)
+
+        # self.item_dict = {
+        #     "l1": self.ui.widget_l1,
+        #     "l2": self.ui.widget_l2,
+        #     "l3": self.ui.widget_l3,
+        #     "l4": self.ui.widget_l4,
+        #     "r1": self.ui.widget_r1,
+        #     "r2": self.ui.widget_r2,
+        #     "r3": self.ui.widget_r3,
+        #     "r4": self.ui.widget_r4,
+        # }
+
         # 绑定信号和槽
         self.ui.pushButton_next.clicked.connect(self.output_info)
         self.ui.pushButton_read_preinstall.clicked.connect(self.use_preinstall)
         self.ui.pushButton_back.clicked.connect(self.close)
         self.ui.comboBox_geshi.currentIndexChanged.connect(self.auto_skip_change_enable)
+        self.ui.comboBox_pingce.currentIndexChanged.connect(self.refresh_pingce)
 
     def add_info(self):
         """
@@ -270,6 +285,37 @@ class OutPutSpeaker(QDialog):
                 text = f"{line[0]}-未识别"
             self.ui.comboBox_speaker.addItem(text, line)
             # self.ui.checkBox_auto_skip.setEnabled(False)
+
+        self.ui.comboBox_pingce.addItem(f"不使用", None)
+        self.ui.comboBox_pingce.addItem(f"标贝评测", ToolStr.biaobei)
+
+    def refresh_pingce(self, index):
+        self.clean_score_layouts()
+        if self.ui.comboBox_pingce.currentData() is None:
+            pass
+        elif self.ui.comboBox_pingce.currentData() == ToolStr.biaobei:
+            sw1 = ScoreWdiget("准确度", "acc", 60, self.ui.horizontalLayoutWidget)
+            self.ui.verticalLayout_left.addWidget(sw1)
+            sw2 = ScoreWdiget("流利度", "acc", 60, self.ui.horizontalLayoutWidget)
+            self.ui.verticalLayout_left.addWidget(sw2)
+            sw3 = ScoreWdiget("完整度", "acc", 60, self.ui.horizontalLayoutWidget)
+            self.ui.verticalLayout_left.addWidget(sw3)
+            sw4 = ScoreWdiget("总分", "acc", 80, self.ui.horizontalLayoutWidget)
+            self.ui.verticalLayout_left.addWidget(sw4)
+
+        else:
+            pass
+
+    def clean_score_layouts(self):
+        for layout in [self.ui.verticalLayout_left, self.ui.verticalLayout_right]:
+            while layout.count():
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.setParent(None)  # 将 widget 从其父控件中移除
+                else:
+                    layout.removeItem(item)
+                del item
 
     def auto_skip_change_enable(self):
         self.ui.checkBox_auto_skip.setEnabled(True)
