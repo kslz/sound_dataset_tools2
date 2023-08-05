@@ -46,7 +46,7 @@ class Pingcejindu(QDialog):
         self.noTasksRunning.connect(self.close)
         self.mutex = QMutex()
         self.running_task = 0
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+        # self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
         # self.closeEvent = self.run_done
 
         self.run_pingce()
@@ -110,6 +110,7 @@ class Pingcejindu(QDialog):
 
     def closeEvent(self, arg__1):
         # self.pool.clear()
+        self.stop_pool()
         self.run_done()
         super().closeEvent(arg__1)
 
@@ -217,8 +218,9 @@ class BiaobeiPingce(QDialog):
                     requsetlogger.info("token重新获取成功")
             requsetlogger.info("token校验通过")
         except requests.exceptions.SSLError:
-            self.ui.label_error.setText("SSLError 请关闭代理在尝试进行评测")
+            self.ui.label_error.setText("SSLError 请关闭代理再尝试进行评测")
             requsetlogger.error("SSLError 请关闭代理在尝试进行评测")
+            return
 
         if is_skip_ascii:
             results = get_pingce_info(self.dataset_id, is_skip_done)
@@ -296,11 +298,11 @@ class OutPutSpeaker(QDialog):
         elif self.ui.comboBox_pingce.currentData() == ToolStr.biaobei:
             sw1 = ScoreWdiget("准确度", "acc", 60, self.ui.horizontalLayoutWidget)
             self.ui.verticalLayout_left.addWidget(sw1)
-            sw2 = ScoreWdiget("流利度", "acc", 60, self.ui.horizontalLayoutWidget)
+            sw2 = ScoreWdiget("流利度", "flu", 60, self.ui.horizontalLayoutWidget)
             self.ui.verticalLayout_left.addWidget(sw2)
-            sw3 = ScoreWdiget("完整度", "acc", 60, self.ui.horizontalLayoutWidget)
+            sw3 = ScoreWdiget("完整度", "int", 60, self.ui.horizontalLayoutWidget)
             self.ui.verticalLayout_left.addWidget(sw3)
-            sw4 = ScoreWdiget("总分", "acc", 80, self.ui.horizontalLayoutWidget)
+            sw4 = ScoreWdiget("总分", "all", 80, self.ui.horizontalLayoutWidget)
             self.ui.verticalLayout_left.addWidget(sw4)
 
         else:
@@ -346,7 +348,28 @@ class OutPutSpeaker(QDialog):
         sample_rate = self.ui.lineEdit_sample_rate.text()
         channels = int(self.ui.comboBox_channel.currentText())
         speaker = self.ui.comboBox_speaker.currentData()
-        results = get_output_info(self.dataset_id, speaker)
+
+        pingce_dict = {}
+        now_pingce = self.ui.comboBox_pingce.currentData()
+        if now_pingce != None:
+            pingce_dict["pingce"] = now_pingce
+            for layout in [self.ui.verticalLayout_left, self.ui.verticalLayout_right]:
+                for i in range(layout.count()):
+                    item = layout.itemAt(i)
+                    sw = item.widget()
+                    if sw is not None:
+                        sw.get_score(pingce_dict)
+
+        results = get_output_info(self.dataset_id, speaker, pingce_dict)
+
+        confirmation = QMessageBox.question(
+            self, '确认导出', f'预计导出{len(results)}条数据，是否继续？',
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        if confirmation == QMessageBox.No:
+            return
+
         is_auto_skip = self.ui.checkBox_auto_skip.isChecked()
         normalization = self.ui.lineEdit_guiyihua.text()
         if normalization == "":

@@ -27,15 +27,6 @@ from utils.log import *
 from utils.request_tools import get_biaobei_token
 
 
-class GeshiStr():
-    aishell3 = "AISHELL-3"
-    default = "默认"
-    vits = "VITS"
-    sovits = "sovits"
-
-
-class ToolStr():
-    biaobei = "标贝"
 
 
 channels_dict = {}

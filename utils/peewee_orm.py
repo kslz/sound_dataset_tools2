@@ -10,6 +10,8 @@ from typing import Optional
 import peewee
 from peewee import *
 
+from utils.tool_str import *
+
 db = SqliteDatabase(None)
 
 
@@ -275,7 +277,7 @@ def get_file_raw_path_by_dataset_id(dataset_id):
     return list(query)
 
 
-def get_output_info(dataset_id, spk_info):
+def get_output_info(dataset_id, spk_info, pingce_dict):
     query = (Info
     .select(
         Info.info_id,
@@ -284,6 +286,7 @@ def get_output_info(dataset_id, spk_info):
         Info.info_start_time,
         Info.info_end_time,
     )
+    # .join(Dataset, on=(Dataset.dataset_id == Info.dataset_id))
     .where(
         (Info.info_is_del == 0) &
         (Info.dataset_id == dataset_id)
@@ -295,6 +298,17 @@ def get_output_info(dataset_id, spk_info):
         query = query.where(Info.info_shibie_speaker == spk_info[0])
     else:
         query = query.where(Info.info_speaker == spk_info[0])
+
+    if len(pingce_dict) != 0:
+        # print(pingce_dict)
+        if pingce_dict["pingce"] == ToolStr.biaobei:
+            query = query.join(BiaoBeiPingCeInfo, on=(Info.info_id == BiaoBeiPingCeInfo.info_id))\
+                .where(
+                    BiaoBeiPingCeInfo.biaobeipingce_acc_score >= pingce_dict["acc"],
+                    BiaoBeiPingCeInfo.biaobeipingce_flu_score >= pingce_dict["flu"],
+                    BiaoBeiPingCeInfo.biaobeipingce_int_score >= pingce_dict["int"],
+                    BiaoBeiPingCeInfo.biaobeipingce_all_score >= pingce_dict["all"]
+                )
 
     result = list(query.dicts())
     # print(result)
