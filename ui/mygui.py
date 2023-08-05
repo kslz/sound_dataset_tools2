@@ -61,8 +61,8 @@ class DatasetWindow(QMainWindow):
         self.ui.tableWidget.setColumnWidth(0, 100)
         self.ui.tableWidget.setColumnWidth(1, 500)
         self.ui.tableWidget.setColumnWidth(2, 125)
-        self.ui.tableWidget.setColumnWidth(3, 200)
-        self.ui.tableWidget.setColumnWidth(4, 200)
+        self.ui.tableWidget.setColumnWidth(3, 130)
+        self.ui.tableWidget.setColumnWidth(4, 270)
         self.ui.tableWidget.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
         header = self.ui.tableWidget.horizontalHeader()
         header.setDefaultAlignment(QtCore.Qt.AlignLeft)  # 设置表头左对齐
@@ -160,6 +160,7 @@ class DatasetWindow(QMainWindow):
             info_start_time = result['info_start_time']
             info_end_time = result['info_end_time']
             info_file_path = result['info_raw_file_path']
+            info_is_del = result['info_is_del']
             if result['info_shibie_speaker'] != None:
                 speaker = result['info_shibie_speaker']
             else:
@@ -185,13 +186,17 @@ class DatasetWindow(QMainWindow):
             btn_bianji = BianJiBTN('编辑', info_id)
             btn_bianji.setMinimumWidth(50)
             btn_bianji.on_clicked.connect(self.edit_info)
+            btn_shanchu = DeleteBTN('删除', info_id, self, info_is_del)
+            btn_shanchu.setMinimumWidth(70)
             self.btn_dict[f"{row}_shiting"] = btn_shiting
             self.btn_dict[f"{row}_fastoutput"] = btn_fastoutput
             self.btn_dict[f"{row}_bianji"] = btn_bianji
+            self.btn_dict[f"{row}_shanchu"] = btn_shanchu
             layout = QHBoxLayout()
             layout.addWidget(self.btn_dict[f"{row}_shiting"])
             layout.addWidget(self.btn_dict[f"{row}_fastoutput"])
             layout.addWidget(self.btn_dict[f"{row}_bianji"])
+            layout.addWidget(self.btn_dict[f"{row}_shanchu"])
             self.btn_dict = {}
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(1)

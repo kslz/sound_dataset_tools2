@@ -128,7 +128,10 @@ def get_pingce_info(dataset_id, is_skip_done):
     query = (Info
              .select(Info, BiaoBeiPingCeInfo.biaobeipingce_all_score)
              .join(BiaoBeiPingCeInfo, JOIN.LEFT_OUTER)
-             .where(Info.dataset_id == dataset_id)
+             .where(
+                Info.dataset_id == dataset_id,
+                Info.info_is_del == 0,
+             )
              )
     # for result in results:
     #     info_id = result.info_id
@@ -171,7 +174,7 @@ def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
             fn.row_number().over(order_by=[Info.info_id]).alias('row_number')
         )
         .where(
-            (Info.info_is_del == 0) &
+            # (Info.info_is_del == 0) &
             (Info.dataset_id == dataset_id)
         )
         .order_by(Info.info_id)
@@ -188,10 +191,11 @@ def get_dataset_window_info(dataset_id=1, page_size=15, page_number=1):
         Info.info_start_time,
         Info.info_end_time,
         Info.info_raw_file_path,
+        Info.info_is_del,
     )
     .join(subquery, on=(Info.info_id == subquery.c.info_id))
     .where(
-        (Info.info_is_del == 0) &
+        # (Info.info_is_del == 0) &
         (Info.dataset_id == dataset_id)
     )
     .order_by(

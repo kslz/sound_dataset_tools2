@@ -30,6 +30,29 @@ class FastOutputSoundBTN(QPushButton):
         output_name = str(self.info_id) + ".wav"
         fast_output_sound(wav_path, start_time, end_time, output_name)
 
+class DeleteBTN(QPushButton):
+    def __init__(self, text, info_id, parent, info_is_del):
+        super().__init__(text, parent)
+        self.info_id = info_id
+        self.info_is_del = info_is_del
+        if self.info_is_del == False:
+            self.setText("删除")
+        else:
+            self.setText("恢复")
+
+        self.clicked.connect(self.change_is_del_sound)
+
+    def change_is_del_sound(self):
+        # 肯定是伪删除
+        new_is_del = True if self.info_is_del == False else False
+        Info.update(info_is_del=new_is_del).where(Info.info_id == self.info_id).execute()
+        self.info_is_del = new_is_del
+        if self.info_is_del == False:
+            self.setText("删除")
+        else:
+            self.setText("恢复")
+
+
 
 class PlaySoundBTN(QPushButton):
     class PlaySoundThread(QtCore.QThread):
