@@ -145,19 +145,65 @@ python main.py
 
 ![image-20230306193521430](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230306193521430.png)
 
+#### 语音评测
+
+语音评测功能可以通过商用评测接口为语句打分，以实现快速挑选优质数据的功能。
+
+目前已接入标贝语音评测接口
+
+##### 标贝语音评测
+
+###### 添加授权信息
+
+首先进入软件设置-授权管理页面，点击添加按钮，输入名称等字段，应用类型选择语音评测。
+
+![image-20230806115645788](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230806115645788.png)
+
+标贝相关字段请进入 [标贝开放平台-语音评测页面](https://ai.data-baker.com/#/expand/evaluating) 开通服务后查看（目前为免费试用期，想白嫖的尽快）
+
+![image-20230806120051148](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230806120051148.png)
+
+添加完毕后会自动进行校验，期间请关闭代理程序。
+
+###### 进行数据评测
+
+然后进入数据处理页面，点击标贝语音评测，选择相应授权信息后即可开始评测。
+
+![image-20230806120245067](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230806120245067.png)
+
+![image-20230806120318125](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230806120318125.png)
+
+###### 根据评测结果导出
+
+返回数据集概览页面，点击导出按钮，在评测相关的部分选择标贝评测，并填入对应分数要求
+
+![image-20230806120507462](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230806120507462.png)
+
+注意：选择评测的话，未进行评测的数据将不会被导出，同时因为标贝评测只支持中文，所以选择后所有英文数据也都不会被导出。
+
+点击下一步，确认后即可开始导出
+
+![image-20230806120653755](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230806120653755.png)
+
+![image-20230806120927179](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230806120927179.png)
+
+另附：不选择评测时的导出结果
+
+![image-20230806121007747](https://cdn.jsdelivr.net/gh/kslz/blogImage@main/img/image-20230806121007747.png)
+
 ## 开发计划
 
-编译exe版本
+~~编译exe版本~~
 
 通过ASR标注
 
-应用语音评测
+~~应用语音评测~~
 
 应用声纹识别
 
 导出多发音人数据集
 
-快速导出
+~~快速导出~~
 
 ......
 
