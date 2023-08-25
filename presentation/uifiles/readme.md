@@ -1,1 +1,1 @@
-存放 pyuic转换后生成的py文件
+存放 QT Designer 生成的ui文件

@@ -9,3 +9,4 @@ dist
 imgs
 *.spec
 out
+/test/
