@@ -9,10 +9,13 @@ from presentation.pyuic.ui_SelectDatasetMainWindow import Ui_SelectDatasetMainWi
 
 
 class SelectDatasetMainWindow(BaseMainWindow):
-    def __init__(self):
+    def __init__(self, tool_workspace):
         super().__init__()
         # 使用ui文件导入定义界面类
         self.ui = Ui_SelectDatasetMainWindow()
         # 初始化界面
         self.ui.setupUi(self)
         self.my_init()
+
+        self.tool_workspace = tool_workspace
+        print(self.tool_workspace.db_file_path)
