@@ -8,6 +8,8 @@
 import configparser
 import os
 
+from domain.repositories.repositories import *
+
 
 class ToolWorkspace:
     def __init__(self, workspace_path):
@@ -35,12 +37,23 @@ class ToolWorkspace:
             os.makedirs(self.output_path, exist_ok=True)
             os.makedirs(self.file_path, exist_ok=True)
             os.makedirs(self.input_file_path, exist_ok=True)
+            self.init_database()
             return True
         except OSError as e:
             print("工作区创建失败\n", e)
             return False  # 创建失败时返回False
+        except OperationalError as e:
+            print("数据库初始化失败\n", e)
+        except Exception as e:
+            print("未知异常\n", e)
 
-    pass
+    def init_database(self):
+        """
+        初始化数据库和PEEWEE
+        """
+
+        init_database(self.db_file_path)
+        pass
 
 
 class ConfigParserWithFile(configparser.ConfigParser):
@@ -74,4 +87,3 @@ default_workspace = .\workspace
             f.write(info)
         config.refresh_config()
     return config
-
