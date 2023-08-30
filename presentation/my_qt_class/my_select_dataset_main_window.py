@@ -3,11 +3,14 @@
     @Time : 2023/8/27 14:56
     @Author : 李子
     @Url : https://github.com/kslz
+    数据集选择界面
 """
 from PySide6.QtWidgets import QTableWidgetItem, QPushButton, QHBoxLayout, QWidget
 
 from domain.repositories.models import Dataset
+from domain.repositories.repositories import *
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
+from presentation.my_qt_class.my_factory_function import *
 from presentation.pyuic.ui_SelectDatasetMainWindow import Ui_SelectDatasetMainWindow
 from utils.tools import *
 
@@ -36,9 +39,8 @@ class SelectDatasetMainWindow(BaseMainWindow):
         :return:
         """
         self.ui.tableWidget.setRowCount(0)
-        datasets = Dataset.select()
+        datasets = get_dataset_info()
         for dataset in datasets:
-            print(dataset.dataset_id)
             self.addData(dataset.dataset_id,
                          dataset.dataset_name,
                          dataset.dataset_create_time,
@@ -47,41 +49,34 @@ class SelectDatasetMainWindow(BaseMainWindow):
 
     def addData(self, dataset_id=None, dataset_name=None, dataset_createtime=None, dataset_lastusetime=None,
                 dataset_info=None):
-        # todo 使用工厂函数新建编辑按钮组
         row = self.ui.tableWidget.rowCount()
         self.ui.tableWidget.insertRow(row)
         self.ui.tableWidget.setItem(row, 0, QTableWidgetItem(str(dataset_name)))
         self.ui.tableWidget.setItem(row, 1, QTableWidgetItem(str(dataset_createtime)))
         self.ui.tableWidget.setItem(row, 2, QTableWidgetItem(str(dataset_lastusetime)))
-        # self.ui.tableWidget.setItem(row, 3, QTableWidgetItem(str(dataset_info)))
+
         info_cell = QTableWidgetItem()
         info_cell.setText(dataset_info)
         info_cell.setToolTip(f"<pre>{huanhang(dataset_info)}</pre>")
         self.ui.tableWidget.setItem(row, 3, info_cell)
 
-        btn_jr = QPushButton('进入', self)
-        btn_jr.clicked.connect(lambda: self.openDatasetWindow(dataset_id))
-        btn_bj = QPushButton('编辑', self)
-        btn_bj.clicked.connect(lambda: self.edit_dataset(dataset_id))
-        btn_sc = QPushButton('删除', self)
-        btn_sc.clicked.connect(lambda: self.del_dataset(dataset_id, dataset_name))
-        layout = QHBoxLayout()
-        layout.addWidget(btn_jr)
-        layout.addWidget(btn_bj)
-        layout.addWidget(btn_sc)
-        layout.setContentsMargins(1, 1, 1, 1)
-        layout.setSpacing(1)
-        caozuo_widget = QWidget()
-        caozuo_widget.setLayout(layout)
+        data_list = [
+            ['进入', lambda: self.openDatasetWindow(dataset_id)],
+            ['编辑', lambda: self.edit_dataset(dataset_id)],
+            ['删除', lambda: self.del_dataset(dataset_id, dataset_name)]
+        ]
+
+        caozuo_widget = make_operate_btns(self, data_list)
         self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
 
     def openDatasetWindow(self, dataset_id):
+        print("进入", dataset_id)
         pass
 
     def edit_dataset(self, dataset_id):
+        print("编辑", dataset_id)
         pass
 
     def del_dataset(self, dataset_id, dataset_name):
+        print("删除", dataset_id, dataset_name)
         pass
-
-
