@@ -5,10 +5,10 @@
     @Url : https://github.com/kslz
     数据集选择界面
 """
-from PySide6.QtWidgets import QTableWidgetItem, QPushButton, QHBoxLayout, QWidget
+from PySide6.QtWidgets import QTableWidgetItem
 
-from domain.repositories.models import Dataset
 from domain.repositories.repositories import *
+from presentation.my_qt_class.my_add_dataset_dialog import AddDatasetDialog
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
 from presentation.my_qt_class.my_factory_function import *
 from presentation.pyuic.ui_SelectDatasetMainWindow import Ui_SelectDatasetMainWindow
@@ -31,6 +31,8 @@ class SelectDatasetMainWindow(BaseMainWindow):
 
         self.tool_workspace = tool_workspace
         self.add_dataset_data()
+
+        self.ui.pushButton.clicked.connect(self.open_add_dataset_window)
 
     def add_dataset_data(self):
         """
@@ -61,7 +63,7 @@ class SelectDatasetMainWindow(BaseMainWindow):
         self.ui.tableWidget.setItem(row, 3, info_cell)
 
         data_list = [
-            ['进入', lambda: self.openDatasetWindow(dataset_id)],
+            ['进入', lambda: self.open_dataset_window(dataset_id)],
             ['编辑', lambda: self.edit_dataset(dataset_id)],
             ['删除', lambda: self.del_dataset(dataset_id, dataset_name)]
         ]
@@ -69,7 +71,7 @@ class SelectDatasetMainWindow(BaseMainWindow):
         caozuo_widget = make_operate_btns(self, data_list)
         self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
 
-    def openDatasetWindow(self, dataset_id):
+    def open_dataset_window(self, dataset_id):
         print("进入", dataset_id)
         pass
 
@@ -80,3 +82,7 @@ class SelectDatasetMainWindow(BaseMainWindow):
     def del_dataset(self, dataset_id, dataset_name):
         print("删除", dataset_id, dataset_name)
         pass
+
+    def open_add_dataset_window(self):
+        self.add_window = AddDatasetDialog(self)
+        self.add_window.exec()
