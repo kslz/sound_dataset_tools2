@@ -5,9 +5,10 @@
     @Url : https://github.com/kslz
     数据集选择界面
 """
-from PySide6.QtWidgets import QTableWidgetItem
+from PySide6.QtWidgets import QTableWidgetItem, QMessageBox
 
 from domain.repositories.repositories import *
+from infrastructure.file_io import del_file_by_dataset_id
 from presentation.my_qt_class.my_add_dataset_dialog import AddDatasetDialog
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
 from presentation.my_qt_class.my_factory_function import *
@@ -83,6 +84,34 @@ class SelectDatasetMainWindow(BaseMainWindow):
 
     def del_dataset(self, dataset_id, dataset_name):
         print("删除", dataset_id, dataset_name)
+        msg_box = QMessageBox()  # 后悔药（不
+        msg_box.setWindowTitle("提示")
+        msg_box.setText(f"确认删除数据集 {dataset_name} 吗？\n{dataset_name} 将会永久失去!(真的很久!)")
+        msg_box.setIcon(QMessageBox.Question)
+
+        # 添加按钮
+        yes_button = msg_box.addButton("确定", QMessageBox.AcceptRole)
+        no_button = msg_box.addButton("取消", QMessageBox.RejectRole)
+
+        # 显示消息框，等待用户响应
+        msg_box.exec()
+
+        # 获取用户的响应
+        button_clicked = msg_box.clickedButton()
+        if button_clicked == yes_button:
+            try:
+                del_dataset_by_id(dataset_id)
+                del_file_by_dataset_id(dataset_id)
+            except Exception as e:
+                self.logger.error(f"删除数据集 {dataset_name} id={dataset_id} 失败\n{e}")
+            else:
+                self.logger.info(f"数据集 {dataset_name} 成功删除")
+            finally:
+                self.add_dataset_data()
+
+        else:
+            pass
+
         pass
 
     def open_add_dataset_window(self):
