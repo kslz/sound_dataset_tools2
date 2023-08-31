@@ -9,12 +9,12 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from presentation.my_qt_class.my_base_dialog import BaseDialog
+from presentation.my_qt_class.my_base_dialog import BaseStartDialog
 from presentation.pyuic.ui_SelectWorkspaceDialog import Ui_SelectWorkspaceDialog
 from utils.init_tools import read_ini_config
 
 
-class SelectWorkspaceDialog(BaseDialog):
+class SelectWorkspaceDialog(BaseStartDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.workspace_path = None

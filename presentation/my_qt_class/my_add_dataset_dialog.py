@@ -10,7 +10,6 @@ import peewee
 from domain.repositories.repositories import *
 from presentation.my_qt_class.my_base_dialog import BaseDialog
 from presentation.pyuic.ui_AddDatasetDialog import Ui_AddDatasetDialog
-from utils.logging_utils import LoggerSingleton
 
 
 class AddDatasetDialog(BaseDialog):
@@ -58,15 +57,34 @@ class AddDatasetDialog(BaseDialog):
             if "UNIQUE constraint failed" in str(e):
                 self.show_error("添加失败，数据集名称重复")
             else:
-                # guilogger.error(e)
+                self.show_error("添加失败，请查看日志")
+                self.logger.error("添加失败：\n", e)
 
                 pass
         else:
-            logger = LoggerSingleton.get_logger()
-            logger.info(f"添加数据集 {dataset_name} 成功")
+            self.logger.info(f"添加数据集 {dataset_name} 成功")
             self.parent().add_dataset_data()
             self.close()
 
     def edit_dataset(self):
+
+        dataset_name = self.ui.lineEdit.text()
+        dataset_info = self.ui.textEdit.toPlainText()
+        if dataset_name == "":
+            self.show_error("修改失败，数据集名称为空")
+            return
+        try:
+            dataset = Dataset.update(dataset_name=dataset_name, dataset_info=dataset_info).where(
+                Dataset.dataset_id == self.dataset_id).execute()
+        except peewee.IntegrityError as e:
+            if "UNIQUE constraint failed" in str(e):
+                self.show_error("修改失败，数据集名称重复")
+            else:
+                self.show_error("修改失败，请查看日志")
+                self.logger.error("修改失败：\n", e)
+        else:
+            self.logger.info(f"数据集 {dataset_name} 修改成功")
+            self.parent().add_dataset_data()
+            self.close()
 
         pass

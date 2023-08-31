@@ -7,10 +7,13 @@
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow
 
+from utils.logging_utils import LoggerSingleton
+
 
 class BaseMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.logger = LoggerSingleton.get_logger()
 
     def my_init(self):
         # 设置窗口左上角图标
