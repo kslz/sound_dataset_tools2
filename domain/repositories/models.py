@@ -27,3 +27,18 @@ class Dataset(BaseModel):
     class Meta:
         table_name = 'dataset_tbl'
 
+class Info(BaseModel):
+    info_id = PrimaryKeyField()
+    dataset_id = ForeignKeyField(Dataset, "dataset_id", "infos", on_delete='CASCADE')
+    info_text = CharField(null=True, )
+    info_pinyin = CharField(null=True, )
+    info_speaker = CharField(null=True, )
+    info_raw_file_path = TextField(null=True, )
+    info_start_time = IntegerField(null=True, )
+    info_end_time = IntegerField(null=True, )
+    info_file_path = TextField(null=True, )
+    info_is_del = BooleanField(default=False)
+
+    class Meta:
+        table_name = 'info_tbl'
+
