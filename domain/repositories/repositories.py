@@ -31,6 +31,7 @@ def get_file_raw_path_by_dataset_id(dataset_id):
 
     pass
 
+
 def get_dataset_info():
     """
     返回所有数据集数据
@@ -53,4 +54,4 @@ def init_database(database_path):
     db.init(database_path)
     db.connect()
     db.pragma('foreign_keys', 'on')
-    db.create_tables([Dataset])
+    db.create_tables([Dataset, Info])

@@ -36,7 +36,6 @@ class Info(BaseModel):
     info_raw_file_path = TextField(null=True, )
     info_start_time = IntegerField(null=True, )
     info_end_time = IntegerField(null=True, )
-    info_file_path = TextField(null=True, )
     info_is_del = BooleanField(default=False)
 
     class Meta:

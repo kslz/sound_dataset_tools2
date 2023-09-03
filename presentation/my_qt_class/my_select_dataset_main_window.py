@@ -77,13 +77,11 @@ class SelectDatasetMainWindow(BaseMainWindow):
         pass
 
     def edit_dataset(self, dataset_id):
-        print("编辑", dataset_id)
         self.edit_window = AddDatasetDialog(self, useby="edit", dataset_id=dataset_id)
         self.edit_window.exec_()
         pass
 
     def del_dataset(self, dataset_id, dataset_name):
-        print("删除", dataset_id, dataset_name)
         msg_box = QMessageBox()  # 后悔药（不
         msg_box.setWindowTitle("提示")
         msg_box.setText(f"确认删除数据集 {dataset_name} 吗？\n{dataset_name} 将会永久失去!(真的很久!)")
