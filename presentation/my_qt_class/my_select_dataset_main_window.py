@@ -5,7 +5,7 @@
     @Url : https://github.com/kslz
     数据集选择界面
 """
-from PySide6.QtWidgets import QTableWidgetItem, QMessageBox
+from PySide6.QtWidgets import QTableWidgetItem, QMessageBox, QHeaderView
 
 from domain.repositories.repositories import *
 from infrastructure.file_io import del_file_by_dataset_id
@@ -24,11 +24,17 @@ class SelectDatasetMainWindow(BaseMainWindow):
         # 初始化界面
         self.ui.setupUi(self)
         self.my_init()
+
+        print(type(self.ui.tableWidget))
         self.ui.tableWidget.setColumnWidth(0, 100)
         self.ui.tableWidget.setColumnWidth(1, 130)
         self.ui.tableWidget.setColumnWidth(2, 130)
         self.ui.tableWidget.setColumnWidth(3, 200)
         self.ui.tableWidget.setColumnWidth(4, 120)
+
+        header = self.ui.tableWidget.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Fixed)
+
 
         self.tool_workspace = tool_workspace
         self.add_dataset_data()
