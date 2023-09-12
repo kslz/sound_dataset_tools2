@@ -12,6 +12,7 @@ from infrastructure.file_io import del_file_by_dataset_id
 from presentation.my_qt_class.my_add_dataset_dialog import AddDatasetDialog
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
 from presentation.my_qt_class.my_factory_function import *
+from presentation.my_qt_class.my_tool_function import *
 from presentation.pyuic.ui_SelectDatasetMainWindow import Ui_SelectDatasetMainWindow
 from utils.tools import *
 
@@ -25,15 +26,14 @@ class SelectDatasetMainWindow(BaseMainWindow):
         self.ui.setupUi(self)
         self.my_init()
 
-        print(type(self.ui.tableWidget))
-        self.ui.tableWidget.setColumnWidth(0, 100)
-        self.ui.tableWidget.setColumnWidth(1, 130)
-        self.ui.tableWidget.setColumnWidth(2, 130)
-        self.ui.tableWidget.setColumnWidth(3, 200)
-        self.ui.tableWidget.setColumnWidth(4, 120)
-
-        header = self.ui.tableWidget.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.Fixed)
+        properties = [
+            ("数据集名", False, 100),
+            ("创建时间", False, 130),
+            ("上次使用时间", False, 130),
+            ("备注", True, 100),
+            ("操作", False, 120),
+        ]
+        modify_table_style(self.ui.tableWidget, properties)
 
 
         self.tool_workspace = tool_workspace
