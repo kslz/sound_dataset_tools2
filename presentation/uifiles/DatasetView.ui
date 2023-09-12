@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DatasetMainWindow</class>
- <widget class="QMainWindow" name="DatasetMainWindow">
+ <class>DatasetViewMainWindow</class>
+ <widget class="QMainWindow" name="DatasetViewMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -123,31 +123,6 @@
            <string>新建行</string>
           </property>
          </row>
-         <column>
-          <property name="text">
-           <string>序号</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>标注文本</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>发音人</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>标签</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>操作</string>
-          </property>
-         </column>
         </widget>
         <widget class="QComboBox" name="comboBox">
          <property name="geometry">
