@@ -11,6 +11,7 @@ from domain.repositories.repositories import *
 from infrastructure.file_io import del_file_by_dataset_id
 from presentation.my_qt_class.my_add_dataset_dialog import AddDatasetDialog
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
+from presentation.my_qt_class.my_dataset_view_window import DatasetViewMainWindow
 from presentation.my_qt_class.my_factory_function import *
 from presentation.my_qt_class.my_tool_function import *
 from presentation.pyuic.ui_SelectDatasetMainWindow import Ui_SelectDatasetMainWindow
@@ -79,6 +80,9 @@ class SelectDatasetMainWindow(BaseMainWindow):
         self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
 
     def open_dataset_window(self, dataset_id):
+        self.dataset_view_main_window = DatasetViewMainWindow(dataset_id)
+        self.dataset_view_main_window.show()
+        self.hide()
         print("进入", dataset_id)
         pass
 
