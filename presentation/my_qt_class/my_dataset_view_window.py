@@ -31,7 +31,7 @@ class DatasetViewMainWindow(BaseMainWindow):
             ("序号", False, 100),
             ("标注文本", True, 130),
             ("发音人", False, 130),
-            ("标签", True, 100),
+            ("标签", False, 100),
             ("操作", False, 120),
         ]
         modify_table_style(self.ui.tableWidget, properties)

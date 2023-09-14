@@ -63,7 +63,6 @@ class ToolWorkspace:
         """
 
         init_database(self.db_file_path)
-        print("连接成功")
         pass
 
     def init_logger(self):

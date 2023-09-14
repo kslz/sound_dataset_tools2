@@ -83,7 +83,6 @@ class SelectDatasetMainWindow(BaseMainWindow):
         self.dataset_view_main_window = DatasetViewMainWindow(dataset_id)
         self.dataset_view_main_window.show()
         self.hide()
-        print("进入", dataset_id)
         pass
 
     def edit_dataset(self, dataset_id):
