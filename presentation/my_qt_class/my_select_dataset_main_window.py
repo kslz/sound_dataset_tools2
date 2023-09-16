@@ -36,7 +36,6 @@ class SelectDatasetMainWindow(BaseMainWindow):
         ]
         modify_table_style(self.ui.tableWidget, properties)
 
-
         self.tool_workspace = tool_workspace
         self.add_dataset_data()
 
@@ -71,9 +70,9 @@ class SelectDatasetMainWindow(BaseMainWindow):
         self.ui.tableWidget.setItem(row, 3, info_cell)
 
         data_list = [
-            ['进入', lambda: self.open_dataset_window(dataset_id)],
-            ['编辑', lambda: self.edit_dataset(dataset_id)],
-            ['删除', lambda: self.del_dataset(dataset_id, dataset_name)]
+            {'text': '进入', 'slot': lambda: self.open_dataset_window(dataset_id)},
+            {'text': '编辑', 'slot': lambda: self.edit_dataset(dataset_id)},
+            {'text': '删除', 'slot': lambda: self.del_dataset(dataset_id, dataset_name)},
         ]
 
         caozuo_widget = make_operate_btns(self, data_list)
