@@ -5,6 +5,7 @@
     @Url : https://github.com/kslz
     工具函数
 """
+import math
 import string
 
 
@@ -68,3 +69,17 @@ def huanhang(text: str, num=30):
 
     formatted_text = '\n'.join(lines)
     return formatted_text
+
+def check_pagenumber_is_out(total_count, page_number, page_size):
+    """
+    验证页码数是否超过上限并如超过则返回上限页码数，不超过则返回当前页码数
+
+    :param total_count: 数据总数
+    :param page_number: 页码数
+    :param page_size: 分页大小
+    :return: 返回页码数
+    """
+    if page_number * page_size > total_count:
+        return True, math.ceil(total_count / page_size)
+    else:
+        return False, page_number

@@ -6,6 +6,7 @@
     数据库相关增删改查操作
 """
 from domain.repositories.models import *
+from utils.tools import check_pagenumber_is_out
 
 
 # 增
@@ -42,6 +43,48 @@ def get_dataset_info():
 
 def get_dataset_info_by_id(dataset_id):
     return Dataset.get_by_id(dataset_id)
+
+
+def get_dataset_view_window_info(dataset_id=1, page_size=15, page_number=1, show_delete=True):
+    subquery = (
+        Info
+        .select(
+            Info.info_id,
+            fn.row_number().over(order_by=[Info.info_id]).alias('row_number')
+        )
+        .where(
+            (Info.dataset_id == dataset_id) &
+            (Info.info_is_del == 0) if not show_delete else True
+        )
+        .order_by(Info.info_id)
+        .alias('subquery')
+    )
+
+    query = (Info
+    .select(
+        subquery.c.row_number.alias('index'),
+        Info.info_id,
+        Info.info_text,
+        Info.info_speaker,
+        # Info.info_shibie_speaker,
+        Info.info_start_time,
+        Info.info_end_time,
+        Info.info_raw_file_path,
+        Info.info_is_del,
+    )
+    .join(subquery, on=(Info.info_id == subquery.c.info_id))
+    .where(
+        (Info.dataset_id == dataset_id)
+    )
+    .order_by(
+        Info.info_id.asc()
+    ))
+    total_count = query.count()
+    _, page_number = check_pagenumber_is_out(total_count, page_number, page_size)
+    query = query.paginate(page_number, page_size)
+
+    results = list(query.dicts())
+    return total_count, results
 
 
 # 其他
