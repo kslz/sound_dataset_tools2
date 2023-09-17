@@ -12,14 +12,28 @@ from domain.repositories.repositories import *
 from utils.logging_utils import init_logger, LoggerSingleton
 
 
+def singleton(cls):
+    instances = {}
+
+    def wrapper(workspace_path=None):
+        if cls not in instances:
+            instances[cls] = cls(workspace_path)
+        return instances[cls]
+
+    return wrapper
+
+
+@singleton
 class ToolWorkspace:
-    def __init__(self, workspace_path):
+
+    def __init__(self, workspace_path=None):
         """
         定义文件路径
 
         :param workspace_path:
         """
         workspace_path = os.path.abspath(workspace_path)
+        self.workspace_path = workspace_path
         self.db_folder_path = os.path.join(workspace_path, "db")
         self.db_file_path = os.path.join(self.db_folder_path, "workspace.db")
         self.output_path = os.path.join(workspace_path, "output")
@@ -71,7 +85,6 @@ class ToolWorkspace:
         """
         self.logger = LoggerSingleton.get_logger(self.log_file_path)
         pass
-
 
 
 class ConfigParserWithFile(configparser.ConfigParser):
