@@ -6,6 +6,9 @@
     文件操作
 """
 import os
+from datetime import datetime
+
+import ffmpeg
 
 from domain.repositories.repositories import get_file_raw_path_by_dataset_id
 from utils.logging_utils import LoggerSingleton
@@ -23,3 +26,22 @@ def del_file_by_dataset_id(dataset_id):
                 logger.info(f"文件 {file_path} 已被删除")
             except:
                 logger.error(f"文件 {file_path} 删除失败")
+
+
+def copy_file_to_workspace(raw_path, to_path):
+    file_name = os.path.basename(raw_path)
+    now = datetime.now()
+    formatted_time = now.strftime("%Y-%m-%d_%H-%M-%S")
+
+    file_name_new = os.path.splitext(file_name)[0] + "_" + formatted_time + ".flac"
+    new_path = os.path.join(to_path, file_name_new)
+
+    (
+        ffmpeg
+        .input(raw_path)
+        .output(new_path, codec="flac", compression_level=5, sample_fmt='s16', bits_per_raw_sample=16)
+        .run(quiet=True)
+    )
+
+    # shutil.copyfile(raw_path, new_path)
+    return new_path

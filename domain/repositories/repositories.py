@@ -15,6 +15,12 @@ def add_dataset(dataset_name, datset_info):
     dataset.save()
 
 
+def insert_info_many(data_list, batch_size=1000):
+    for i in range(0, len(data_list), batch_size):
+        with db.atomic():
+            Info.insert_many(data_list[i:i + batch_size]).execute()
+
+
 # 删
 
 def del_dataset_by_id(dataset_id):

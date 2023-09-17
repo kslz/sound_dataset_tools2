@@ -8,6 +8,7 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QTableWidgetItem, QPushButton
 
 from domain.repositories.repositories import *
+from presentation.my_qt_class.my_add_from_wav_srt_dialog import AddFromWavSrtDialog
 from presentation.my_qt_class.my_audio_button import AudioButton
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
 from presentation.my_qt_class.my_factory_function import *
@@ -29,6 +30,8 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.page_number = 1
         self.page_size = 15
         self.refresh_table()
+
+        self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
 
     def set_table_style(self):
         # 数据集概览表格
@@ -101,7 +104,6 @@ class DatasetViewMainWindow(BaseMainWindow):
             ]
 
             caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
-            print(caozuo_widget)
             self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
 
         self.ui.comboBox.setCurrentIndex(page_number - 1)
@@ -118,3 +120,7 @@ class DatasetViewMainWindow(BaseMainWindow):
     def del_info(self, info_id, info_is_del):
         print(f'删除{info_id}')
         pass
+
+    def add_from_file_wav_srt(self):
+        add_wav_srt_window = AddFromWavSrtDialog(self, self.dataset_id)
+        add_wav_srt_window.exec()

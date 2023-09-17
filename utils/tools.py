@@ -8,6 +8,8 @@
 import math
 import string
 
+import ffmpeg
+
 
 def huanhang(text: str, num=30):
     """
@@ -83,3 +85,18 @@ def check_pagenumber_is_out(total_count, page_number, page_size):
         return True, math.ceil(total_count / page_size)
     else:
         return False, page_number
+
+def get_audio_duration(file_path):
+    """
+    获取音频持续时间
+
+    :param file_path:
+    :return:
+    """
+
+    probe = ffmpeg.probe(file_path)
+    audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
+    duration = float(audio_stream['duration'])
+    duration = round(duration * 1000)
+
+    return duration
