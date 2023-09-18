@@ -10,7 +10,7 @@ import pysrt
 from PySide6.QtWidgets import QFileDialog
 from pydub import AudioSegment
 
-from domain.service.input_service_protocol import add_info_by_file_wav_srt_better
+from application.services.input_service import add_info_by_file_wav_srt_better
 from infrastructure.file_io import copy_file_to_workspace
 from presentation.my_qt_class.my_base_dialog import BaseDialog
 from presentation.pyuic.ui_AddFromWavSrtDialog import Ui_AddFromWavSrtDialog
@@ -99,7 +99,6 @@ class AddFromWavSrtDialog(BaseDialog):
                 self.ui.error_lable.setText(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 self.logger.error(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 return
-            # if add_info_by_file_wav_srt(self.dataset_id, wav_path, srt_path, speaker):
             sound = AudioSegment.from_file(wav_path)
             if add_info_by_file_wav_srt_better(self.dataset_id, wav_path, srt_path, speaker, sound, is_merge_srt):
                 self.parent().refresh_table()
