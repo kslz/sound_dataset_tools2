@@ -21,7 +21,6 @@ from utils.tools import get_audio_duration
 class AddFromWavSrtDialog(BaseDialog):
     def __init__(self, parent, dataset_id):
         super().__init__(parent)
-        self.workspace_path = None
         # 使用ui文件导入定义界面类
         self.ui = Ui_AddFromWavSrtDialog()
         # 初始化界面
@@ -37,7 +36,6 @@ class AddFromWavSrtDialog(BaseDialog):
         self.ui.pushButton_submit.clicked.connect(self.save_to_dataset)
         self.ui.pushButton_back.clicked.connect(self.go_back)
 
-        self.workspace = ToolWorkspace()
 
     def select_file_wav(self):
         filePath, _ = QFileDialog.getOpenFileName(

@@ -7,6 +7,7 @@
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QDialog
 
+from utils.init_tools import ToolWorkspace
 from utils.logging_utils import LoggerSingleton
 
 
@@ -14,6 +15,7 @@ class BaseDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.logger = LoggerSingleton.get_logger()
+        self.workspace = ToolWorkspace()
 
     def my_init(self):
         # 设置窗口左上角图标

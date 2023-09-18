@@ -15,7 +15,6 @@ from presentation.pyuic.ui_AddDatasetDialog import Ui_AddDatasetDialog
 class AddDatasetDialog(BaseDialog):
     def __init__(self, parent, useby="add", dataset_id=None):
         super().__init__(parent)
-        self.workspace_path = None
         # 使用ui文件导入定义界面类
         self.ui = Ui_AddDatasetDialog()
         # 初始化界面
