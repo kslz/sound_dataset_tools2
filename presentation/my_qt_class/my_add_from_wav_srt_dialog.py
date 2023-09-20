@@ -10,11 +10,10 @@ import pysrt
 from PySide6.QtWidgets import QFileDialog
 from pydub import AudioSegment
 
-from application.services.input_service import add_info_by_file_wav_srt_better
+from application.services.input_service import InputByWavSrtService
 from infrastructure.file_io import copy_file_to_workspace
 from presentation.my_qt_class.my_base_dialog import BaseDialog
 from presentation.pyuic.ui_AddFromWavSrtDialog import Ui_AddFromWavSrtDialog
-from utils.init_tools import ToolWorkspace
 from utils.tools import get_audio_duration
 
 
@@ -36,6 +35,7 @@ class AddFromWavSrtDialog(BaseDialog):
         self.ui.pushButton_submit.clicked.connect(self.save_to_dataset)
         self.ui.pushButton_back.clicked.connect(self.go_back)
 
+        self.input_service = None
 
     def select_file_wav(self):
         filePath, _ = QFileDialog.getOpenFileName(
@@ -74,7 +74,6 @@ class AddFromWavSrtDialog(BaseDialog):
         if speaker.strip() == "" or None:
             self.ui.error_lable.setText("输入发音人为空")
             return
-        # 多写return就不用写else了，某种意义上来讲能少几段缩进，提高可读性（也许
 
         if os.path.isfile(wav_path) and os.path.isfile(srt_path):
             try:
@@ -99,8 +98,12 @@ class AddFromWavSrtDialog(BaseDialog):
                 self.ui.error_lable.setText(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 self.logger.error(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 return
-            sound = AudioSegment.from_file(wav_path)
-            if add_info_by_file_wav_srt_better(self.dataset_id, wav_path, srt_path, speaker, sound, is_merge_srt):
+            self.input_service = InputByWavSrtService(dataset_id=self.dataset_id,
+                                                      wav_path=wav_path,
+                                                      srt_path=srt_path,
+                                                      speaker=speaker,
+                                                      optimization={"OptimizationMergeService": {"min_time": 40}})
+            if self.input_service.input_data():
                 self.parent().refresh_table()
                 self.close()
 
@@ -114,5 +117,3 @@ class AddFromWavSrtDialog(BaseDialog):
 
     def go_back(self):
         self.close()
-
-

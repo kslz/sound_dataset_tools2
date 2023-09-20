@@ -5,4 +5,9 @@
     @Url : https://github.com/kslz
     优化逻辑协议定义
 """
+from typing import Protocol
 
+
+class OptimizationService(Protocol):
+    def optimize_data(self):
+        pass

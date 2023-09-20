@@ -4,4 +4,9 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+from typing import Protocol
 
+
+class InputService(Protocol):
+    def input_data(self):
+        pass

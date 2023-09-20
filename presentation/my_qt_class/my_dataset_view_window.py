@@ -31,6 +31,8 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.page_size = 15
         self.refresh_table()
 
+        # 连接信号
+        self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
         self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
 
     def set_table_style(self):
@@ -124,3 +126,8 @@ class DatasetViewMainWindow(BaseMainWindow):
     def add_from_file_wav_srt(self):
         add_wav_srt_window = AddFromWavSrtDialog(self, self.dataset_id)
         add_wav_srt_window.exec()
+
+    def change_page_number(self, index):
+        new_page_num = self.ui.comboBox.itemData(index)
+        self.refresh_table(new_page_num)
+        self.page_number = new_page_num
