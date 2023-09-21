@@ -8,5 +8,9 @@ from typing import Protocol
 
 
 class InputService(Protocol):
-    def input_data(self):
+
+    def init_info(self, **kwargs):
+        pass
+
+    def input_data(self) -> bool:
         pass

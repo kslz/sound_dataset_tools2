@@ -11,6 +11,7 @@ from PySide6.QtWidgets import QFileDialog
 from pydub import AudioSegment
 
 from application.services.input_service import InputByWavSrtService
+from domain.service.input_service_protocol import InputService
 from infrastructure.file_io import copy_file_to_workspace
 from presentation.my_qt_class.my_base_dialog import BaseDialog
 from presentation.pyuic.ui_AddFromWavSrtDialog import Ui_AddFromWavSrtDialog
@@ -35,7 +36,7 @@ class AddFromWavSrtDialog(BaseDialog):
         self.ui.pushButton_submit.clicked.connect(self.save_to_dataset)
         self.ui.pushButton_back.clicked.connect(self.go_back)
 
-        self.input_service = None
+        self.input_service: InputService = InputByWavSrtService()
 
     def select_file_wav(self):
         filePath, _ = QFileDialog.getOpenFileName(
@@ -98,11 +99,11 @@ class AddFromWavSrtDialog(BaseDialog):
                 self.ui.error_lable.setText(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 self.logger.error(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 return
-            self.input_service = InputByWavSrtService(dataset_id=self.dataset_id,
-                                                      wav_path=wav_path,
-                                                      srt_path=srt_path,
-                                                      speaker=speaker,
-                                                      optimization={"OptimizationMergeService": {"min_time": 40}})
+            self.input_service.init_info(dataset_id=self.dataset_id,
+                                         wav_path=wav_path,
+                                         srt_path=srt_path,
+                                         speaker=speaker,
+                                         optimization={"OptimizationMergeService": {"min_time": 40}})
             if self.input_service.input_data():
                 self.parent().refresh_table()
                 self.close()

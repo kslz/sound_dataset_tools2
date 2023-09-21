@@ -11,15 +11,32 @@ import pysrt
 
 class OptimizationMergeService:
     """
-    剪映生成的字幕偶尔会出现长句被截成两个紧贴着的短句的情况，这个函数可以将紧贴着的两个或更多短句合成一句
+    剪映生成的字幕偶尔会出现长句被截成两个紧贴着的短句的情况，这个优化方案可以将紧贴着的两个或更多短句合成一句
     """
+    OPTIMIZATION_MIN_TIME = 'min_time'
 
-    def __init__(self, args_dict):
+    def __init__(self):
+        self.wav_path = None
+        self.subs = None
+        self.sound = None
+        self.min_time = None
+
+    def need_args(self):
+        need_args = {
+            self.OPTIMIZATION_MIN_TIME: {
+                'name': self.OPTIMIZATION_MIN_TIME,
+                'show_text': '最小合并间隔',
+                'type':int,
+
+
+            }
+        }
+
+    def init_data(self, args_dict):
         self.wav_path = args_dict['wav_path']
         self.subs = args_dict['subs']
         self.sound = args_dict['sound']
-        self.min_time = args_dict.get('min_time', 35)
-        print(self.min_time)
+        self.min_time = args_dict.get(self.OPTIMIZATION_MIN_TIME, 35)
 
     def optimize_data(self):
         subs = self.subs

@@ -10,14 +10,44 @@ from pydub import AudioSegment
 
 from application.services.optimization_service import optimization_server_dict, OptimizationMergeService
 from domain.repositories.repositories import insert_info_many
+from domain.service.optimization_service_protocol import OptimizationService
 
 
-class InputByWavSrtService:
+class InputBaseService:
+    def optimization(self, subs: pysrt.SubRipFile) -> pysrt.SubRipFile:
+        for optimization_name in self.optimizations.keys():
+            optimization = optimization_server_dict[optimization_name]
+            args_dict = {
+                "wav_path": self.wav_path,
+                "subs": subs,
+                "sound": self.sound,
+            }
+            args_dict.update(self.optimizations[optimization_name])
+            optimization_obj: OptimizationService = optimization(args_dict)
+            new_wav_path, subs = optimization_obj.optimize_data()
+            self.change_sound(new_wav_path)
+        return subs
+
+    def change_sound(self, new_wav_path):
+        if self.wav_path == new_wav_path:
+            self.wav_path = new_wav_path
+            self.sound = AudioSegment.from_file(self.wav_path)
+
+
+class InputByWavSrtService(InputBaseService):
     """
     通过音频和对应的字幕文件导入数据
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
+        self.dataset_id = None
+        self.wav_path = None
+        self.srt_path = None
+        self.speaker = None
+        self.sound = None
+        self.optimizations = None
+
+    def init_info(self, **kwargs):
         self.dataset_id = kwargs['dataset_id']
         self.wav_path = kwargs['wav_path']
         self.srt_path = kwargs['srt_path']
@@ -25,7 +55,7 @@ class InputByWavSrtService:
         self.sound = AudioSegment.from_file(self.wav_path)
         self.optimizations = kwargs['optimization']
 
-    def input_data(self):
+    def input_data(self) -> bool:
         subs = pysrt.open(self.srt_path)
         subs = self.optimization(subs)
 
@@ -47,22 +77,3 @@ class InputByWavSrtService:
         insert_info_many(data_list)
 
         return True
-
-    def optimization(self, subs):
-        for optimization_name in self.optimizations.keys():
-            optimization = optimization_server_dict[optimization_name]
-            args_dict = {
-                "wav_path": self.wav_path,
-                "subs": subs,
-                "sound": self.sound,
-            }
-            args_dict.update(self.optimizations[optimization_name])
-            optimization_obj = optimization(args_dict)
-            new_wav_path, subs = optimization_obj.optimize_data()
-            self.change_sound(new_wav_path)
-        return subs
-
-    def change_sound(self, new_wav_path):
-        if self.wav_path == new_wav_path:
-            self.wav_path = new_wav_path
-            self.sound = AudioSegment.from_file(self.wav_path)
