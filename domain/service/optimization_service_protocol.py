@@ -9,5 +9,15 @@ from typing import Protocol
 
 
 class OptimizationService(Protocol):
+
+    def need_args(self) -> dict:
+        """
+        返回所需参数信息字典
+        """
+        pass
+
+    def init_data(self, args_dict: dict):
+        pass
+
     def optimize_data(self):
         pass

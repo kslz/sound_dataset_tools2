@@ -22,15 +22,28 @@ class OptimizationMergeService:
         self.min_time = None
 
     def need_args(self):
-        need_args = {
+        show_text = '最小合并间隔'
+
+        def check_min_time(input_str):
+            try:
+                if int(input_str) >= 0:
+                    return True, ''
+                else:
+                    return False, f'{show_text} 应为不小于0的整数'
+            except:
+                return False, f'{show_text} 应为不小于0的整数'
+
+        need_args_dict = {
+            'need_sound': False,
             self.OPTIMIZATION_MIN_TIME: {
                 'name': self.OPTIMIZATION_MIN_TIME,
-                'show_text': '最小合并间隔',
-                'type':int,
-
-
+                'show_text': show_text,
+                'type': int,
+                'default': 35,
+                'check': check_min_time
             }
         }
+        return need_args_dict
 
     def init_data(self, args_dict):
         self.wav_path = args_dict['wav_path']
@@ -82,7 +95,7 @@ class OptimizationMergeService:
         return self.wav_path, optimized_subs
 
 
-optimization_server_dict = {
+optimization_service_dict = {
     "OptimizationMergeService": OptimizationMergeService
 }
 

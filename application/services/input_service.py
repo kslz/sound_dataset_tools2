@@ -8,22 +8,22 @@
 import pysrt
 from pydub import AudioSegment
 
-from application.services.optimization_service import optimization_server_dict, OptimizationMergeService
+from application.services.optimization_service import optimization_service_dict
 from domain.repositories.repositories import insert_info_many
 from domain.service.optimization_service_protocol import OptimizationService
 
 
 class InputBaseService:
+
     def optimization(self, subs: pysrt.SubRipFile) -> pysrt.SubRipFile:
-        for optimization_name in self.optimizations.keys():
-            optimization = optimization_server_dict[optimization_name]
+        for optimization_name, optimization_obj in self.optimizations.items():
             args_dict = {
                 "wav_path": self.wav_path,
                 "subs": subs,
                 "sound": self.sound,
             }
             args_dict.update(self.optimizations[optimization_name])
-            optimization_obj: OptimizationService = optimization(args_dict)
+            optimization_obj.init_data(args_dict)
             new_wav_path, subs = optimization_obj.optimize_data()
             self.change_sound(new_wav_path)
         return subs
@@ -45,7 +45,13 @@ class InputByWavSrtService(InputBaseService):
         self.srt_path = None
         self.speaker = None
         self.sound = None
-        self.optimizations = None
+        self.optimizations = {}
+        self.optimization_args = None
+
+    def init_optimizations(self):
+        for key, value in optimization_service_dict.items():
+            optimization_service_obj = value()
+            self.optimizations[key] = optimization_service_obj
 
     def init_info(self, **kwargs):
         self.dataset_id = kwargs['dataset_id']
