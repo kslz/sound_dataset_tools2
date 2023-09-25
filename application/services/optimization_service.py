@@ -34,6 +34,7 @@ class OptimizationMergeService:
                 return False, f'{show_text} 应为不小于0的整数'
 
         need_args_dict = {
+            'show_name': '合并相邻过近条目',
             'need_sound': False,
             self.OPTIMIZATION_MIN_TIME: {
                 'name': self.OPTIMIZATION_MIN_TIME,

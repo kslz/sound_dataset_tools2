@@ -15,16 +15,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDialog, QHeaderView,
+    QLabel, QLineEdit, QPushButton, QSizePolicy,
+    QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_AddFromWavSrtDialog(object):
     def setupUi(self, AddFromWavSrtDialog):
         if not AddFromWavSrtDialog.objectName():
             AddFromWavSrtDialog.setObjectName(u"AddFromWavSrtDialog")
-        AddFromWavSrtDialog.resize(600, 300)
+        AddFromWavSrtDialog.resize(600, 375)
         AddFromWavSrtDialog.setMinimumSize(QSize(600, 300))
-        AddFromWavSrtDialog.setMaximumSize(QSize(600, 300))
         font = QFont()
         font.setPointSize(12)
         AddFromWavSrtDialog.setFont(font)
@@ -51,13 +51,13 @@ class Ui_AddFromWavSrtDialog(object):
         self.pushButton_select_srt.setGeometry(QRect(500, 99, 81, 23))
         self.pushButton_back = QPushButton(AddFromWavSrtDialog)
         self.pushButton_back.setObjectName(u"pushButton_back")
-        self.pushButton_back.setGeometry(QRect(500, 210, 81, 24))
+        self.pushButton_back.setGeometry(QRect(500, 340, 81, 24))
         self.pushButton_submit = QPushButton(AddFromWavSrtDialog)
         self.pushButton_submit.setObjectName(u"pushButton_submit")
-        self.pushButton_submit.setGeometry(QRect(390, 210, 81, 24))
+        self.pushButton_submit.setGeometry(QRect(390, 340, 81, 24))
         self.error_lable = QLabel(AddFromWavSrtDialog)
         self.error_lable.setObjectName(u"error_lable")
-        self.error_lable.setGeometry(QRect(30, 190, 541, 16))
+        self.error_lable.setGeometry(QRect(110, 160, 471, 20))
         self.error_lable.setFont(font)
         self.error_lable.setStyleSheet(u"color: red;")
         self.lineEdit_spk = QLineEdit(AddFromWavSrtDialog)
@@ -66,9 +66,22 @@ class Ui_AddFromWavSrtDialog(object):
         self.label_4 = QLabel(AddFromWavSrtDialog)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setGeometry(QRect(30, 130, 81, 16))
-        self.checkBox_ismerge = QCheckBox(AddFromWavSrtDialog)
-        self.checkBox_ismerge.setObjectName(u"checkBox_ismerge")
-        self.checkBox_ismerge.setGeometry(QRect(30, 160, 421, 20))
+        self.tableWidget_optimization = QTableWidget(AddFromWavSrtDialog)
+        if (self.tableWidget_optimization.rowCount() < 1):
+            self.tableWidget_optimization.setRowCount(1)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tableWidget_optimization.setVerticalHeaderItem(0, __qtablewidgetitem)
+        self.tableWidget_optimization.setObjectName(u"tableWidget_optimization")
+        self.tableWidget_optimization.setGeometry(QRect(30, 190, 551, 141))
+        font1 = QFont()
+        font1.setPointSize(10)
+        self.tableWidget_optimization.setFont(font1)
+        self.tableWidget_optimization.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget_optimization.verticalHeader().setVisible(False)
+        self.tableWidget_optimization.verticalHeader().setMinimumSectionSize(20)
+        self.label_5 = QLabel(AddFromWavSrtDialog)
+        self.label_5.setObjectName(u"label_5")
+        self.label_5.setGeometry(QRect(30, 160, 81, 16))
 
         self.retranslateUi(AddFromWavSrtDialog)
 
@@ -89,6 +102,6 @@ class Ui_AddFromWavSrtDialog(object):
         self.error_lable.setText("")
         self.lineEdit_spk.setText("")
         self.label_4.setText(QCoreApplication.translate("AddFromWavSrtDialog", u"\u53d1\u97f3\u4eba\uff1a", None))
-        self.checkBox_ismerge.setText(QCoreApplication.translate("AddFromWavSrtDialog", u"\u81ea\u52a8\u5c06\u76f8\u79bb\u8fc7\u8fd1\u7684\u5b57\u5e55\u5408\u4e3a\u4e00\u4e2a\uff08\u526a\u6620\u5b57\u5e55\u5efa\u8bae\u52fe\u9009\uff09", None))
+        self.label_5.setText(QCoreApplication.translate("AddFromWavSrtDialog", u"\u4f18\u5316\u9009\u9879\uff1a", None))
     # retranslateUi
 

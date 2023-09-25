@@ -7,13 +7,14 @@
 import os
 
 import pysrt
-from PySide6.QtWidgets import QFileDialog
+from PySide6.QtWidgets import QFileDialog, QTableWidgetItem
 from pydub import AudioSegment
 
 from application.services.input_service import InputByWavSrtService
 from domain.service.input_service_protocol import InputService
 from infrastructure.file_io import copy_file_to_workspace
 from presentation.my_qt_class.my_base_dialog import BaseDialog
+from presentation.my_qt_class.my_tool_function import modify_table_style
 from presentation.pyuic.ui_AddFromWavSrtDialog import Ui_AddFromWavSrtDialog
 from utils.tools import get_audio_duration
 
@@ -38,6 +39,27 @@ class AddFromWavSrtDialog(BaseDialog):
 
         self.input_service = InputByWavSrtService()
         self.need_optimization_args = self.input_service.optimization_args
+        self.init_optimization_tbl()
+
+    def init_optimization_tbl(self):
+        tbl = self.ui.tableWidget_optimization
+        tbl.setRowCount(0)
+        properties = [
+            ("是否启用", False, 80),
+            ("优化名称", False, 150),
+            ("所需参数", True, 130),
+        ]
+        modify_table_style(tbl, properties)
+        print(self.need_optimization_args)
+        for name, args_info in self.need_optimization_args.items():
+            row = tbl.rowCount()
+            tbl.insertRow(row)
+            info_cell = QTableWidgetItem()
+            info_cell.setText(args_info['show_name'])
+            info_cell.setToolTip(f"<pre>{args_info['show_name']}</pre>")
+            tbl.setItem(row, 1, info_cell)
+
+            pass
 
     def select_file_wav(self):
         filePath, _ = QFileDialog.getOpenFileName(

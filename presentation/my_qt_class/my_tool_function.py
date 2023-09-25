@@ -25,7 +25,7 @@ def modify_table_style(table: QTableWidget, properties: list):
         info = properties[column]
         if info[1]:
             header.setSectionResizeMode(column, QHeaderView.ResizeMode.Stretch)
-            header.setMinimumSectionSize(info[2])
+            table.setColumnWidth(column, info[2])
         else:
             header.setSectionResizeMode(column, QHeaderView.ResizeMode.Fixed)
             table.setColumnWidth(column, info[2])
