@@ -36,7 +36,8 @@ class AddFromWavSrtDialog(BaseDialog):
         self.ui.pushButton_submit.clicked.connect(self.save_to_dataset)
         self.ui.pushButton_back.clicked.connect(self.go_back)
 
-        self.input_service: InputService = InputByWavSrtService()
+        self.input_service = InputByWavSrtService()
+        self.need_optimization_args = self.input_service.optimization_args
 
     def select_file_wav(self):
         filePath, _ = QFileDialog.getOpenFileName(
