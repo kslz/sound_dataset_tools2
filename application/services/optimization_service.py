@@ -37,6 +37,7 @@ class OptimizationMergeService:
             'show_name': '合并相邻过近条目',
             'show_help': '剪映生成的字幕偶尔会出现长句被截成两个紧贴着的短句的情况，这个优化方案可以将紧贴着的两个或更多短句合成一句',
             'need_sound': False,
+            'default_check': True,
             'args': [
                 {
                     'name': self.OPTIMIZATION_MIN_TIME,

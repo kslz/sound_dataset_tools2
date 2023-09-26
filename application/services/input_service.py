@@ -17,12 +17,15 @@ class InputBaseService:
 
     def optimization(self, subs: pysrt.SubRipFile) -> pysrt.SubRipFile:
         for optimization_name, optimization_obj in self.optimizations.items():
+            if optimization_name not in self.optimizations_get_args.keys():
+                continue
             args_dict = {
                 "wav_path": self.wav_path,
                 "subs": subs,
                 "sound": self.sound,
             }
-            args_dict.update(self.optimizations[optimization_name])
+            args_dict.update(self.optimizations_get_args[optimization_name])
+            print(optimization_obj)
             optimization_obj.init_data(args_dict)
             new_wav_path, subs = optimization_obj.optimize_data()
             self.change_sound(new_wav_path)
@@ -47,6 +50,7 @@ class InputByWavSrtService(InputBaseService):
         self.sound = None
         self.optimizations = {}
         self.optimization_args = {}
+        self.optimizations_get_args = {}
         self.init_optimizations()
 
     def init_optimizations(self):
@@ -60,8 +64,10 @@ class InputByWavSrtService(InputBaseService):
         self.wav_path = kwargs['wav_path']
         self.srt_path = kwargs['srt_path']
         self.speaker = kwargs['speaker']
-        self.sound = AudioSegment.from_file(self.wav_path)
-        self.optimizations = kwargs['optimization']
+        self.sound = None
+        if kwargs['need_sound']:
+            self.sound = AudioSegment.from_file(self.wav_path)
+        self.optimizations_get_args = kwargs['optimization']
 
     def input_data(self) -> bool:
         subs = pysrt.open(self.srt_path)

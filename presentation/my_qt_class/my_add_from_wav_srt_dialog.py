@@ -37,6 +37,9 @@ class AddFromWavSrtDialog(BaseDialog):
         self.ui.lineEdit_srt.setReadOnly(True)
         self.file_paths = {}
         self.dataset_id = dataset_id
+        self.page_input = {}
+        self.need_sound = False
+
         self.ui.pushButton_select_wav.clicked.connect(self.select_file_wav)
         self.ui.pushButton_select_srt.clicked.connect(self.select_file_srt)
         self.ui.pushButton_submit.clicked.connect(self.save_to_dataset)
@@ -45,7 +48,6 @@ class AddFromWavSrtDialog(BaseDialog):
         self.input_service = InputByWavSrtService()
         self.need_optimization_args = self.input_service.optimization_args
         self.init_optimization_tbl()
-        self.page_input = {}
 
     def init_optimization_tbl(self):
         tbl = self.ui.tableWidget_optimization
@@ -58,6 +60,7 @@ class AddFromWavSrtDialog(BaseDialog):
         modify_table_style(tbl, properties)
         print(self.need_optimization_args)
         for name, args_info in self.need_optimization_args.items():
+            info_obj = {}
             row = tbl.rowCount()
             tbl.insertRow(row)
 
@@ -72,6 +75,9 @@ class AddFromWavSrtDialog(BaseDialog):
                 image: url(img/unchecked.svg);
                 }
             ''')
+            if args_info['default_check']:
+                use_checkbox.setChecked(True)
+
             use_layout = QHBoxLayout(use_widget)
             use_layout.setContentsMargins(1, 1, 1, 1)
             use_layout.setSpacing(0)
@@ -79,6 +85,7 @@ class AddFromWavSrtDialog(BaseDialog):
             use_layout.addWidget(use_checkbox)
             use_widget.clicked.connect(use_checkbox.click)
             tbl.setCellWidget(row, 0, use_widget)
+            info_obj["use_checkbox"] = use_checkbox
 
             info_widget = QWidget()
             info_layout = QHBoxLayout(info_widget)
@@ -101,26 +108,27 @@ class AddFromWavSrtDialog(BaseDialog):
             args_layout = QVBoxLayout(args_widget)
             args_layout.setContentsMargins(1, 1, 1, 1)
             args_layout.setSpacing(1)
+            args_obj_list = []
             for arg in args_info['args']:
                 line_widget = QWidget()
                 line_layout = QHBoxLayout(line_widget)
                 line_layout.setContentsMargins(1, 1, 1, 1)
                 line_layout.setSpacing(10)
                 arg_label = QLabel(arg['show_text'])
-                arg_line_edit = MyCheckOkLineEdit(arg['check'])
+                arg_line_edit = MyCheckOkLineEdit(arg['check'], arg['name'], arg['type'])
+                arg_line_edit.setText(str(arg['default']))
 
                 line_layout.addWidget(arg_label)
                 line_layout.addWidget(arg_line_edit)
 
                 args_layout.addWidget(line_widget)
+                args_obj_list.append(arg_line_edit)
+            info_obj['args'] = args_obj_list
+            info_obj['need_sound'] = args_info['need_sound']
             tbl.setCellWidget(row, 2, args_widget)
             tbl.resizeRowToContents(row)
-
-
-
-
-
-            pass
+            self.page_input[name] = info_obj
+        print(self.page_input)
 
     def select_file_wav(self):
         filePath, _ = QFileDialog.getOpenFileName(
@@ -142,13 +150,31 @@ class AddFromWavSrtDialog(BaseDialog):
         self.file_paths["srt"] = filePath
         self.ui.lineEdit_srt.setText(filePath)
 
+    def get_and_check_optimization_args(self):
+        result_dict = {}
+        all_need_sound = False
+        for name, args_obj in self.page_input.items():
+            if args_obj['use_checkbox'].isChecked():
+                all_dict = {}
+                for arg_obj in args_obj['args']:
+                    is_ok, msg = arg_obj.get_ok()
+                    if is_ok:
+                        all_dict[arg_obj.arg_name] = arg_obj.get_result()
+                    else:
+                        self.ui.error_lable.setText(msg)
+                        return False, {}
+                result_dict[name] = all_dict
+                if args_obj['need_sound']:
+                    all_need_sound = True
+        self.need_sound = all_need_sound
+        return True, result_dict
+
     def save_to_dataset(self):
         wav_path = self.file_paths["wav"]
         workspace_path = self.workspace.workspace_path
-        wav_path = copy_file_to_workspace(wav_path, self.workspace.file_path)
+        # wav_path = copy_file_to_workspace(wav_path, self.workspace.file_path)
         srt_path = self.file_paths["srt"]
         speaker = self.ui.lineEdit_spk.text()
-        is_merge_srt = self.ui.checkBox_ismerge.isChecked()
 
         if wav_path.strip() == "" or None:
             self.ui.error_lable.setText("输入音频路径为空")
@@ -183,11 +209,20 @@ class AddFromWavSrtDialog(BaseDialog):
                 self.ui.error_lable.setText(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 self.logger.error(f"字幕文件长度长于音频文件，请检查是否选择错误")
                 return
+            result_ok, result = self.get_and_check_optimization_args()
+            if result_ok:
+                print(result)
+
+            else:
+                return
+
+            wav_path = copy_file_to_workspace(wav_path, self.workspace.file_path)
             self.input_service.init_info(dataset_id=self.dataset_id,
                                          wav_path=wav_path,
                                          srt_path=srt_path,
                                          speaker=speaker,
-                                         optimization={"OptimizationMergeService": {"min_time": 40}})
+                                         need_sound=self.need_sound,
+                                         optimization=result)
             if self.input_service.input_data():
                 self.parent().refresh_table()
                 self.close()
