@@ -21,8 +21,8 @@ class OptimizationMergeService:
         self.sound = None
         self.min_time = None
 
-    def need_args(self):
-        show_text = '最小合并间隔'
+    def need_info(self):
+        show_text = '最小合并间隔(ms)'
 
         def check_min_time(input_str):
             try:
@@ -33,18 +33,21 @@ class OptimizationMergeService:
             except:
                 return False, f'{show_text} 应为不小于0的整数'
 
-        need_args_dict = {
+        need_info_dict = {
             'show_name': '合并相邻过近条目',
+            'show_help': '剪映生成的字幕偶尔会出现长句被截成两个紧贴着的短句的情况，这个优化方案可以将紧贴着的两个或更多短句合成一句',
             'need_sound': False,
-            self.OPTIMIZATION_MIN_TIME: {
-                'name': self.OPTIMIZATION_MIN_TIME,
-                'show_text': show_text,
-                'type': int,
-                'default': 35,
-                'check': check_min_time
-            }
+            'args': [
+                {
+                    'name': self.OPTIMIZATION_MIN_TIME,
+                    'show_text': show_text,
+                    'type': int,
+                    'default': 35,
+                    'check': check_min_time
+                }
+            ]
         }
-        return need_args_dict
+        return need_info_dict
 
     def init_data(self, args_dict):
         self.wav_path = args_dict['wav_path']

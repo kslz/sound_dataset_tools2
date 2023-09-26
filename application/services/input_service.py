@@ -53,7 +53,7 @@ class InputByWavSrtService(InputBaseService):
         for key, value in optimization_service_dict.items():
             optimization_service_obj = value()
             self.optimizations[key] = optimization_service_obj
-            self.optimization_args[key] = optimization_service_obj.need_args()
+            self.optimization_args[key] = optimization_service_obj.need_info()
 
     def init_info(self, **kwargs):
         self.dataset_id = kwargs['dataset_id']

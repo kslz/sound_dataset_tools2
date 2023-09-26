@@ -7,7 +7,11 @@
 import os
 
 import pysrt
-from PySide6.QtWidgets import QFileDialog, QTableWidgetItem
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
+from PySide6.QtSvgWidgets import QSvgWidget
+from PySide6.QtWidgets import QFileDialog, QTableWidgetItem, QWidget, QHBoxLayout, QLabel, QCheckBox, QToolTip, \
+    QVBoxLayout
 from pydub import AudioSegment
 
 from application.services.input_service import InputByWavSrtService
@@ -15,6 +19,7 @@ from domain.service.input_service_protocol import InputService
 from infrastructure.file_io import copy_file_to_workspace
 from presentation.my_qt_class.my_base_dialog import BaseDialog
 from presentation.my_qt_class.my_tool_function import modify_table_style
+from presentation.my_qt_class.my_widgets import MyClickableWidget, MyCheckOkLineEdit
 from presentation.pyuic.ui_AddFromWavSrtDialog import Ui_AddFromWavSrtDialog
 from utils.tools import get_audio_duration
 
@@ -40,12 +45,13 @@ class AddFromWavSrtDialog(BaseDialog):
         self.input_service = InputByWavSrtService()
         self.need_optimization_args = self.input_service.optimization_args
         self.init_optimization_tbl()
+        self.page_input = {}
 
     def init_optimization_tbl(self):
         tbl = self.ui.tableWidget_optimization
         tbl.setRowCount(0)
         properties = [
-            ("是否启用", False, 80),
+            ("启用", False, 40),
             ("优化名称", False, 150),
             ("所需参数", True, 130),
         ]
@@ -54,10 +60,65 @@ class AddFromWavSrtDialog(BaseDialog):
         for name, args_info in self.need_optimization_args.items():
             row = tbl.rowCount()
             tbl.insertRow(row)
-            info_cell = QTableWidgetItem()
-            info_cell.setText(args_info['show_name'])
-            info_cell.setToolTip(f"<pre>{args_info['show_name']}</pre>")
-            tbl.setItem(row, 1, info_cell)
+
+            use_widget = MyClickableWidget()
+            use_checkbox = QCheckBox()
+            use_checkbox.setStyleSheet('''
+                QCheckBox::indicator { width: 30px; height: 30px;}
+                QCheckBox::indicator:checked {
+                    image: url(img/checked.svg);
+                }
+                QCheckBox::indicator {
+                image: url(img/unchecked.svg);
+                }
+            ''')
+            use_layout = QHBoxLayout(use_widget)
+            use_layout.setContentsMargins(1, 1, 1, 1)
+            use_layout.setSpacing(0)
+            use_layout.setAlignment(Qt.AlignCenter)
+            use_layout.addWidget(use_checkbox)
+            use_widget.clicked.connect(use_checkbox.click)
+            tbl.setCellWidget(row, 0, use_widget)
+
+            info_widget = QWidget()
+            info_layout = QHBoxLayout(info_widget)
+            info_layout.setContentsMargins(1, 1, 1, 1)
+            info_layout.setSpacing(1)
+
+            info_label = QLabel(args_info['show_name'])
+            info_label.setToolTip(f"<pre>{args_info['show_name']}</pre>")
+            help_widget = QSvgWidget()
+            help_widget.load("img/基础_说明.svg")
+            help_widget.setToolTip(f"<pre>{args_info['show_help']}</pre>")
+            help_widget.setFixedSize(20, 20)
+
+            info_layout.addWidget(info_label)
+            info_layout.addWidget(help_widget)
+
+            tbl.setCellWidget(row, 1, info_widget)
+
+            args_widget = QWidget()
+            args_layout = QVBoxLayout(args_widget)
+            args_layout.setContentsMargins(1, 1, 1, 1)
+            args_layout.setSpacing(1)
+            for arg in args_info['args']:
+                line_widget = QWidget()
+                line_layout = QHBoxLayout(line_widget)
+                line_layout.setContentsMargins(1, 1, 1, 1)
+                line_layout.setSpacing(10)
+                arg_label = QLabel(arg['show_text'])
+                arg_line_edit = MyCheckOkLineEdit(arg['check'])
+
+                line_layout.addWidget(arg_label)
+                line_layout.addWidget(arg_line_edit)
+
+                args_layout.addWidget(line_widget)
+            tbl.setCellWidget(row, 2, args_widget)
+            tbl.resizeRowToContents(row)
+
+
+
+
 
             pass
 
