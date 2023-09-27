@@ -115,6 +115,59 @@ class OptimizationMergeService:
                     break
         return self.wav_path, optimized_subs
 
+class OptimizationCutBetterService:
+    """
+    读取每句的开头和结尾部分响度，并分别向外寻找响度更低的位置，直到获得响度最低的时间点，作为新的句子起止位置
+    """
+
+    def __init__(self):
+        self.wav_path = None
+        self.subs = None
+        self.sound = None
+
+    def need_info(self):
+        """
+        返回优化所需参数和相关信息
+
+        :return:
+        """
+
+        need_info_dict = {
+            'show_name': '优化裁切',
+            'show_help': '读取每句的开头和结尾部分响度，并分别向外寻找响度更低的位置，直到获得响度最低的时间点，作为新的句子起止位置',
+            'need_sound': True,
+            'default_check': True,
+            'args': []
+        }
+        return need_info_dict
+
+    def init_data(self, args_dict):
+        """
+        获取优化所需的参数
+
+        :param args_dict:
+        :return:
+        """
+        self.wav_path = args_dict['wav_path']
+        self.subs = args_dict['subs']
+        self.sound = args_dict['sound']
+
+    def optimize_data(self):
+        """
+        优化流程
+
+        :return:
+        """
+        subs = self.subs
+        optimized_subs = pysrt.SubRipFile()
+        index = 0
+
+        # 遍历每个字幕
+        for sub in subs:
+            start = sub.start.ordinal
+            end = sub.end.ordinal
+
+        return self.wav_path, optimized_subs
 
 optimization_service_dict = {
     "OptimizationMergeService": OptimizationMergeService
@@ -125,13 +178,6 @@ def merge_srt(wav_path: str, sound: pydub.audio_segment.AudioSegment, subs: pysr
     print(wav_path)
     pass
 
-
-def cut_wav_better2(wav_path: str, sound: pydub.audio_segment.AudioSegment, subs: pysrt.srtfile.SubRipFile):
-    for sub in subs:
-        sub: pysrt.srtitem.SubRipItem
-        start = sub.start.ordinal
-        end = sub.end.ordinal
-        start, end = cut_wav_better(sound, start, end)
 
 
 def cut_wav_better(sound, start, end, step=50):
