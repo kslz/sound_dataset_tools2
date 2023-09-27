@@ -22,6 +22,11 @@ class OptimizationMergeService:
         self.min_time = None
 
     def need_info(self):
+        """
+        返回优化所需参数和相关信息
+
+        :return:
+        """
         show_text = '最小合并间隔(ms)'
 
         def check_min_time(input_str):
@@ -51,12 +56,23 @@ class OptimizationMergeService:
         return need_info_dict
 
     def init_data(self, args_dict):
+        """
+        获取优化所需的参数
+
+        :param args_dict:
+        :return:
+        """
         self.wav_path = args_dict['wav_path']
         self.subs = args_dict['subs']
         self.sound = args_dict['sound']
         self.min_time = args_dict.get(self.OPTIMIZATION_MIN_TIME, 35)
 
     def optimize_data(self):
+        """
+        优化流程
+
+        :return:
+        """
         subs = self.subs
         optimized_subs = pysrt.SubRipFile()
         min_time = self.min_time
