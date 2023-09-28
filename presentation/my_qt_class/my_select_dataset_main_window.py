@@ -108,8 +108,8 @@ class SelectDatasetMainWindow(BaseMainWindow):
         button_clicked = msg_box.clickedButton()
         if button_clicked == yes_button:
             try:
-                del_dataset_by_id(dataset_id)
                 del_file_by_dataset_id(dataset_id)
+                del_dataset_by_id(dataset_id)
             except Exception as e:
                 self.logger.error(f"删除数据集 {dataset_name} id={dataset_id} 失败\n{e}")
             else:

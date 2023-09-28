@@ -15,7 +15,6 @@ from utils.logging_utils import LoggerSingleton
 
 
 def del_file_by_dataset_id(dataset_id):
-    print("删除文件")
     logger = LoggerSingleton.get_logger()
     query_list = get_file_raw_path_by_dataset_id(dataset_id)
     for row in query_list:

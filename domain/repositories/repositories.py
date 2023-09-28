@@ -32,11 +32,8 @@ def del_dataset_by_id(dataset_id):
 
 # 查
 def get_file_raw_path_by_dataset_id(dataset_id):
-    # todo 获取要删除的文件，需要等Info模型写完
-    # query = Info.select(Info.info_raw_file_path).distinct().where(Info.dataset_id == dataset_id)
-    return []
-
-    pass
+    query = Info.select(Info.info_raw_file_path).distinct().where(Info.dataset_id == dataset_id)
+    return query
 
 
 def get_dataset_info():
