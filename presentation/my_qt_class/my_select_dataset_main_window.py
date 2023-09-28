@@ -88,7 +88,7 @@ class SelectDatasetMainWindow(BaseMainWindow):
 
     def edit_dataset(self, dataset_id):
         self.edit_window = AddDatasetDialog(self, useby="edit", dataset_id=dataset_id)
-        self.edit_window.exec_()
+        self.edit_window.exec()
         pass
 
     def del_dataset(self, dataset_id, dataset_name):

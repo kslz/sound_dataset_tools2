@@ -12,6 +12,7 @@ from domain.repositories.repositories import *
 from presentation.my_qt_class.my_add_from_wav_srt_dialog import AddFromWavSrtDialog
 from presentation.my_qt_class.my_audio_button import AudioButton
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
+from presentation.my_qt_class.my_delete_info_by_wav_dialog import DeleteInfoByWavDialog
 from presentation.my_qt_class.my_factory_function import *
 from presentation.my_qt_class.my_tool_function import *
 from presentation.pyuic.ui_DatasetViewMainWindow import Ui_DatasetViewMainWindow
@@ -36,6 +37,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         # 连接信号
         self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
         self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
+        self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
 
     def set_table_style(self):
         # 数据集概览表格
@@ -137,3 +139,7 @@ class DatasetViewMainWindow(BaseMainWindow):
     def closeEvent(self, event):
         self.closed.emit()
         super().closeEvent(event)
+
+    def open_del_info_by_wav_dialog(self):
+        del_info_by_wav = DeleteInfoByWavDialog(self, self.dataset_id)
+        del_info_by_wav.exec()

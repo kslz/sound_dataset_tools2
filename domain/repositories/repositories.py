@@ -28,6 +28,11 @@ def del_dataset_by_id(dataset_id):
     dataset.delete_instance()
 
 
+def del_info_by_raw_file_path(file_path):
+    query = Info.delete().where(Info.info_raw_file_path == file_path)
+    query.execute()
+
+
 # 改
 
 # 查

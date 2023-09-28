@@ -26,6 +26,9 @@ def del_file_by_dataset_id(dataset_id):
             except:
                 logger.error(f"文件 {file_path} 删除失败")
 
+def del_file_by_path(file_path):
+    os.remove(file_path)
+
 
 def copy_file_to_workspace(raw_path, to_path):
     file_name = os.path.basename(raw_path)
