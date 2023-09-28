@@ -58,7 +58,7 @@ class AddFromWavSrtDialog(BaseDialog):
             ("所需参数", True, 130),
         ]
         modify_table_style(tbl, properties)
-        print(self.need_optimization_args)
+        self.logger.debug(f"获取到优化信息{self.need_optimization_args}")
         for name, args_info in self.need_optimization_args.items():
             info_obj = {}
             row = tbl.rowCount()
@@ -128,7 +128,7 @@ class AddFromWavSrtDialog(BaseDialog):
             tbl.setCellWidget(row, 2, args_widget)
             tbl.resizeRowToContents(row)
             self.page_input[name] = info_obj
-        print(self.page_input)
+        self.logger.debug(f"获取到程序优化区对象{self.page_input}")
 
     def select_file_wav(self):
         filePath, _ = QFileDialog.getOpenFileName(
@@ -211,7 +211,7 @@ class AddFromWavSrtDialog(BaseDialog):
                 return
             result_ok, result = self.get_and_check_optimization_args()
             if result_ok:
-                print(result)
+                self.logger.debug(f"获取到优化参数result")
 
             else:
                 return

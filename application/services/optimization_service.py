@@ -8,6 +8,8 @@
 import pydub
 import pysrt
 
+from utils.logging_utils import LoggerSingleton
+
 
 class OptimizationMergeService:
     """
@@ -73,6 +75,7 @@ class OptimizationMergeService:
 
         :return:
         """
+        start_len = len(self.subs)
         subs = self.subs
         optimized_subs = pysrt.SubRipFile()
         min_time = self.min_time
@@ -113,6 +116,9 @@ class OptimizationMergeService:
                     index = i + 1
                     optimized_subs.append(line)
                     break
+        end_len = len(optimized_subs)
+        logger = LoggerSingleton.get_logger()
+        logger.info(f"合并相邻过近条目 优化完毕，优化前条数：{start_len} 优化后条数:{end_len}")
         return self.wav_path, optimized_subs
 
 class OptimizationCutBetterService:
@@ -159,18 +165,52 @@ class OptimizationCutBetterService:
         :return:
         """
         subs = self.subs
-        optimized_subs = pysrt.SubRipFile()
-        index = 0
+        sound = self.sound
+        step = 50
 
         # 遍历每个字幕
         for sub in subs:
             start = sub.start.ordinal
             end = sub.end.ordinal
 
-        return self.wav_path, optimized_subs
+            start = max(0, start)
+            end = min(end, len(sound))
+
+            # 向前寻找响度更小的start
+            current_start = start - step
+            volume = sound[start:start + step].dBFS
+            while current_start >= 0:
+                current_end = current_start + step
+                current_segment = sound[current_start:current_end]
+                current_volume = current_segment.dBFS
+                if current_volume > volume:
+                    break
+                volume = current_volume
+                start = current_start
+                current_start -= step
+
+            # 向后寻找响度更小的end
+            current_end = end + step
+            volume = sound[current_end - step:current_end].dBFS
+            while current_end <= len(sound):
+                current_start = current_end - step
+                current_segment = sound[current_start:current_end]
+                current_volume = current_segment.dBFS
+                if current_volume > volume:
+                    break
+                volume = current_volume
+                end = current_end
+                current_end += step
+
+            sub.start.ordinal = start
+            sub.end.ordinal = end
+        logger = LoggerSingleton.get_logger()
+        logger.info(f"优化裁切 优化完毕")
+        return self.wav_path, subs
 
 optimization_service_dict = {
-    "OptimizationMergeService": OptimizationMergeService
+    "OptimizationMergeService": OptimizationMergeService,
+    "OptimizationCutBetterService": OptimizationCutBetterService,
 }
 
 
