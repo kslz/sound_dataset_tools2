@@ -79,9 +79,11 @@ class SelectDatasetMainWindow(BaseMainWindow):
         self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
 
     def open_dataset_window(self, dataset_id):
+        self.update_dataset_dataset_last_use_time(dataset_id)
         self.dataset_view_main_window = DatasetViewMainWindow(dataset_id)
         self.dataset_view_main_window.show()
         self.hide()
+        self.dataset_view_main_window.closed.connect(self.show)
         pass
 
     def edit_dataset(self, dataset_id):
@@ -123,3 +125,9 @@ class SelectDatasetMainWindow(BaseMainWindow):
     def open_add_dataset_window(self):
         self.add_window = AddDatasetDialog(self)
         self.add_window.exec()
+
+    def update_dataset_dataset_last_use_time(self, dataset_id):
+        Dataset.update(dataset_last_use_time=datetime.now().replace(microsecond=0)).where(
+            Dataset.dataset_id == dataset_id).execute()
+
+

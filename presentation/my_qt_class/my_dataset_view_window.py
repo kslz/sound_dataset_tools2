@@ -5,6 +5,7 @@
     @Url : https://github.com/kslz
 """
 from PySide6 import QtCore, QtGui
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QTableWidgetItem, QPushButton
 
 from domain.repositories.repositories import *
@@ -17,6 +18,7 @@ from presentation.pyuic.ui_DatasetViewMainWindow import Ui_DatasetViewMainWindow
 
 
 class DatasetViewMainWindow(BaseMainWindow):
+    closed = Signal()
     def __init__(self, dataset_id):
         super().__init__()
         # 使用ui文件导入定义界面类
@@ -131,3 +133,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         new_page_num = self.ui.comboBox.itemData(index)
         self.refresh_table(new_page_num)
         self.page_number = new_page_num
+
+    def closeEvent(self, event):
+        self.closed.emit()
+        super().closeEvent(event)
