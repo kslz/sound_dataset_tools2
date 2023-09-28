@@ -5,6 +5,8 @@
     @Url : https://github.com/kslz
     存放工厂函数
 """
+import copy
+
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QSizePolicy
 
 

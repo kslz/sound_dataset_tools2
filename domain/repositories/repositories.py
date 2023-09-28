@@ -53,6 +53,10 @@ def get_dataset_info_by_id(dataset_id):
     return Dataset.get_by_id(dataset_id)
 
 
+def get_info_by_id(info_id):
+    return Info.get_by_id(info_id)
+
+
 def get_dataset_view_window_info(dataset_id=1, page_size=15, page_number=1, show_delete=True):
     subquery = (
         Info

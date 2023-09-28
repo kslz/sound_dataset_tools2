@@ -4,11 +4,14 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+import os
+
 from PySide6 import QtCore, QtGui
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QTableWidgetItem, QPushButton
 
 from domain.repositories.repositories import *
+from infrastructure.file_io import fast_output_sound
 from presentation.my_qt_class.my_add_from_wav_srt_dialog import AddFromWavSrtDialog
 from presentation.my_qt_class.my_audio_button import AudioButton
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
@@ -20,6 +23,7 @@ from presentation.pyuic.ui_DatasetViewMainWindow import Ui_DatasetViewMainWindow
 
 class DatasetViewMainWindow(BaseMainWindow):
     closed = Signal()
+
     def __init__(self, dataset_id):
         super().__init__()
         # 使用ui文件导入定义界面类
@@ -102,11 +106,29 @@ class DatasetViewMainWindow(BaseMainWindow):
             self.ui.tableWidget.setItem(row, 1, QTableWidgetItem(info_text))
             self.ui.tableWidget.setItem(row, 2, QTableWidgetItem(speaker))
 
+            # data_list = [
+            #     {'btn': AudioButton,
+            #      'args': {'wav_path': info_file_path, 'start_time': info_start_time, 'end_time': info_end_time,
+            #               'parent': self}, 'slot': None, 'length': 2},
+            #     {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self},
+            #      'slot': lambda: self.fast_output(info_id), 'length': 3},
+            #     {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self}, 'slot': lambda: self.edit_info(info_id)},
+            #     {'btn': QPushButton, 'args': {'text': '删除', 'parent': self},
+            #      'slot': lambda: self.del_info(info_id, info_is_del)},
+            # ]
+            # 注意：此处不能写为上面的形式，必须使用闭包形式来分割作用域，不然绑定的所有信号与槽会永远传递info_id的最后一个值
+            def get_lamda(fun, args):
+                return lambda: fun(*args)
+
             data_list = [
-                {'btn': AudioButton,'args': {'wav_path': info_file_path, 'start_time': info_start_time, 'end_time': info_end_time,'parent': self}, 'slot': None, 'length': 2},
-                {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self}, 'slot': lambda: self.fast_output(info_id), 'length': 3},
-                {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self}, 'slot': lambda: self.edit_info(info_id)},
-                {'btn': QPushButton, 'args': {'text': '删除', 'parent': self}, 'slot': lambda: self.del_info(info_id, info_is_del)},
+                {'btn': AudioButton,
+                 'args': {'wav_path': info_file_path, 'start_time': info_start_time, 'end_time': info_end_time,
+                          'parent': self}, 'slot': None, 'length': 2},
+                {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self},
+                 'slot': get_lamda(self.fast_output, [info_id]), 'length': 3},
+                {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self}, 'slot': get_lamda(self.edit_info, [info_id])},
+                {'btn': QPushButton, 'args': {'text': '删除', 'parent': self},
+                 'slot': get_lamda(self.del_info, [info_id, info_is_del])},
             ]
 
             caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
@@ -115,9 +137,16 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.ui.comboBox.setCurrentIndex(page_number - 1)
         self.ui.comboBox.blockSignals(False)
 
+    @Slot()
     def fast_output(self, info_id):
-        print(f'快速导出{info_id}')
-        pass
+        info = get_info_by_id(info_id)
+        wav_path = info.info_raw_file_path
+        start_time = info.info_start_time
+        end_time = info.info_end_time
+        output_name = str(info_id) + ".wav"
+        output_path = os.path.join(self.workspace.output_path, "fastoutput")
+        fast_output_sound(wav_path, start_time, end_time, output_name, output_path)
+        self.logger.info(f"快速导出音频文件文件 {os.path.join(output_path, output_name)}")
 
     def edit_info(self, info_id):
         print(f'编辑{info_id}')
