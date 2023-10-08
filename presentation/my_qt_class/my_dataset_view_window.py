@@ -15,6 +15,7 @@ from infrastructure.file_io import fast_output_sound
 from presentation.my_qt_class.my_add_from_wav_srt_dialog import AddFromWavSrtDialog
 from presentation.my_qt_class.my_audio_button import AudioButton
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
+from presentation.my_qt_class.my_delete_button import DeleteBTN
 from presentation.my_qt_class.my_delete_info_by_wav_dialog import DeleteInfoByWavDialog
 from presentation.my_qt_class.my_edit_info_dialog import EditInfoDialog
 from presentation.my_qt_class.my_factory_function import *
@@ -128,9 +129,10 @@ class DatasetViewMainWindow(BaseMainWindow):
                 {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self},
                  'slot': get_lamda(self.fast_output, [info_id]), 'length': 3},
                 {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self}, 'slot': get_lamda(self.edit_info, [info_id])},
-                {'btn': QPushButton, 'args': {'text': '删除', 'parent': self},
-                 'slot': get_lamda(self.del_info, [info_id, info_is_del])},
+                {'btn': DeleteBTN, 'args': {'text': '删除', "info_id": info_id, 'parent': self,
+                                            "info_is_del": info_is_del}, 'slot': None},
             ]
+            # text, info_id, parent, info_is_del
 
             caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
             self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)

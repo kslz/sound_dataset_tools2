@@ -39,6 +39,10 @@ def update_info(text, start_time, end_time, info_id):
         .where(Info.info_id == info_id).execute()
 
 
+def update_is_delete(info_id, new_is_del):
+    Info.update(info_is_del=new_is_del).where(Info.info_id == info_id).execute()
+
+
 # 查
 def get_file_raw_path_by_dataset_id(dataset_id):
     query = Info.select(Info.info_raw_file_path).distinct().where(Info.dataset_id == dataset_id)
