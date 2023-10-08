@@ -34,6 +34,10 @@ def del_info_by_raw_file_path(file_path):
 
 
 # 改
+def update_info(text, start_time, end_time, info_id):
+    updated_row = Info.update(info_text=text, info_start_time=start_time, info_end_time=end_time) \
+        .where(Info.info_id == info_id).execute()
+
 
 # 查
 def get_file_raw_path_by_dataset_id(dataset_id):

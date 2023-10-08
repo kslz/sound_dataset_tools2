@@ -16,6 +16,7 @@ from presentation.my_qt_class.my_add_from_wav_srt_dialog import AddFromWavSrtDia
 from presentation.my_qt_class.my_audio_button import AudioButton
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
 from presentation.my_qt_class.my_delete_info_by_wav_dialog import DeleteInfoByWavDialog
+from presentation.my_qt_class.my_edit_info_dialog import EditInfoDialog
 from presentation.my_qt_class.my_factory_function import *
 from presentation.my_qt_class.my_tool_function import *
 from presentation.pyuic.ui_DatasetViewMainWindow import Ui_DatasetViewMainWindow
@@ -149,7 +150,9 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.logger.info(f"快速导出音频文件文件 {os.path.join(output_path, output_name)}")
 
     def edit_info(self, info_id):
-        print(f'编辑{info_id}')
+        edit_info_dialog = EditInfoDialog(self, info_id)
+        edit_info_dialog.windowClosed.connect(self.refresh_table)
+        edit_info_dialog.exec()
         pass
 
     def del_info(self, info_id, info_is_del):

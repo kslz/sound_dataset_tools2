@@ -72,11 +72,11 @@ class AudioThread(QThread):
             .input(wav_path, ss=start_time, t=duration)
             # .filter("loudnorm", I="-23", dual_mono="true")  # 归一化
             .output('pipe:', format='wav', ar=44100)
-            .run(capture_stdout=True)
+            .run(capture_stdout=True, quiet=True)
         )
 
         # 播放输出的音频
-        self.process = subprocess.Popen(['ffplay', "-nodisp", "-autoexit", '-'], stdin=subprocess.PIPE)
+        self.process = subprocess.Popen(['ffplay', "-nodisp", "-autoexit", "-loglevel", "quiet", '-'], stdin=subprocess.PIPE)
         self.process.communicate(output[0])
 
         self.is_playing = False
@@ -85,3 +85,15 @@ class AudioThread(QThread):
     def stop(self):
         if self.process and self.process.poll() is None:  # 检查子进程是否在运行
             self.process.terminate()  # 终止子进程
+
+
+class AudioNowButton(AudioButton):
+    def __init__(self, wav_path, start_time, end_time, parent=None):
+        super().__init__(wav_path, start_time, end_time, parent)
+        self.clicked.disconnect(super().on_button_clicked)
+
+    def on_button_clicked_new(self, start_time, end_time):
+        self.start_time = int(start_time)
+        self.end_time = int(end_time)
+
+        self.on_button_clicked()
