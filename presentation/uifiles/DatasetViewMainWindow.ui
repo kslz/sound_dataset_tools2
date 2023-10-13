@@ -26,390 +26,445 @@
    <string>数据集</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTabWidget" name="tabWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1181</width>
-      <height>681</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>数据集概览</string>
-     </attribute>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QWidget" name="widget_2" native="true">
-        <widget class="QTableWidget" name="tableWidget">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>1141</width>
-           <height>421</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderMinimumSectionSize">
-          <number>20</number>
-         </attribute>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>新建行</string>
-          </property>
-         </row>
-        </widget>
-        <widget class="QComboBox" name="comboBox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>440</y>
-           <width>201</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pushButton_add_wav_srt">
-         <property name="geometry">
-          <rect>
-           <x>230</x>
-           <y>440</y>
-           <width>231</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>从文件导入（音频+字幕）</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pushButton_output_speaker">
-         <property name="geometry">
-          <rect>
-           <x>920</x>
-           <y>440</y>
-           <width>231</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>导出数据集（单发音人）</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pushButton_add_long_wav">
-         <property name="geometry">
-          <rect>
-           <x>230</x>
-           <y>490</y>
-           <width>231</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>从文件导入（长音频）</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pushButton_del_by_raw_wav">
-         <property name="geometry">
-          <rect>
-           <x>580</x>
-           <y>440</y>
-           <width>231</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>根据源音频删除数据</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>数据处理</string>
-     </attribute>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QWidget" name="widget" native="true">
-        <widget class="QPushButton" name="pushButton_biaobei_pingce">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>20</y>
-           <width>211</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>标贝语音评测</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>软件设置</string>
-     </attribute>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>271</width>
-        <height>21</height>
-       </rect>
-      </property>
+   <layout class="QVBoxLayout" name="verticalLayout_6">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
       <property name="font">
        <font>
         <pointsize>12</pointsize>
        </font>
       </property>
-      <property name="text">
-       <string>注意：本页设置在本工作区下通用</string>
-      </property>
-     </widget>
-     <widget class="QTabWidget" name="tabWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>50</y>
-        <width>1141</width>
-        <height>601</height>
-       </rect>
-      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab_4">
+      <widget class="QWidget" name="tab1View">
        <attribute name="title">
-        <string>授权管理</string>
+        <string>数据集概览</string>
        </attribute>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>1111</width>
-          <height>271</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>标贝</string>
-        </property>
-        <widget class="QTableWidget" name="tableWidget_biaobei">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>20</y>
-           <width>961</width>
-           <height>231</height>
-          </rect>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <column>
-          <property name="text">
-           <string>id</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>名称</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>APP类型</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>APPID</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>APISecret（client_secret）</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>APIKey（client_id）</string>
-          </property>
-         </column>
-        </widget>
-        <widget class="QPushButton" name="pushButton_add_biaobei">
-         <property name="geometry">
-          <rect>
-           <x>990</x>
-           <y>20</y>
-           <width>111</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>添加</string>
-         </property>
-        </widget>
-       </widget>
-       <widget class="QGroupBox" name="groupBox_2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>290</y>
-          <width>1111</width>
-          <height>271</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>讯飞</string>
-        </property>
-        <widget class="QPushButton" name="pushButton_add_xunfei">
-         <property name="geometry">
-          <rect>
-           <x>990</x>
-           <y>20</y>
-           <width>111</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>添加</string>
-         </property>
-        </widget>
-        <widget class="QTableWidget" name="tableWidget_xunfei">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>20</y>
-           <width>961</width>
-           <height>231</height>
-          </rect>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <column>
-          <property name="text">
-           <string>id</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>名称</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>APP类型</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>APPID</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>APISecret（client_secret）</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>APIKey（client_id）</string>
-          </property>
-         </column>
-        </widget>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QWidget" name="widget_2" native="true">
+          <widget class="QTableWidget" name="tableWidget">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>1141</width>
+             <height>421</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderMinimumSectionSize">
+            <number>20</number>
+           </attribute>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>新建行</string>
+            </property>
+           </row>
+          </widget>
+          <widget class="QComboBox" name="comboBox">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>440</y>
+             <width>201</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pushButton_add_wav_srt">
+           <property name="geometry">
+            <rect>
+             <x>230</x>
+             <y>440</y>
+             <width>231</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>从文件导入（音频+字幕）</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pushButton_output_speaker">
+           <property name="geometry">
+            <rect>
+             <x>920</x>
+             <y>440</y>
+             <width>231</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>导出数据集（单发音人）</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pushButton_add_long_wav">
+           <property name="geometry">
+            <rect>
+             <x>230</x>
+             <y>490</y>
+             <width>231</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>从文件导入（长音频）</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pushButton_del_by_raw_wav">
+           <property name="geometry">
+            <rect>
+             <x>580</x>
+             <y>440</y>
+             <width>231</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>根据源音频删除数据</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="QWidget" name="tab_5">
+      <widget class="QWidget" name="tab2SearchOutput">
        <attribute name="title">
-        <string>全局设置</string>
+        <string>筛选和导出</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QWidget" name="tbl_widget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>5</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QTableWidget" name="tableWidget_2"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="btn_widget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>2</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QGroupBox" name="groupBox_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>数据展示</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <widget class="QComboBox" name="comboBox_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_3" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>4</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab3DataProcessing">
+       <attribute name="title">
+        <string>数据处理</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QWidget" name="widget" native="true">
+          <widget class="QPushButton" name="pushButton_biaobei_pingce">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>20</y>
+             <width>211</width>
+             <height>51</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>标贝语音评测</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab4Settings">
+       <attribute name="title">
+        <string>软件设置</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>注意：本页设置在本工作区下通用</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab_4">
+           <attribute name="title">
+            <string>授权管理</string>
+           </attribute>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>1111</width>
+              <height>271</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>标贝</string>
+            </property>
+            <widget class="QTableWidget" name="tableWidget_biaobei">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>20</y>
+               <width>961</width>
+               <height>231</height>
+              </rect>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>id</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>名称</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>APP类型</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>APPID</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>APISecret（client_secret）</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>APIKey（client_id）</string>
+              </property>
+             </column>
+            </widget>
+            <widget class="QPushButton" name="pushButton_add_biaobei">
+             <property name="geometry">
+              <rect>
+               <x>990</x>
+               <y>20</y>
+               <width>111</width>
+               <height>41</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>添加</string>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>290</y>
+              <width>1111</width>
+              <height>271</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>讯飞</string>
+            </property>
+            <widget class="QPushButton" name="pushButton_add_xunfei">
+             <property name="geometry">
+              <rect>
+               <x>990</x>
+               <y>20</y>
+               <width>111</width>
+               <height>41</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>添加</string>
+             </property>
+            </widget>
+            <widget class="QTableWidget" name="tableWidget_xunfei">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>20</y>
+               <width>961</width>
+               <height>231</height>
+              </rect>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>id</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>名称</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>APP类型</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>APPID</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>APISecret（client_secret）</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>APIKey（client_id）</string>
+              </property>
+             </column>
+            </widget>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_5">
+           <attribute name="title">
+            <string>全局设置</string>
+           </attribute>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
-    </widget>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
