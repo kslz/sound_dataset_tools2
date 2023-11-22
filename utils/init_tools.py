@@ -97,24 +97,28 @@ class ConfigParserWithFile(configparser.ConfigParser):
     def refresh_config(self, encoding=None):
         return super().read(self.file, encoding)
 
+    def write_to_file(self):
+        with open(self.file, 'w') as configfile:
+            self.write(configfile)
+
 
 def read_ini_config(ini_path="config/settings.ini"):
-    info = """[program_configs]
-default_workspace = .\workspace
+    default_workspace = os.path.join(".", "workspace")
+    default_pagesize = 15
 
-"""
-    if not os.path.exists(ini_path):
-        # 如果不存在，则创建一个默认配置文件
-        os.makedirs(os.path.dirname(ini_path), exist_ok=True)
-
-        with open(ini_path, 'w') as f:
-            f.write(info)
     config = ConfigParserWithFile()
     config.read(ini_path)
-    try:
-        config["program_configs"]["default_workspace"]
-    except:
-        with open(ini_path, 'w') as f:
-            f.write(info)
-        config.refresh_config()
+
+    config_dict = {}
+
+    if config.has_option("program_configs", "default_workspace"):
+        default_workspace = config.get("program_configs", "default_workspace")
+    config_dict['default_workspace'] = default_workspace
+
+    if config.has_option("program_configs", "default_pagesize"):
+        default_pagesize = config.get("program_configs", "default_pagesize")
+    config_dict['default_pagesize'] = default_pagesize
+    config['program_configs'] = config_dict
+
+    config.write_to_file()
     return config
