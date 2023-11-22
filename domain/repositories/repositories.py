@@ -50,6 +50,18 @@ class SearchInfo:
     def search_dataset_id(self,dataset_id):
         self.query = self.query.where(Info.dataset_id == dataset_id)
 
+    def order_by_id(self):
+        self.query = self.query.order_by(Info.info_id.asc())
+
+    def get_count(self):
+        return self.query.count()
+
+    def get_result_page(self,page_number, page_size):
+        total_count = self.get_count()
+        _, page_number = check_pagenumber_is_out(total_count, page_number, page_size)
+        self.query = self.query.paginate(page_number, page_size)
+        return total_count, page_number, self.query.dict()
+
     def do_join(self, args):
         self.query = self.query.join(*args)
 
