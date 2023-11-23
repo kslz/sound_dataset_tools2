@@ -32,7 +32,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.ui = Ui_DatasetViewMainWindow()
         # 初始化界面
         self.ui.setupUi(self)
-        self.my_init()
+        self.my_init(False)
         self.set_table_style()
 
         self.dataset_id = dataset_id
@@ -128,7 +128,8 @@ class DatasetViewMainWindow(BaseMainWindow):
                           'parent': self}, 'slot': None, 'length': 2},
                 {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self},
                  'slot': get_lamda(self.fast_output, [info_id]), 'length': 3},
-                {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self}, 'slot': get_lamda(self.edit_info, [info_id])},
+                {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self},
+                 'slot': get_lamda(self.edit_info, [info_id])},
                 {'btn': DeleteBTN, 'args': {'text': '删除', "info_id": info_id, 'parent': self,
                                             "info_is_del": info_is_del}, 'slot': None},
             ]

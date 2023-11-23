@@ -17,10 +17,11 @@ class BaseMainWindow(QMainWindow):
         self.logger = LoggerSingleton.get_logger()
         self.workspace = ToolWorkspace()
 
-    def my_init(self):
+    def my_init(self, is_fixed=True):
         # 设置窗口左上角图标
         self.setWindowIcon(QIcon("./img/logo.png"))
 
-        # 禁止拖拽缩放窗口
-        self.setFixedSize(self.size())  # 禁止窗口大小变化
+        if is_fixed:
+            # 禁止拖拽缩放窗口
+            self.setFixedSize(self.size())  # 禁止窗口大小变化
 
