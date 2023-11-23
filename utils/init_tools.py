@@ -103,21 +103,26 @@ class ConfigParserWithFile(configparser.ConfigParser):
 
 
 def read_ini_config(ini_path="config/settings.ini"):
-    default_workspace = os.path.join(".", "workspace")
-    default_pagesize = 15
+    """
+    初始化配置文件，如果配置文件中没有对应字段则自动添加该字段，如果已有则不会进行修改
+
+    :param ini_path:
+    :return:
+    """
+
+    # 配置文件默认字段值
+    config_dict = {
+        "default_workspace": os.path.join(".", "workspace"),
+        "default_pagesize": 15,
+    }
 
     config = ConfigParserWithFile()
     config.read(ini_path)
 
-    config_dict = {}
+    for k in config_dict.keys():
+        if config.has_option("program_configs", k):
+            config_dict[k] = config.get("program_configs", k)
 
-    if config.has_option("program_configs", "default_workspace"):
-        default_workspace = config.get("program_configs", "default_workspace")
-    config_dict['default_workspace'] = default_workspace
-
-    if config.has_option("program_configs", "default_pagesize"):
-        default_pagesize = config.get("program_configs", "default_pagesize")
-    config_dict['default_pagesize'] = default_pagesize
     config['program_configs'] = config_dict
 
     config.write_to_file()
