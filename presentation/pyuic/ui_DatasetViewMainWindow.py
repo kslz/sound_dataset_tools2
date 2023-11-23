@@ -54,10 +54,15 @@ class Ui_DatasetViewMainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.pushButton_search)
 
-        self.pushButton = QPushButton(self.groupBox_operate)
-        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton_output = QPushButton(self.groupBox_operate)
+        self.pushButton_output.setObjectName(u"pushButton_output")
 
-        self.horizontalLayout_2.addWidget(self.pushButton)
+        self.horizontalLayout_2.addWidget(self.pushButton_output)
+
+        self.pushButton_columns_setting = QPushButton(self.groupBox_operate)
+        self.pushButton_columns_setting.setObjectName(u"pushButton_columns_setting")
+
+        self.horizontalLayout_2.addWidget(self.pushButton_columns_setting)
 
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -75,31 +80,26 @@ class Ui_DatasetViewMainWindow(object):
         self.groupBox_dataset.setSizePolicy(sizePolicy)
         self.verticalLayout_9 = QVBoxLayout(self.groupBox_dataset)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.tableWidget_3 = QTableWidget(self.groupBox_dataset)
-        self.tableWidget_3.setObjectName(u"tableWidget_3")
+        self.tableWidget_info_show = QTableWidget(self.groupBox_dataset)
+        self.tableWidget_info_show.setObjectName(u"tableWidget_info_show")
 
-        self.verticalLayout_9.addWidget(self.tableWidget_3)
+        self.verticalLayout_9.addWidget(self.tableWidget_info_show)
 
-        self.widget_4 = QWidget(self.groupBox_dataset)
-        self.widget_4.setObjectName(u"widget_4")
-        self.verticalLayout_11 = QVBoxLayout(self.widget_4)
-        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.verticalLayout_11.setContentsMargins(0, 0, 0, 0)
-        self.widget_5 = QWidget(self.widget_4)
-        self.widget_5.setObjectName(u"widget_5")
-        self.horizontalLayout_3 = QHBoxLayout(self.widget_5)
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.label_page_info = QLabel(self.widget_5)
-        self.label_page_info.setObjectName(u"label_page_info")
-
-        self.horizontalLayout_3.addWidget(self.label_page_info)
-
-        self.widget_page_size = QWidget(self.widget_5)
+        self.widget_page_info = QWidget(self.groupBox_dataset)
+        self.widget_page_info.setObjectName(u"widget_page_info")
+        self.horizontalLayout_6 = QHBoxLayout(self.widget_page_info)
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
+        self.widget_page_size = QWidget(self.widget_page_info)
         self.widget_page_size.setObjectName(u"widget_page_size")
         self.horizontalLayout_4 = QHBoxLayout(self.widget_page_size)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.label_page_info = QLabel(self.widget_page_size)
+        self.label_page_info.setObjectName(u"label_page_info")
+
+        self.horizontalLayout_4.addWidget(self.label_page_info)
+
         self.label_page_size_1 = QLabel(self.widget_page_size)
         self.label_page_size_1.setObjectName(u"label_page_size_1")
 
@@ -110,19 +110,19 @@ class Ui_DatasetViewMainWindow(object):
 
         self.horizontalLayout_4.addWidget(self.comboBox_page_size)
 
-        self.label_2 = QLabel(self.widget_page_size)
-        self.label_2.setObjectName(u"label_2")
+        self.label_page_size_2 = QLabel(self.widget_page_size)
+        self.label_page_size_2.setObjectName(u"label_page_size_2")
 
-        self.horizontalLayout_4.addWidget(self.label_2)
+        self.horizontalLayout_4.addWidget(self.label_page_size_2)
 
 
-        self.horizontalLayout_3.addWidget(self.widget_page_size)
+        self.horizontalLayout_6.addWidget(self.widget_page_size)
 
-        self.horizontalSpacer_2 = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_2)
 
-        self.widget_page_change = QWidget(self.widget_5)
+        self.widget_page_change = QWidget(self.widget_page_info)
         self.widget_page_change.setObjectName(u"widget_page_change")
         self.horizontalLayout_5 = QHBoxLayout(self.widget_page_change)
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
@@ -138,13 +138,10 @@ class Ui_DatasetViewMainWindow(object):
         self.horizontalLayout_5.addWidget(self.pushButton_page_next)
 
 
-        self.horizontalLayout_3.addWidget(self.widget_page_change)
+        self.horizontalLayout_6.addWidget(self.widget_page_change)
 
 
-        self.verticalLayout_11.addWidget(self.widget_5)
-
-
-        self.verticalLayout_9.addWidget(self.widget_4)
+        self.verticalLayout_9.addWidget(self.widget_page_info)
 
 
         self.verticalLayout_8.addWidget(self.groupBox_dataset)
@@ -384,11 +381,12 @@ class Ui_DatasetViewMainWindow(object):
         self.groupBox_operate.setTitle(QCoreApplication.translate("DatasetViewMainWindow", u"\u64cd\u4f5c", None))
         self.pushButton_input.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u5bfc\u5165", None))
         self.pushButton_search.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u641c\u7d22", None))
-        self.pushButton.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u5bfc\u51fa", None))
+        self.pushButton_output.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u5bfc\u51fa", None))
+        self.pushButton_columns_setting.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u5217\u8bbe\u7f6e", None))
         self.groupBox_dataset.setTitle(QCoreApplication.translate("DatasetViewMainWindow", u"\u6570\u636e\u96c6", None))
         self.label_page_info.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u5f53\u524d1\u523015\uff0c\u51711234\u6761\u6570\u636e", None))
         self.label_page_size_1.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u6bcf\u9875", None))
-        self.label_2.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u884c", None))
+        self.label_page_size_2.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u884c", None))
         self.pushButton_page_last.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u2190", None))
         self.pushButton_page_next.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u2192", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1NewView), QCoreApplication.translate("DatasetViewMainWindow", u"\u65b0\u6570\u636e\u96c6\u6982\u89c8", None))

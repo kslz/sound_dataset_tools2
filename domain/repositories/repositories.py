@@ -11,20 +11,22 @@ from utils.tools import check_pagenumber_is_out
 
 class SearchField:
     """
-    用于提前写好可能需要查询的字段，我猜在一个地方写比在所有地方写强一点
+    搜索表格展示列和涉及数据库字段处理的类。
+    期望实现选择什么列就能返回涉及什么字段的效果
     """
 
     def __init__(self):
         self.field_dict = {}
-        self.field_dict["info_id"] = {"name": "数据ID", "field": Info.info_id}
-        self.field_dict["dataset_id"] = {"name": "数据集ID", "field": Info.dataset_id}
-        self.field_dict["info_text"] = {"name": "数据文本", "field": Info.info_text}
-        self.field_dict["info_pinyin"] = {"name": "数据拼音", "field": Info.info_pinyin}
-        self.field_dict["info_speaker"] = {"name": "发音人", "field": Info.info_speaker}
-        self.field_dict["info_raw_file_path"] = {"name": "音频文件位置", "field": Info.info_raw_file_path}
-        self.field_dict["info_start_time"] = {"name": "音频开始时间", "field": Info.info_start_time}
-        self.field_dict["info_end_time"] = {"name": "音频结束时间", "field": Info.info_end_time}
-        self.field_dict["info_is_del"] = {"name": "是否已删除", "field": Info.info_is_del}
+        self.field_dict["序号"] = {"name": "序号", "field": None}
+        self.field_dict["数据ID"] = {"name": "数据ID", "field": Info.info_id}
+        self.field_dict["数据集ID"] = {"name": "数据集ID", "field": Info.dataset_id}
+        self.field_dict["数据文本"] = {"name": "数据文本", "field": Info.info_text}
+        self.field_dict["数据拼音"] = {"name": "数据拼音", "field": Info.info_pinyin}
+        self.field_dict["发音人"] = {"name": "发音人", "field": Info.info_speaker}
+        self.field_dict["音频文件位置"] = {"name": "音频文件位置", "field": Info.info_raw_file_path}
+        self.field_dict["音频开始时间"] = {"name": "音频开始时间", "field": Info.info_start_time}
+        self.field_dict["音频结束时间"] = {"name": "音频结束时间", "field": Info.info_end_time}
+        self.field_dict["是否已删除"] = {"name": "是否已删除", "field": Info.info_is_del}
 
         # self.field_dict[""] = {"name": "", "field": }
         pass

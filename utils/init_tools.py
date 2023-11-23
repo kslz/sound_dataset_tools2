@@ -114,6 +114,7 @@ def read_ini_config(ini_path="config/settings.ini"):
     config_dict = {
         "default_workspace": os.path.join(".", "workspace"),
         "default_pagesize": 15,
+        "default_colums": "all"
     }
 
     config = ConfigParserWithFile()

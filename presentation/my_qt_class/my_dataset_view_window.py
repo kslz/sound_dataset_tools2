@@ -21,6 +21,7 @@ from presentation.my_qt_class.my_edit_info_dialog import EditInfoDialog
 from presentation.my_qt_class.my_factory_function import *
 from presentation.my_qt_class.my_tool_function import *
 from presentation.pyuic.ui_DatasetViewMainWindow import Ui_DatasetViewMainWindow
+from utils.init_tools import read_ini_config
 
 
 class DatasetViewMainWindow(BaseMainWindow):
@@ -35,18 +36,20 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.my_init(False)
         self.set_table_style()
 
+        self.config = read_ini_config()
         self.dataset_id = dataset_id
         self.page_number = 1
-        self.page_size = 15
-        self.refresh_table()
+        self.page_size = int(self.config["program_configs"]["default_pagesize"])
 
-        # 连接信号
-        self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
-        self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
-        self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
+        # self.refresh_table()
+        #
+        # # 连接信号
+        # self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
+        # self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
+        # self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
 
-    def set_table_style(self):
-        # 数据集概览表格
+
+    def columns_setting(self):
         properties = [
             ("序号", False, 100),
             ("标注文本", True, 130),
@@ -56,8 +59,16 @@ class DatasetViewMainWindow(BaseMainWindow):
         ]
         modify_table_style(self.ui.tableWidget, properties)
 
-        self.ui.tableWidget.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
-        header = self.ui.tableWidget.horizontalHeader()
+        pass
+
+    def set_table_style(self):
+        # 设置表格列
+        # todo
+        self.columns_setting()
+        # modify_table_style(self.ui.tableWidget, properties)
+
+        self.ui.tableWidget_info_show.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
+        header = self.ui.tableWidget_info_show.horizontalHeader()
         header.setDefaultAlignment(QtCore.Qt.AlignLeft)  # 设置表头左对齐
         # 创建一个字体对象，并设置字号为12
         font = QtGui.QFont()
