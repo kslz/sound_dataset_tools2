@@ -60,29 +60,15 @@ class DatasetViewMainWindow(BaseMainWindow):
         # self.logger.debug(f"已选择自定义列：{','.join(checked_list)}")
         checked_str = self.config['program_configs']['default_colums']
         checked_list = checked_str.split(",")
+        checked_list.append("操作")
         self.logger.info(f"已选择自定义列：{checked_str}")
         self.ui.tableWidget_info_show.setColumnCount(len(checked_list))
         self.ui.tableWidget_info_show.setHorizontalHeaderLabels(checked_list)
         # header = self.ui.tableWidget_info_show.horizontalHeader()
+        self.refresh_table()
         self.ui.tableWidget_info_show.resizeColumnsToContents()
 
-    # def columns_setting(self):
-    #     properties = [
-    #         ("序号", False, 100),
-    #         ("标注文本", True, 130),
-    #         ("发音人", False, 130),
-    #         ("标签", False, 100),
-    #         ("操作", False, 250),
-    #     ]
-    #     modify_table_style(self.ui.tableWidget, properties)
-    #
-    #     pass
-
     def set_table_style(self):
-        # 设置表格列
-        # todo
-        # self.columns_setting()
-        # modify_table_style(self.ui.tableWidget, properties)
 
         self.ui.tableWidget_info_show.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
         header = self.ui.tableWidget_info_show.horizontalHeader()
@@ -96,14 +82,17 @@ class DatasetViewMainWindow(BaseMainWindow):
 
     def refresh_table(self, page_number=0):
         # 注意 QcomboBox在被清空的时候也会发出currentIndexChanged信号
-        self.ui.comboBox.blockSignals(True)
-
         page_size = self.page_size
         if page_number == 0:
             page_number = self.page_number
-        self.ui.tableWidget.setRowCount(0)
-        self.ui.comboBox.clear()
-        total_count, results = get_dataset_view_window_info(self.dataset_id, page_size, page_number)
+        self.ui.tableWidget_info_show.setRowCount(0)
+        k_list = self.config['program_configs']['default_colums'].split(",")
+
+        total_count, page_number, results = get_dataset_view_window_info(self.dataset_id, page_size, page_number, k_list)
+        print(total_count, page_number, results)
+        return
+
+
         pagecount = 1
         while total_count > 0:
             start = page_size * (pagecount - 1) + 1

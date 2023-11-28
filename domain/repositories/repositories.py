@@ -38,21 +38,26 @@ class SearchField:
         field_list = []
         if not k_list:
             for v in self.field_dict.values():
+                if v['field'] is None:
+                    continue
                 field_list.append(v['field'])
         else:
             for k in k_list:
+                if self.field_dict[k]['field'] is None:
+                    continue
                 field_list.append(self.field_dict[k]['field'])
         return field_list
 
     def get_all_keys(self):
         return self.field_dict.keys()
 
+
 class SearchInfo:
 
     def __init__(self, field_list):
         self.query = Info.select(*field_list)
 
-    def search_dataset_id(self,dataset_id):
+    def search_dataset_id(self, dataset_id):
         self.query = self.query.where(Info.dataset_id == dataset_id)
 
     def order_by_id(self):
@@ -61,21 +66,17 @@ class SearchInfo:
     def get_count(self):
         return self.query.count()
 
-    def get_result_page(self,page_number, page_size):
+    def get_result_page(self, page_number, page_size):
         total_count = self.get_count()
         _, page_number = check_pagenumber_is_out(total_count, page_number, page_size)
         self.query = self.query.paginate(page_number, page_size)
-        return total_count, page_number, self.query.dict()
+        return total_count, page_number, self.query.dicts()
 
     def do_join(self, args):
         self.query = self.query.join(*args)
 
     def do_where(self, args):
         self.query = self.query.where(*args)
-
-
-
-
 
 
 # 增
@@ -134,7 +135,22 @@ def get_info_by_id(info_id):
     return Info.get_by_id(info_id)
 
 
-def get_dataset_view_window_info(dataset_id=1, page_size=15, page_number=1, show_delete=True):
+def get_dataset_view_window_info(dataset_id=1, page_size=15, page_number=1, k_list=None, show_delete=True):
+    if k_list is None:
+        k_list = []
+    sf = SearchField()
+    field_list = sf.get_field_list(k_list)
+    si = SearchInfo(field_list)
+    si.search_dataset_id(dataset_id)
+    total_count, page_number, results = si.get_result_page(page_number, page_size)
+
+    return total_count, page_number, results
+
+
+    pass
+
+
+def get_dataset_view_window_info2(dataset_id=1, page_size=15, page_number=1, show_delete=True):
     subquery = (
         Info
         .select(
