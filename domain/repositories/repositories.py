@@ -44,6 +44,9 @@ class SearchField:
                 field_list.append(self.field_dict[k]['field'])
         return field_list
 
+    def get_all_keys(self):
+        return self.field_dict.keys()
+
 class SearchInfo:
 
     def __init__(self, field_list):

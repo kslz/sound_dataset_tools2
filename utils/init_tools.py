@@ -87,18 +87,19 @@ class ToolWorkspace:
         pass
 
 
+@singleton
 class ConfigParserWithFile(configparser.ConfigParser):
     file = None
 
-    def read(self, filenames, encoding=None):
+    def read(self, filenames, encoding="UTF-8"):
         self.file = filenames
         return super().read(filenames, encoding)
 
-    def refresh_config(self, encoding=None):
+    def refresh_config(self, encoding="UTF-8"):
         return super().read(self.file, encoding)
 
     def write_to_file(self):
-        with open(self.file, 'w') as configfile:
+        with open(self.file, 'w', encoding="UTF-8") as configfile:
             self.write(configfile)
 
 
@@ -123,6 +124,10 @@ def read_ini_config(ini_path="config/settings.ini"):
     for k in config_dict.keys():
         if config.has_option("program_configs", k):
             config_dict[k] = config.get("program_configs", k)
+
+    if config_dict["default_colums"] == "all":
+        sf = SearchField()
+        config_dict["default_colums"] = ",".join(sf.get_all_keys())
 
     config['program_configs'] = config_dict
 

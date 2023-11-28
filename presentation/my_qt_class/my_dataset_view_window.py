@@ -15,6 +15,7 @@ from infrastructure.file_io import fast_output_sound
 from presentation.my_qt_class.my_add_from_wav_srt_dialog import AddFromWavSrtDialog
 from presentation.my_qt_class.my_audio_button import AudioButton
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
+from presentation.my_qt_class.my_columns_setting_dialog import ColumnsSettingDialog
 from presentation.my_qt_class.my_delete_button import DeleteBTN
 from presentation.my_qt_class.my_delete_info_by_wav_dialog import DeleteInfoByWavDialog
 from presentation.my_qt_class.my_edit_info_dialog import EditInfoDialog
@@ -40,31 +41,47 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.dataset_id = dataset_id
         self.page_number = 1
         self.page_size = int(self.config["program_configs"]["default_pagesize"])
+        self.apply_columns_setting()
 
         # self.refresh_table()
         #
         # # 连接信号
+        self.ui.pushButton_columns_setting.clicked.connect(self.columns_setting)
         # self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
         # self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
         # self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
 
-
     def columns_setting(self):
-        properties = [
-            ("序号", False, 100),
-            ("标注文本", True, 130),
-            ("发音人", False, 130),
-            ("标签", False, 100),
-            ("操作", False, 250),
-        ]
-        modify_table_style(self.ui.tableWidget, properties)
+        columns_setting_dialog = ColumnsSettingDialog(self, self.config)
+        columns_setting_dialog.saveWindowClosed.connect(self.apply_columns_setting)
+        columns_setting_dialog.exec()
 
-        pass
+    def apply_columns_setting(self):
+        # self.logger.debug(f"已选择自定义列：{','.join(checked_list)}")
+        checked_str = self.config['program_configs']['default_colums']
+        checked_list = checked_str.split(",")
+        self.logger.info(f"已选择自定义列：{checked_str}")
+        self.ui.tableWidget_info_show.setColumnCount(len(checked_list))
+        self.ui.tableWidget_info_show.setHorizontalHeaderLabels(checked_list)
+        # header = self.ui.tableWidget_info_show.horizontalHeader()
+        self.ui.tableWidget_info_show.resizeColumnsToContents()
+
+    # def columns_setting(self):
+    #     properties = [
+    #         ("序号", False, 100),
+    #         ("标注文本", True, 130),
+    #         ("发音人", False, 130),
+    #         ("标签", False, 100),
+    #         ("操作", False, 250),
+    #     ]
+    #     modify_table_style(self.ui.tableWidget, properties)
+    #
+    #     pass
 
     def set_table_style(self):
         # 设置表格列
         # todo
-        self.columns_setting()
+        # self.columns_setting()
         # modify_table_style(self.ui.tableWidget, properties)
 
         self.ui.tableWidget_info_show.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
