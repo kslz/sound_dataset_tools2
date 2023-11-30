@@ -80,6 +80,9 @@ class DatasetViewMainWindow(BaseMainWindow):
         # 将字体对象设置为表头的字体
         header.setFont(font)
 
+        # 不展示行号
+        self.ui.tableWidget_info_show.verticalHeader().setVisible(False)
+
     def refresh_table(self, page_number=0):
         # 注意 QcomboBox在被清空的时候也会发出currentIndexChanged信号
         page_size = self.page_size
@@ -88,21 +91,16 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.ui.tableWidget_info_show.setRowCount(0)
         k_list = self.config['program_configs']['default_colums'].split(",")
 
-        total_count, page_number, results = get_dataset_view_window_info(self.dataset_id, page_size, page_number, k_list)
+        total_count, page_number, results = get_dataset_view_window_info(self.dataset_id, page_size, page_number,
+                                                                         k_list)
+
         print(total_count, page_number, results)
+
+        table_tool = TableTool(page_size, page_number, results, self.ui.tableWidget_info_show)
+        table_tool.add_to_table(k_list)
+
+
         return
-
-
-        pagecount = 1
-        while total_count > 0:
-            start = page_size * (pagecount - 1) + 1
-            if total_count >= page_size:
-                end = start + page_size - 1
-            else:
-                end = start + total_count - 1
-            self.ui.comboBox.addItem(f"第 {str(pagecount)} 页  {str(start)} ~ {str(end)}", pagecount)
-            total_count -= page_size
-            pagecount += 1
 
         self.btn_dict = {}
         for i, result in enumerate(results, start=1):
@@ -195,3 +193,70 @@ class DatasetViewMainWindow(BaseMainWindow):
     def open_del_info_by_wav_dialog(self):
         del_info_by_wav = DeleteInfoByWavDialog(self, self.dataset_id)
         del_info_by_wav.exec()
+
+
+class TableTool:
+    """
+    用于从列名和数据库查询得到的数据获取页面信息
+    """
+
+    def __init__(self, page_size, page_number, results, table):
+        self.page_size = page_size
+        self.page_number = page_number
+        self.results = results
+        self.table = table
+
+        self.fun_dict = {}
+        self.fun_dict["序号"] = self.index
+        self.fun_dict["数据ID"] = self.info_id
+        self.fun_dict["数据集ID"] = self.dataset_id
+        self.fun_dict["数据文本"] = self.info_text
+        self.fun_dict["数据拼音"] = self.info_pinyin
+        self.fun_dict["发音人"] = self.info_speaker
+        self.fun_dict["音频文件位置"] = self.info_raw_file_path
+        self.fun_dict["音频开始时间"] = self.info_start_time
+        self.fun_dict["音频结束时间"] = self.info_end_time
+        self.fun_dict["是否已删除"] = self.info_is_del
+
+        pass
+
+    def add_to_table(self, k_list):
+        for i, result in enumerate(self.results, start=1):
+            column_now = 0
+            row = self.table.rowCount()
+            self.table.insertRow(row)
+            for k in k_list:
+                fun_now = self.fun_dict[k]
+                fun_now(row, column_now, result)
+                column_now += 1
+
+    def index(self, row, column, result_dict):
+        index = (self.page_number - 1) * self.page_size + row + 1
+        self.table.setItem(row, column, QTableWidgetItem(str(index)))
+
+    def info_id(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_id"])))
+
+    def dataset_id(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["dataset_id"])))
+
+    def info_text(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_text"])))
+
+    def info_pinyin(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_pinyin"])))
+
+    def info_speaker(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_speaker"])))
+
+    def info_raw_file_path(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_raw_file_path"])))
+
+    def info_start_time(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_start_time"])))
+
+    def info_end_time(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_end_time"])))
+
+    def info_is_del(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_is_del"])))

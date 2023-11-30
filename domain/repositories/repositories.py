@@ -18,7 +18,7 @@ class SearchField:
     def __init__(self):
         self.field_dict = {}
         self.field_dict["序号"] = {"name": "序号", "field": None}
-        self.field_dict["数据ID"] = {"name": "数据ID", "field": Info.info_id}
+        self.field_dict["数据ID"] = {"name": "数据ID", "field": None}  # 因为一定要查询Info.info_id 所以在这里不再传递
         self.field_dict["数据集ID"] = {"name": "数据集ID", "field": Info.dataset_id}
         self.field_dict["数据文本"] = {"name": "数据文本", "field": Info.info_text}
         self.field_dict["数据拼音"] = {"name": "数据拼音", "field": Info.info_pinyin}
@@ -35,7 +35,7 @@ class SearchField:
         if k_list is None:
             k_list = []
 
-        field_list = []
+        field_list = [Info.info_id]
         if not k_list:
             for v in self.field_dict.values():
                 if v['field'] is None:
@@ -144,7 +144,7 @@ def get_dataset_view_window_info(dataset_id=1, page_size=15, page_number=1, k_li
     si.search_dataset_id(dataset_id)
     total_count, page_number, results = si.get_result_page(page_number, page_size)
 
-    return total_count, page_number, results
+    return total_count, page_number, list(results)
 
 
     pass
