@@ -35,7 +35,7 @@ class ColumnsSettingDialog(BaseDialog):
 
 
     def add_info_line(self):
-        check_colums_list = self.config["program_configs"]["default_colums"].split(",")
+        check_colums_list = self.config["program_configs"]["default_columns"].split(",")
         for colum_name in self.sf.get_all_keys():
             checkbox = QCheckBox(colum_name, self)
             # checkbox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -51,7 +51,7 @@ class ColumnsSettingDialog(BaseDialog):
         checked_checkboxes = [button for button in self.btn_group.buttons() if button.isChecked()]
         for checkbox in checked_checkboxes:
             new_list.append(checkbox.text())
-        self.config['program_configs']['default_colums'] = ",".join(new_list)
+        self.config['program_configs']['default_columns'] = ",".join(new_list)
         self.config.write_to_file()
         self.saveWindowClosed.emit()
         self.close()

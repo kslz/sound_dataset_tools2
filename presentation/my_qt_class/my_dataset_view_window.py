@@ -8,7 +8,7 @@ import os
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtCore import Signal, Slot
-from PySide6.QtWidgets import QTableWidgetItem, QPushButton
+from PySide6.QtWidgets import QTableWidgetItem
 
 from domain.repositories.repositories import *
 from infrastructure.file_io import fast_output_sound
@@ -20,7 +20,6 @@ from presentation.my_qt_class.my_delete_button import DeleteBTN
 from presentation.my_qt_class.my_delete_info_by_wav_dialog import DeleteInfoByWavDialog
 from presentation.my_qt_class.my_edit_info_dialog import EditInfoDialog
 from presentation.my_qt_class.my_factory_function import *
-from presentation.my_qt_class.my_tool_function import *
 from presentation.pyuic.ui_DatasetViewMainWindow import Ui_DatasetViewMainWindow
 from utils.init_tools import read_ini_config
 
@@ -58,9 +57,9 @@ class DatasetViewMainWindow(BaseMainWindow):
 
     def apply_columns_setting(self):
         # self.logger.debug(f"已选择自定义列：{','.join(checked_list)}")
-        checked_str = self.config['program_configs']['default_colums']
+        checked_str = self.config['program_configs']['default_columns']
         checked_list = checked_str.split(",")
-        checked_list.append("操作")
+        # checked_list.append("操作")
         self.logger.info(f"已选择自定义列：{checked_str}")
         self.ui.tableWidget_info_show.setColumnCount(len(checked_list))
         self.ui.tableWidget_info_show.setHorizontalHeaderLabels(checked_list)
@@ -69,6 +68,11 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.ui.tableWidget_info_show.resizeColumnsToContents()
 
     def set_table_style(self):
+        """
+        设置表格样式
+
+        :return:
+        """
 
         self.ui.tableWidget_info_show.verticalHeader().setDefaultSectionSize(26)  # 设置行高24
         header = self.ui.tableWidget_info_show.horizontalHeader()
@@ -84,21 +88,26 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.ui.tableWidget_info_show.verticalHeader().setVisible(False)
 
     def refresh_table(self, page_number=0):
+        """
+        刷新表格
+
+        :param page_number:
+        :return:
+        """
         # 注意 QcomboBox在被清空的时候也会发出currentIndexChanged信号
         page_size = self.page_size
         if page_number == 0:
             page_number = self.page_number
         self.ui.tableWidget_info_show.setRowCount(0)
-        k_list = self.config['program_configs']['default_colums'].split(",")
+        k_list = self.config['program_configs']['default_columns'].split(",")
 
         total_count, page_number, results = get_dataset_view_window_info(self.dataset_id, page_size, page_number,
                                                                          k_list)
 
-        print(total_count, page_number, results)
+        # print(total_count, page_number, results)
 
-        table_tool = TableTool(page_size, page_number, results, self.ui.tableWidget_info_show)
+        table_tool = TableTool(results, self.ui.tableWidget_info_show, self)
         table_tool.add_to_table(k_list)
-
 
         return
 
@@ -148,7 +157,6 @@ class DatasetViewMainWindow(BaseMainWindow):
                 {'btn': DeleteBTN, 'args': {'text': '删除', "info_id": info_id, 'parent': self,
                                             "info_is_del": info_is_del}, 'slot': None},
             ]
-            # text, info_id, parent, info_is_del
 
             caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
             self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
@@ -200,9 +208,10 @@ class TableTool:
     用于从列名和数据库查询得到的数据获取页面信息
     """
 
-    def __init__(self, page_size, page_number, results, table):
-        self.page_size = page_size
-        self.page_number = page_number
+    def __init__(self, results, table, parent_window):
+        self.parent_window = parent_window
+        self.page_size = self.parent_window.page_size
+        self.page_number = self.parent_window.page_number
         self.results = results
         self.table = table
 
@@ -217,6 +226,7 @@ class TableTool:
         self.fun_dict["音频开始时间"] = self.info_start_time
         self.fun_dict["音频结束时间"] = self.info_end_time
         self.fun_dict["是否已删除"] = self.info_is_del
+        self.fun_dict["操作"] = self.caozuo
 
         pass
 
@@ -260,3 +270,41 @@ class TableTool:
 
     def info_is_del(self, row, column, result_dict):
         self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_is_del"])))
+
+    def caozuo(self, row, column, result_dict):
+
+        def get_lamda(fun, args):
+            return lambda: fun(*args)
+
+        data_list = [
+            {'btn': AudioButton,
+             'args': {'wav_path': result_dict["info_raw_file_path"], 'start_time': result_dict["info_start_time"],
+                      'end_time': result_dict["info_end_time"],
+                      'parent': self.parent_window}, 'slot': None, 'length': 2},
+            {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self.parent_window},
+             'slot': get_lamda(self.parent_window.fast_output, [result_dict["info_id"]]), 'length': 3},
+            {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self.parent_window},
+             'slot': get_lamda(self.parent_window.edit_info, [result_dict["info_id"]])},
+            {'btn': DeleteBTN, 'args': {'text': '删除', "info_id": result_dict["info_id"], 'parent': self.parent_window,
+                                        "info_is_del": result_dict["info_is_del"]}, 'slot': None},
+        ]
+        caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
+        self.table.setCellWidget(row, column, caozuo_widget)
+
+        # def get_lamda(fun, args):
+        #     return lambda: fun(*args)
+        #
+        # data_list = [
+        #     {'btn': AudioButton,
+        #      'args': {'wav_path': info_file_path, 'start_time': info_start_time, 'end_time': info_end_time,
+        #               'parent': self}, 'slot': None, 'length': 2},
+        #     {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self},
+        #      'slot': get_lamda(self.fast_output, [info_id]), 'length': 3},
+        #     {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self},
+        #      'slot': get_lamda(self.edit_info, [info_id])},
+        #     {'btn': DeleteBTN, 'args': {'text': '删除', "info_id": info_id, 'parent': self,
+        #                                 "info_is_del": info_is_del}, 'slot': None},
+        # ]
+        #
+        # caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
+        # self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)

@@ -115,7 +115,7 @@ def read_ini_config(ini_path="config/settings.ini"):
     config_dict = {
         "default_workspace": os.path.join(".", "workspace"),
         "default_pagesize": 15,
-        "default_colums": "all"
+        "default_columns": "all"
     }
 
     config = ConfigParserWithFile()
@@ -125,9 +125,9 @@ def read_ini_config(ini_path="config/settings.ini"):
         if config.has_option("program_configs", k):
             config_dict[k] = config.get("program_configs", k)
 
-    if config_dict["default_colums"] == "all":
+    if config_dict["default_columns"] == "all":
         sf = SearchField()
-        config_dict["default_colums"] = ",".join(sf.get_all_keys())
+        config_dict["default_columns"] = ",".join(sf.get_all_keys())
 
     config['program_configs'] = config_dict
 

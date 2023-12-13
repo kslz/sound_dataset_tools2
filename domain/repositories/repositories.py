@@ -18,7 +18,7 @@ class SearchField:
     def __init__(self):
         self.field_dict = {}
         self.field_dict["序号"] = {"name": "序号", "field": None}
-        self.field_dict["数据ID"] = {"name": "数据ID", "field": None}  # 因为一定要查询Info.info_id 所以在这里不再传递
+        self.field_dict["数据ID"] = {"name": "数据ID", "field": Info.info_id}
         self.field_dict["数据集ID"] = {"name": "数据集ID", "field": Info.dataset_id}
         self.field_dict["数据文本"] = {"name": "数据文本", "field": Info.info_text}
         self.field_dict["数据拼音"] = {"name": "数据拼音", "field": Info.info_pinyin}
@@ -27,25 +27,42 @@ class SearchField:
         self.field_dict["音频开始时间"] = {"name": "音频开始时间", "field": Info.info_start_time}
         self.field_dict["音频结束时间"] = {"name": "音频结束时间", "field": Info.info_end_time}
         self.field_dict["是否已删除"] = {"name": "是否已删除", "field": Info.info_is_del}
+        self.field_dict["操作"] = {"name": "操作", "field": [Info.info_raw_file_path,
+                                                             Info.info_start_time,
+                                                             Info.info_end_time,
+                                                             Info.info_id,
+                                                             Info.info_is_del]}
 
         # self.field_dict[""] = {"name": "", "field": }
         pass
 
     def get_field_list(self, k_list=None):
+        """
+        根据列名获取要查询的字段
+
+        :param k_list:
+        :return:
+        """
         if k_list is None:
             k_list = []
 
-        field_list = [Info.info_id]
+        field_list = [Info.info_id, Info.info_id]
         if not k_list:
             for v in self.field_dict.values():
                 if v['field'] is None:
                     continue
-                field_list.append(v['field'])
+                if type(v['field']) == list:
+                    field_list = field_list + v['field']
+                else:
+                    field_list.append(v['field'])
         else:
             for k in k_list:
                 if self.field_dict[k]['field'] is None:
                     continue
-                field_list.append(self.field_dict[k]['field'])
+                if type(self.field_dict[k]['field']) == list:
+                    field_list = field_list + self.field_dict[k]['field']
+                else:
+                    field_list.append(self.field_dict[k]['field'])
         return field_list
 
     def get_all_keys(self):
@@ -145,7 +162,6 @@ def get_dataset_view_window_info(dataset_id=1, page_size=15, page_number=1, k_li
     total_count, page_number, results = si.get_result_page(page_number, page_size)
 
     return total_count, page_number, list(results)
-
 
     pass
 
