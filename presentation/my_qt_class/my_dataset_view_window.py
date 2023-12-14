@@ -41,14 +41,36 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.page_number = 1
         self.page_size = int(self.config["program_configs"]["default_pagesize"])
         self.apply_columns_setting()
+        self.init_comboBox_page_size()
 
         # self.refresh_table()
         #
         # # 连接信号
         self.ui.pushButton_columns_setting.clicked.connect(self.columns_setting)
-        # self.ui.comboBox.currentIndexChanged.connect(self.change_page_number)
+        self.ui.comboBox_page_size.currentIndexChanged.connect(self.change_page_size)
         # self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
         # self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
+
+    def change_page_size(self, select_index):
+        new_pagesize = self.ui.comboBox_page_size.currentData()
+        self.page_size = new_pagesize
+        self.refresh_table()
+        self.ui.tableWidget_info_show.resizeColumnsToContents()  # 使表格自动列宽
+
+    def init_comboBox_page_size(self):
+        """
+        初始化分页大小下拉框
+
+        :return:
+        """
+        size_list = [15, 20, 30, 50, 100]
+        combox = self.ui.comboBox_page_size
+        combox.blockSignals(True)  # 阻止发送信号
+        combox.clear()
+        for size in size_list:
+            combox.addItem(str(size), size)
+        combox.setCurrentText(str(self.page_size))
+        combox.blockSignals(False)  # 恢复发送信号
 
     def columns_setting(self):
         columns_setting_dialog = ColumnsSettingDialog(self, self.config)
@@ -56,6 +78,11 @@ class DatasetViewMainWindow(BaseMainWindow):
         columns_setting_dialog.exec()
 
     def apply_columns_setting(self):
+        """
+        应用自定义列修改
+
+        :return:
+        """
         # self.logger.debug(f"已选择自定义列：{','.join(checked_list)}")
         checked_str = self.config['program_configs']['default_columns']
         checked_list = checked_str.split(",")
@@ -109,61 +136,6 @@ class DatasetViewMainWindow(BaseMainWindow):
         table_tool = TableTool(results, self.ui.tableWidget_info_show, self)
         table_tool.add_to_table(k_list)
 
-        return
-
-        self.btn_dict = {}
-        for i, result in enumerate(results, start=1):
-            index = i + (page_number - 1) * page_size
-            info_id = result['info_id']
-            info_text = result['info_text']
-            info_start_time = result['info_start_time']
-            info_end_time = result['info_end_time']
-            info_file_path = result['info_raw_file_path']
-            info_is_del = result['info_is_del']
-            speaker = result['info_speaker']
-            # if result['info_shibie_speaker'] != None:
-            #     speaker = result['info_shibie_speaker']
-            # else:
-            #     speaker = result['info_speaker']
-            # is_separate_file = result['is_separate_file']
-            row = self.ui.tableWidget.rowCount()
-            self.ui.tableWidget.insertRow(row)
-            self.ui.tableWidget.setItem(row, 0, QTableWidgetItem(str(index)))
-            self.ui.tableWidget.setItem(row, 1, QTableWidgetItem(info_text))
-            self.ui.tableWidget.setItem(row, 2, QTableWidgetItem(speaker))
-
-            # data_list = [
-            #     {'btn': AudioButton,
-            #      'args': {'wav_path': info_file_path, 'start_time': info_start_time, 'end_time': info_end_time,
-            #               'parent': self}, 'slot': None, 'length': 2},
-            #     {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self},
-            #      'slot': lambda: self.fast_output(info_id), 'length': 3},
-            #     {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self}, 'slot': lambda: self.edit_info(info_id)},
-            #     {'btn': QPushButton, 'args': {'text': '删除', 'parent': self},
-            #      'slot': lambda: self.del_info(info_id, info_is_del)},
-            # ]
-            # 注意：此处不能写为上面的形式，必须使用闭包形式来分割作用域，不然绑定的所有信号与槽会永远传递info_id的最后一个值
-            def get_lamda(fun, args):
-                return lambda: fun(*args)
-
-            data_list = [
-                {'btn': AudioButton,
-                 'args': {'wav_path': info_file_path, 'start_time': info_start_time, 'end_time': info_end_time,
-                          'parent': self}, 'slot': None, 'length': 2},
-                {'btn': QPushButton, 'args': {'text': '快速导出', 'parent': self},
-                 'slot': get_lamda(self.fast_output, [info_id]), 'length': 3},
-                {'btn': QPushButton, 'args': {'text': '编辑', 'parent': self},
-                 'slot': get_lamda(self.edit_info, [info_id])},
-                {'btn': DeleteBTN, 'args': {'text': '删除', "info_id": info_id, 'parent': self,
-                                            "info_is_del": info_is_del}, 'slot': None},
-            ]
-
-            caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
-            self.ui.tableWidget.setCellWidget(row, 4, caozuo_widget)
-
-        self.ui.comboBox.setCurrentIndex(page_number - 1)
-        self.ui.comboBox.blockSignals(False)
-
     @Slot()
     def fast_output(self, info_id):
         info = get_info_by_id(info_id)
@@ -189,10 +161,6 @@ class DatasetViewMainWindow(BaseMainWindow):
         add_wav_srt_window = AddFromWavSrtDialog(self, self.dataset_id)
         add_wav_srt_window.exec()
 
-    def change_page_number(self, index):
-        new_page_num = self.ui.comboBox.itemData(index)
-        self.refresh_table(new_page_num)
-        self.page_number = new_page_num
 
     def closeEvent(self, event):
         self.closed.emit()

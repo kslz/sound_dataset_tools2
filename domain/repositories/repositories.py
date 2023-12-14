@@ -26,7 +26,7 @@ class SearchField:
         self.field_dict["音频文件位置"] = {"name": "音频文件位置", "field": Info.info_raw_file_path}
         self.field_dict["音频开始时间"] = {"name": "音频开始时间", "field": Info.info_start_time}
         self.field_dict["音频结束时间"] = {"name": "音频结束时间", "field": Info.info_end_time}
-        self.field_dict["是否已删除"] = {"name": "是否已删除", "field": Info.info_is_del}
+        # self.field_dict["是否已删除"] = {"name": "是否已删除", "field": Info.info_is_del}
         self.field_dict["操作"] = {"name": "操作", "field": [Info.info_raw_file_path,
                                                              Info.info_start_time,
                                                              Info.info_end_time,
