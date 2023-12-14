@@ -65,7 +65,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.ui.tableWidget_info_show.setHorizontalHeaderLabels(checked_list)
         # header = self.ui.tableWidget_info_show.horizontalHeader()
         self.refresh_table()
-        self.ui.tableWidget_info_show.resizeColumnsToContents()
+        self.ui.tableWidget_info_show.resizeColumnsToContents()  # 使表格自动列宽
 
     def set_table_style(self):
         """

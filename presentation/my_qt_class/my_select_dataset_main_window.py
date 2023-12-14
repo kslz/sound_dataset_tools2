@@ -5,6 +5,9 @@
     @Url : https://github.com/kslz
     数据集选择界面
 """
+import subprocess
+import threading
+
 from PySide6.QtWidgets import QTableWidgetItem, QMessageBox, QHeaderView
 
 from domain.repositories.repositories import *
@@ -40,6 +43,7 @@ class SelectDatasetMainWindow(BaseMainWindow):
         self.add_dataset_data()
 
         self.ui.pushButton.clicked.connect(self.open_add_dataset_window)
+        self.init_play_sound()
 
     def add_dataset_data(self):
         """
@@ -129,5 +133,28 @@ class SelectDatasetMainWindow(BaseMainWindow):
     def update_dataset_dataset_last_use_time(self, dataset_id):
         Dataset.update(dataset_last_use_time=datetime.now().replace(microsecond=0)).where(
             Dataset.dataset_id == dataset_id).execute()
+
+    def init_play_sound(self):
+        """
+        因第一次使用ffplay播放音频时会卡一下，所以在此预调用一下
+        :return:
+        """
+
+        def generate_audio():
+            self.logger.debug("开始预执行播放音频")
+            output = (
+                ffmpeg
+                .input('anullsrc', f='lavfi', t=1)
+                .output('pipe:', format='s16le', acodec='pcm_s16le', ac=1, ar=16000)
+                .run(capture_stdout=True, quiet=True)
+            )
+            process = subprocess.Popen(['ffplay', "-nodisp", "-autoexit", "-loglevel", "quiet", '-'],
+                                       stdin=subprocess.PIPE)
+            process.communicate(output[0])
+            self.logger.debug("预执行播放音频完毕")
+
+        # 创建一个新线程来执行生成音频的任务
+        thread1 = threading.Thread(target=generate_audio)
+        thread1.start()
 
 
