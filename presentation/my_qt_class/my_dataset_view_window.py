@@ -114,6 +114,9 @@ class DatasetViewMainWindow(BaseMainWindow):
         # 不展示行号
         self.ui.tableWidget_info_show.verticalHeader().setVisible(False)
 
+    def init_page_utils(self):
+        pass
+
     def refresh_table(self, page_number=0):
         """
         刷新表格
@@ -259,3 +262,10 @@ class TableTool:
         caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
         self.table.setCellWidget(row, column, caozuo_widget)
 
+class PageUtils(QWidget):
+    def __init__(self, page_size, page_now, count):
+        super().__init__()
+        self.page_size = page_size
+        self.page_now = page_now
+        self.count = count
+    pass

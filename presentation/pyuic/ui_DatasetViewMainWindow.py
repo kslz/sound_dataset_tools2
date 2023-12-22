@@ -16,10 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QGroupBox,
-    QHBoxLayout, QHeaderView, QLabel, QMainWindow,
-    QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
-    QStatusBar, QTabWidget, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+    QHBoxLayout, QHeaderView, QLabel, QLineEdit,
+    QMainWindow, QMenuBar, QPushButton, QSizePolicy,
+    QSpacerItem, QStatusBar, QTabWidget, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_DatasetViewMainWindow(object):
     def setupUi(self, DatasetViewMainWindow):
@@ -115,12 +115,12 @@ class Ui_DatasetViewMainWindow(object):
 
         self.horizontalLayout_4.addWidget(self.label_page_size_2)
 
-
-        self.horizontalLayout_6.addWidget(self.widget_page_size)
-
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_6.addItem(self.horizontalSpacer_2)
+        self.horizontalLayout_4.addItem(self.horizontalSpacer_2)
+
+
+        self.horizontalLayout_6.addWidget(self.widget_page_size)
 
         self.widget_page_change = QWidget(self.widget_page_info)
         self.widget_page_change.setObjectName(u"widget_page_change")
@@ -139,6 +139,39 @@ class Ui_DatasetViewMainWindow(object):
 
 
         self.horizontalLayout_6.addWidget(self.widget_page_change)
+
+        self.widget_jump_page = QWidget(self.widget_page_info)
+        self.widget_jump_page.setObjectName(u"widget_jump_page")
+        self.horizontalLayout_3 = QHBoxLayout(self.widget_jump_page)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.label_jump_page = QLabel(self.widget_jump_page)
+        self.label_jump_page.setObjectName(u"label_jump_page")
+
+        self.horizontalLayout_3.addWidget(self.label_jump_page)
+
+        self.lineEdit = QLineEdit(self.widget_jump_page)
+        self.lineEdit.setObjectName(u"lineEdit")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
+        self.lineEdit.setSizePolicy(sizePolicy1)
+
+        self.horizontalLayout_3.addWidget(self.lineEdit)
+
+        self.pushButton = QPushButton(self.widget_jump_page)
+        self.pushButton.setObjectName(u"pushButton")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
+        self.pushButton.setSizePolicy(sizePolicy2)
+
+        self.horizontalLayout_3.addWidget(self.pushButton)
+
+
+        self.horizontalLayout_6.addWidget(self.widget_jump_page)
 
 
         self.verticalLayout_9.addWidget(self.widget_page_info)
@@ -210,11 +243,11 @@ class Ui_DatasetViewMainWindow(object):
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.tbl_widget = QWidget(self.tab2SearchOutput)
         self.tbl_widget.setObjectName(u"tbl_widget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(5)
-        sizePolicy1.setHeightForWidth(self.tbl_widget.sizePolicy().hasHeightForWidth())
-        self.tbl_widget.setSizePolicy(sizePolicy1)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(5)
+        sizePolicy3.setHeightForWidth(self.tbl_widget.sizePolicy().hasHeightForWidth())
+        self.tbl_widget.setSizePolicy(sizePolicy3)
         self.verticalLayout_4 = QVBoxLayout(self.tbl_widget)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.tableWidget_2 = QTableWidget(self.tbl_widget)
@@ -227,29 +260,29 @@ class Ui_DatasetViewMainWindow(object):
 
         self.btn_widget = QWidget(self.tab2SearchOutput)
         self.btn_widget.setObjectName(u"btn_widget")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(2)
-        sizePolicy2.setHeightForWidth(self.btn_widget.sizePolicy().hasHeightForWidth())
-        self.btn_widget.setSizePolicy(sizePolicy2)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(2)
+        sizePolicy4.setHeightForWidth(self.btn_widget.sizePolicy().hasHeightForWidth())
+        self.btn_widget.setSizePolicy(sizePolicy4)
         self.horizontalLayout = QHBoxLayout(self.btn_widget)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.groupBox_3 = QGroupBox(self.btn_widget)
         self.groupBox_3.setObjectName(u"groupBox_3")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy3.setHorizontalStretch(1)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.groupBox_3.sizePolicy().hasHeightForWidth())
-        self.groupBox_3.setSizePolicy(sizePolicy3)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy5.setHorizontalStretch(1)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.groupBox_3.sizePolicy().hasHeightForWidth())
+        self.groupBox_3.setSizePolicy(sizePolicy5)
         self.verticalLayout_7 = QVBoxLayout(self.groupBox_3)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.comboBox_2 = QComboBox(self.groupBox_3)
         self.comboBox_2.setObjectName(u"comboBox_2")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.comboBox_2.sizePolicy().hasHeightForWidth())
-        self.comboBox_2.setSizePolicy(sizePolicy4)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.comboBox_2.sizePolicy().hasHeightForWidth())
+        self.comboBox_2.setSizePolicy(sizePolicy6)
 
         self.verticalLayout_7.addWidget(self.comboBox_2)
 
@@ -258,11 +291,11 @@ class Ui_DatasetViewMainWindow(object):
 
         self.widget_3 = QWidget(self.btn_widget)
         self.widget_3.setObjectName(u"widget_3")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy5.setHorizontalStretch(4)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.widget_3.sizePolicy().hasHeightForWidth())
-        self.widget_3.setSizePolicy(sizePolicy5)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy7.setHorizontalStretch(4)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.widget_3.sizePolicy().hasHeightForWidth())
+        self.widget_3.setSizePolicy(sizePolicy7)
 
         self.horizontalLayout.addWidget(self.widget_3)
 
@@ -389,6 +422,8 @@ class Ui_DatasetViewMainWindow(object):
         self.label_page_size_2.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u884c", None))
         self.pushButton_page_last.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u2190", None))
         self.pushButton_page_next.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u2192", None))
+        self.label_jump_page.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u8df3\u8f6c\u9875\u7801\uff1a", None))
+        self.pushButton.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u8df3\u8f6c", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1NewView), QCoreApplication.translate("DatasetViewMainWindow", u"\u65b0\u6570\u636e\u96c6\u6982\u89c8", None))
         ___qtablewidgetitem = self.tableWidget.verticalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u65b0\u5efa\u884c", None));
