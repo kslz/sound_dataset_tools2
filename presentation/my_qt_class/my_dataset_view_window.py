@@ -43,6 +43,8 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.apply_columns_setting()
         self.init_comboBox_page_size()
 
+        self.init_page_utils()
+
         # self.refresh_table()
         #
         # # 连接信号
@@ -115,6 +117,16 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.ui.tableWidget_info_show.verticalHeader().setVisible(False)
 
     def init_page_utils(self):
+        widget_page_change = self.ui.widget_page_change
+        layout = widget_page_change.layout()
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+            else:
+                layout.removeItem(item)
+
         pass
 
     def refresh_table(self, page_number=0):
