@@ -126,7 +126,33 @@ class DatasetViewMainWindow(BaseMainWindow):
                 widget.deleteLater()
             else:
                 layout.removeItem(item)
+        button_last = SmallButton(" 上一页 ")
+        layout.addWidget(button_last)
+        button_last.auto_width()
+        if self.page_number - 1 > 0:
+            button_last.clicked.connect(self.to_last_page)
+        else:
+            button_last.setEnabled(False)
+        if self.page_number < 5:
+            for page_num in range(1, self.page_number+1):
+                _button = SmallButton(str(page_num))
+                layout.addWidget(_button)
+                _button.auto_width()
+                if page_num == self.page_number:
+                    _button.setEnabled(False)
+                else:
+                    _button.clicked.connect(self.to_num_page)
 
+
+        pass
+
+    def to_last_page(self):
+        pass
+
+    def to_next_page(self):
+        pass
+
+    def to_num_page(self):
         pass
 
     def refresh_table(self, page_number=0):
@@ -175,7 +201,6 @@ class DatasetViewMainWindow(BaseMainWindow):
     def add_from_file_wav_srt(self):
         add_wav_srt_window = AddFromWavSrtDialog(self, self.dataset_id)
         add_wav_srt_window.exec()
-
 
     def closeEvent(self, event):
         self.closed.emit()
@@ -274,10 +299,25 @@ class TableTool:
         caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
         self.table.setCellWidget(row, column, caozuo_widget)
 
+
 class PageUtils(QWidget):
     def __init__(self, page_size, page_now, count):
         super().__init__()
         self.page_size = page_size
         self.page_now = page_now
         self.count = count
+
+        layout = QHBoxLayout()
+        widget_page_change = QWidget()
+
     pass
+
+
+class SmallButton(QPushButton):
+    def __init__(self, text):
+        super().__init__(text=text)
+
+    def auto_width(self):
+        text = self.text()
+        new_width = 20 + len(text) * 10
+        self.setFixedWidth(new_width)
