@@ -129,6 +129,11 @@ class Ui_DatasetViewMainWindow(object):
         self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.pushButton_page_last = QPushButton(self.widget_page_change)
         self.pushButton_page_last.setObjectName(u"pushButton_page_last")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.pushButton_page_last.sizePolicy().hasHeightForWidth())
+        self.pushButton_page_last.setSizePolicy(sizePolicy1)
 
         self.horizontalLayout_5.addWidget(self.pushButton_page_last)
 
@@ -152,23 +157,20 @@ class Ui_DatasetViewMainWindow(object):
 
         self.lineEdit = QLineEdit(self.widget_jump_page)
         self.lineEdit.setObjectName(u"lineEdit")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
         self.lineEdit.setSizePolicy(sizePolicy1)
 
         self.horizontalLayout_3.addWidget(self.lineEdit)
 
-        self.pushButton = QPushButton(self.widget_jump_page)
-        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton_jump_to = QPushButton(self.widget_jump_page)
+        self.pushButton_jump_to.setObjectName(u"pushButton_jump_to")
         sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy2)
+        sizePolicy2.setHeightForWidth(self.pushButton_jump_to.sizePolicy().hasHeightForWidth())
+        self.pushButton_jump_to.setSizePolicy(sizePolicy2)
 
-        self.horizontalLayout_3.addWidget(self.pushButton)
+        self.horizontalLayout_3.addWidget(self.pushButton_jump_to)
 
 
         self.horizontalLayout_6.addWidget(self.widget_jump_page)
@@ -423,7 +425,7 @@ class Ui_DatasetViewMainWindow(object):
         self.pushButton_page_last.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u2190", None))
         self.pushButton_page_next.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u2192", None))
         self.label_jump_page.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u8df3\u8f6c\u9875\u7801\uff1a", None))
-        self.pushButton.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u8df3\u8f6c", None))
+        self.pushButton_jump_to.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u8df3\u8f6c", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1NewView), QCoreApplication.translate("DatasetViewMainWindow", u"\u65b0\u6570\u636e\u96c6\u6982\u89c8", None))
         ___qtablewidgetitem = self.tableWidget.verticalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("DatasetViewMainWindow", u"\u65b0\u5efa\u884c", None));

@@ -4,11 +4,12 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+import math
 import os
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtCore import Signal, Slot
-from PySide6.QtWidgets import QTableWidgetItem
+from PySide6.QtWidgets import QTableWidgetItem, QLabel
 
 from domain.repositories.repositories import *
 from infrastructure.file_io import fast_output_sound
@@ -40,10 +41,11 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.dataset_id = dataset_id
         self.page_number = 1
         self.page_size = int(self.config["program_configs"]["default_pagesize"])
+        self.total_count = 0
+
         self.apply_columns_setting()
         self.init_comboBox_page_size()
 
-        self.init_page_utils()
 
         # self.refresh_table()
         #
@@ -133,16 +135,83 @@ class DatasetViewMainWindow(BaseMainWindow):
             button_last.clicked.connect(self.to_last_page)
         else:
             button_last.setEnabled(False)
-        if self.page_number < 5:
-            for page_num in range(1, self.page_number+1):
-                _button = SmallButton(str(page_num))
-                layout.addWidget(_button)
-                _button.auto_width()
-                if page_num == self.page_number:
-                    _button.setEnabled(False)
-                else:
-                    _button.clicked.connect(self.to_num_page)
 
+        all_button_count = 7
+
+        all_page_num = math.ceil(self.total_count / self.page_size)
+
+        size_length = int(all_button_count / 2)
+
+        # left_btn_num = self.page_number - 1
+        # right_btn_num = min(all_button_count, all_page_num) - 1 - left_btn_num
+
+
+
+        if self.page_number - size_length > 1:
+            left_need_cut = True
+        else:
+            left_need_cut = False
+        if self.page_number + size_length < all_page_num:
+            right_need_cut = True
+        else:
+            right_need_cut = False
+
+        if left_need_cut:
+            left_start = self.page_number - size_length + 1
+            left_end = self.page_number
+        else:
+            left_start = 2
+            left_end = self.page_number
+
+        if right_need_cut:
+            right_start = self.page_number + 1
+            right_end = self.page_number + size_length
+        else:
+            right_start = self.page_number + 1
+            right_end = all_page_num + 1
+
+        # if left_end - left_start <= 1 and right_need_cut:
+
+        if left_need_cut:
+            button_start = SmallButton("1")
+            layout.addWidget(button_start)
+            button_start.auto_width()
+            button_start.clicked.connect(lambda: self.to_num_page(1))
+            label_left = QLabel("···")
+            layout.addWidget(label_left)
+        for _page_num in range(left_start, left_end):
+            _button_to_num = SmallButton(str(_page_num))
+            layout.addWidget(_button_to_num)
+            _button_to_num.auto_width()
+            _button_to_num.clicked.connect(lambda: self.to_num_page(_page_num))
+
+        button_now = SmallButton(str(self.page_number))
+        layout.addWidget(button_now)
+        button_now.auto_width()
+        button_now.setEnabled(False)
+        # button_now.clicked.connect(lambda: self.to_num_page(self.page_number))
+
+        for _page_num in range(right_start, right_end):
+            _button_to_num = SmallButton(str(_page_num))
+            layout.addWidget(_button_to_num)
+            _button_to_num.auto_width()
+            _button_to_num.clicked.connect(lambda: self.to_num_page(_page_num))
+
+        if right_need_cut:
+            label_left = QLabel("···")
+            layout.addWidget(label_left)
+            button_end = SmallButton(str(all_page_num))
+            layout.addWidget(button_end)
+            button_end.auto_width()
+            button_end.clicked.connect(lambda: self.to_num_page(all_page_num))
+
+        button_next = SmallButton(" 下一页 ")
+        layout.addWidget(button_next)
+        button_next.auto_width()
+        if self.page_number != all_page_num:
+            button_last.clicked.connect(self.to_next_page)
+        else:
+            button_last.setEnabled(False)
 
         pass
 
@@ -152,7 +221,8 @@ class DatasetViewMainWindow(BaseMainWindow):
     def to_next_page(self):
         pass
 
-    def to_num_page(self):
+    def to_num_page(self, page_num):
+        print(f"去{page_num}页")
         pass
 
     def refresh_table(self, page_number=0):
@@ -176,6 +246,10 @@ class DatasetViewMainWindow(BaseMainWindow):
 
         table_tool = TableTool(results, self.ui.tableWidget_info_show, self)
         table_tool.add_to_table(k_list)
+
+        self.total_count = total_count
+
+        self.init_page_utils()
 
     @Slot()
     def fast_output(self, info_id):
