@@ -155,12 +155,12 @@ class Ui_DatasetViewMainWindow(object):
 
         self.horizontalLayout_3.addWidget(self.label_jump_page)
 
-        self.lineEdit = QLineEdit(self.widget_jump_page)
-        self.lineEdit.setObjectName(u"lineEdit")
-        sizePolicy1.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
-        self.lineEdit.setSizePolicy(sizePolicy1)
+        self.lineEdit_jump_to = QLineEdit(self.widget_jump_page)
+        self.lineEdit_jump_to.setObjectName(u"lineEdit_jump_to")
+        sizePolicy1.setHeightForWidth(self.lineEdit_jump_to.sizePolicy().hasHeightForWidth())
+        self.lineEdit_jump_to.setSizePolicy(sizePolicy1)
 
-        self.horizontalLayout_3.addWidget(self.lineEdit)
+        self.horizontalLayout_3.addWidget(self.lineEdit_jump_to)
 
         self.pushButton_jump_to = QPushButton(self.widget_jump_page)
         self.pushButton_jump_to.setObjectName(u"pushButton_jump_to")

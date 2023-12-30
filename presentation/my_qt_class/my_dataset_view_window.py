@@ -46,7 +46,6 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.apply_columns_setting()
         self.init_comboBox_page_size()
 
-
         # self.refresh_table()
         #
         # # 连接信号
@@ -54,6 +53,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.ui.comboBox_page_size.currentIndexChanged.connect(self.change_page_size)
         # self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
         # self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
+        self.ui.pushButton_jump_to.clicked.connect(self.jump_to)
 
     def change_page_size(self, select_index):
         new_pagesize = self.ui.comboBox_page_size.currentData()
@@ -100,7 +100,7 @@ class DatasetViewMainWindow(BaseMainWindow):
 
     def set_table_style(self):
         """
-        设置表格样式
+        设置表格和页面样式
 
         :return:
         """
@@ -118,7 +118,9 @@ class DatasetViewMainWindow(BaseMainWindow):
         # 不展示行号
         self.ui.tableWidget_info_show.verticalHeader().setVisible(False)
 
-    def init_page_utils(self):
+        self.ui.lineEdit_jump_to.setFixedWidth(50)
+
+    def refresh_page_utils(self):
         widget_page_change = self.ui.widget_page_change
         layout = widget_page_change.layout()
         while layout.count():
@@ -136,7 +138,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         else:
             button_last.setEnabled(False)
 
-        all_button_count = 7
+        all_button_count = 5
 
         all_page_num = math.ceil(self.total_count / self.page_size)
 
@@ -144,8 +146,6 @@ class DatasetViewMainWindow(BaseMainWindow):
 
         # left_btn_num = self.page_number - 1
         # right_btn_num = min(all_button_count, all_page_num) - 1 - left_btn_num
-
-
 
         if self.page_number - size_length > 1:
             left_need_cut = True
@@ -160,7 +160,7 @@ class DatasetViewMainWindow(BaseMainWindow):
             left_start = self.page_number - size_length + 1
             left_end = self.page_number
         else:
-            left_start = 2
+            left_start = 1
             left_end = self.page_number
 
         if right_need_cut:
@@ -171,6 +171,8 @@ class DatasetViewMainWindow(BaseMainWindow):
             right_end = all_page_num + 1
 
         # if left_end - left_start <= 1 and right_need_cut:
+        def get_lamda(fun, args):
+            return lambda: fun(*args)
 
         if left_need_cut:
             button_start = SmallButton("1")
@@ -183,7 +185,7 @@ class DatasetViewMainWindow(BaseMainWindow):
             _button_to_num = SmallButton(str(_page_num))
             layout.addWidget(_button_to_num)
             _button_to_num.auto_width()
-            _button_to_num.clicked.connect(lambda: self.to_num_page(_page_num))
+            _button_to_num.clicked.connect(get_lamda(self.to_num_page, [_page_num]))
 
         button_now = SmallButton(str(self.page_number))
         layout.addWidget(button_now)
@@ -195,7 +197,7 @@ class DatasetViewMainWindow(BaseMainWindow):
             _button_to_num = SmallButton(str(_page_num))
             layout.addWidget(_button_to_num)
             _button_to_num.auto_width()
-            _button_to_num.clicked.connect(lambda: self.to_num_page(_page_num))
+            _button_to_num.clicked.connect(get_lamda(self.to_num_page, [_page_num]))
 
         if right_need_cut:
             label_left = QLabel("···")
@@ -209,32 +211,55 @@ class DatasetViewMainWindow(BaseMainWindow):
         layout.addWidget(button_next)
         button_next.auto_width()
         if self.page_number != all_page_num:
-            button_last.clicked.connect(self.to_next_page)
+            button_next.clicked.connect(self.to_next_page)
         else:
-            button_last.setEnabled(False)
+            button_next.setEnabled(False)
+
+        self.refresh_label_page_info()
 
         pass
 
+    def jump_to(self):
+        jump_to_num = self.ui.lineEdit_jump_to.text()
+        try:
+            jump_to_num = int(jump_to_num)
+        except:
+            self.logger.error("输入的跳转页码不是有效数字")
+            return
+        self.to_num_page(jump_to_num)
+
+    def refresh_label_page_info(self):
+        total_count = self.total_count
+        now_start = (self.page_number - 1) * self.page_size + 1
+        now_end = min(self.page_number * self.page_size, total_count)
+        self.ui.label_page_info.setText(f"当前{now_start}到{now_end}，共{total_count}条数据")
+
     def to_last_page(self):
+        self.page_number -= 1
+        self.refresh_table()
         pass
 
     def to_next_page(self):
+        self.page_number += 1
+        self.refresh_table()
         pass
 
     def to_num_page(self, page_num):
-        print(f"去{page_num}页")
+        # print(f"去{page_num}页")
+        self.page_number = page_num
+        self.refresh_table()
         pass
 
     def refresh_table(self, page_number=0):
         """
-        刷新表格
+        刷新表格和页面
 
         :param page_number:
         :return:
         """
         # 注意 QcomboBox在被清空的时候也会发出currentIndexChanged信号
         page_size = self.page_size
-        if page_number == 0:
+        if page_number <= 0:
             page_number = self.page_number
         self.ui.tableWidget_info_show.setRowCount(0)
         k_list = self.config['program_configs']['default_columns'].split(",")
@@ -243,13 +268,17 @@ class DatasetViewMainWindow(BaseMainWindow):
                                                                          k_list)
 
         # print(total_count, page_number, results)
+        self.total_count = total_count
+        all_page_num = math.ceil(self.total_count / self.page_size)
+        if self.page_number > all_page_num:
+            self.page_number = all_page_num
 
         table_tool = TableTool(results, self.ui.tableWidget_info_show, self)
         table_tool.add_to_table(k_list)
 
-        self.total_count = total_count
 
-        self.init_page_utils()
+
+        self.refresh_page_utils()
 
     @Slot()
     def fast_output(self, info_id):
@@ -373,18 +402,6 @@ class TableTool:
         caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
         self.table.setCellWidget(row, column, caozuo_widget)
 
-
-class PageUtils(QWidget):
-    def __init__(self, page_size, page_now, count):
-        super().__init__()
-        self.page_size = page_size
-        self.page_now = page_now
-        self.count = count
-
-        layout = QHBoxLayout()
-        widget_page_change = QWidget()
-
-    pass
 
 
 class SmallButton(QPushButton):
