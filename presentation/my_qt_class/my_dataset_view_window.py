@@ -42,7 +42,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.page_number = 1
         self.page_size = int(self.config["program_configs"]["default_pagesize"])
         self.total_count = 0
-        self.order_by_info = (Info.info_id, "asc")
+        self.order_by_info = None  # (0, "asc")  # 保存排序列索引和排序方式
 
         self.apply_columns_setting()
         self.init_comboBox_page_size()
@@ -55,6 +55,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         # self.ui.pushButton_add_wav_srt.clicked.connect(self.add_from_file_wav_srt)
         # self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
         self.ui.pushButton_jump_to.clicked.connect(self.jump_to)
+        self.ui.tableWidget_info_show.horizontalHeader().sectionClicked.connect(self.change_order_by)
 
     def change_page_size(self, select_index):
         new_pagesize = self.ui.comboBox_page_size.currentData()
@@ -95,6 +96,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.logger.info(f"已选择自定义列：{checked_str}")
         self.ui.tableWidget_info_show.setColumnCount(len(checked_list))
         self.ui.tableWidget_info_show.setHorizontalHeaderLabels(checked_list)
+        self.order_by_info = (self.get_header_label(0), "asc")
         # header = self.ui.tableWidget_info_show.horizontalHeader()
         self.refresh_table()
         self.ui.tableWidget_info_show.resizeColumnsToContents()  # 使表格自动列宽
@@ -250,6 +252,25 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.page_number = page_num
         self.refresh_table()
         pass
+
+    def get_header_label(self, index=0):
+
+        header_label = self.ui.tableWidget_info_show.horizontalHeaderItem(index).text()
+        if header_label in ["序号","操作"]:
+            header_label = "数据ID"
+        return header_label
+
+    def change_order_by(self, index):
+        old_order = self.order_by_info[0]
+        old_adesc = self.order_by_info[1]
+
+        new_order = self.get_header_label(index)
+        if old_order == new_order:
+            new_adesc = "asc" if old_adesc == "desc" else "desc"
+        else:
+            new_adesc = "asc"
+        self.order_by_info = (new_order, new_adesc)
+        self.refresh_table()
 
     def refresh_table(self, page_number=0):
         """

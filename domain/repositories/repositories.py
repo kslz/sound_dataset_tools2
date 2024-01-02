@@ -81,7 +81,8 @@ class SearchInfo:
         self.query = self.query.order_by(Info.info_id.asc())
 
     def order_by_other(self, order_info):
-        column = order_info[0]
+        sf = SearchField()
+        column = sf.field_dict[order_info[0]]["field"]
         order = order_info[1]
         if order == 'asc':
             self.query = self.query.order_by(column.asc())
