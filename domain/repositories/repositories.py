@@ -80,6 +80,14 @@ class SearchInfo:
     def order_by_id(self):
         self.query = self.query.order_by(Info.info_id.asc())
 
+    def order_by_other(self, order_info):
+        column = order_info[0]
+        order = order_info[1]
+        if order == 'asc':
+            self.query = self.query.order_by(column.asc())
+        else:
+            self.query = self.query.order_by(column.desc())
+
     def get_count(self):
         return self.query.count()
 
@@ -152,13 +160,15 @@ def get_info_by_id(info_id):
     return Info.get_by_id(info_id)
 
 
-def get_dataset_view_window_info(dataset_id=1, page_size=15, page_number=1, k_list=None, show_delete=True):
+def get_dataset_view_window_info(dataset_id=1, page_size=15, page_number=1, k_list=None, order_by_info=None,
+                                 show_delete=True):
     if k_list is None:
         k_list = []
     sf = SearchField()
     field_list = sf.get_field_list(k_list)
     si = SearchInfo(field_list)
     si.search_dataset_id(dataset_id)
+    si.order_by_other(order_by_info)
     total_count, page_number, results = si.get_result_page(page_number, page_size)
 
     return total_count, page_number, list(results)

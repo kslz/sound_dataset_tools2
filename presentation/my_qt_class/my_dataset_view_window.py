@@ -42,6 +42,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.page_number = 1
         self.page_size = int(self.config["program_configs"]["default_pagesize"])
         self.total_count = 0
+        self.order_by_info = (Info.info_id, "asc")
 
         self.apply_columns_setting()
         self.init_comboBox_page_size()
@@ -265,7 +266,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         k_list = self.config['program_configs']['default_columns'].split(",")
 
         total_count, page_number, results = get_dataset_view_window_info(self.dataset_id, page_size, page_number,
-                                                                         k_list)
+                                                                         k_list, self.order_by_info)
 
         # print(total_count, page_number, results)
         self.total_count = total_count
@@ -275,8 +276,6 @@ class DatasetViewMainWindow(BaseMainWindow):
 
         table_tool = TableTool(results, self.ui.tableWidget_info_show, self)
         table_tool.add_to_table(k_list)
-
-
 
         self.refresh_page_utils()
 
@@ -401,7 +400,6 @@ class TableTool:
         ]
         caozuo_widget = make_my_operate_btns(parent=self, data_list=data_list)
         self.table.setCellWidget(row, column, caozuo_widget)
-
 
 
 class SmallButton(QPushButton):
