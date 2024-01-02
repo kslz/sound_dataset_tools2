@@ -21,6 +21,7 @@ class SearchField:
         self.field_dict["数据ID"] = {"name": "数据ID", "field": Info.info_id}
         self.field_dict["数据集ID"] = {"name": "数据集ID", "field": Info.dataset_id}
         self.field_dict["数据文本"] = {"name": "数据文本", "field": Info.info_text}
+        self.field_dict["数据字数"] = {"name": "数据字数", "field": fn.LENGTH(Info.info_text).alias('info_text_length')}
         self.field_dict["数据拼音"] = {"name": "数据拼音", "field": Info.info_pinyin}
         self.field_dict["发音人"] = {"name": "发音人", "field": Info.info_speaker}
         self.field_dict["音频文件位置"] = {"name": "音频文件位置", "field": Info.info_raw_file_path}

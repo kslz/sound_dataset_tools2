@@ -351,6 +351,7 @@ class TableTool:
         self.fun_dict["数据ID"] = self.info_id
         self.fun_dict["数据集ID"] = self.dataset_id
         self.fun_dict["数据文本"] = self.info_text
+        self.fun_dict["数据字数"] = self.info_text_length
         self.fun_dict["数据拼音"] = self.info_pinyin
         self.fun_dict["发音人"] = self.info_speaker
         self.fun_dict["音频文件位置"] = self.info_raw_file_path
@@ -383,6 +384,9 @@ class TableTool:
 
     def info_text(self, row, column, result_dict):
         self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_text"])))
+
+    def info_text_length(self, row, column, result_dict):
+        self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_text_length"])))
 
     def info_pinyin(self, row, column, result_dict):
         self.table.setItem(row, column, QTableWidgetItem(str(result_dict["info_pinyin"])))
