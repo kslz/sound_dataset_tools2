@@ -21,6 +21,7 @@ from presentation.my_qt_class.my_delete_button import DeleteBTN
 from presentation.my_qt_class.my_delete_info_by_wav_dialog import DeleteInfoByWavDialog
 from presentation.my_qt_class.my_edit_info_dialog import EditInfoDialog
 from presentation.my_qt_class.my_factory_function import *
+from presentation.my_qt_class.my_select_input_way_dialog import SelectInputWayDialog
 from presentation.pyuic.ui_DatasetViewMainWindow import Ui_DatasetViewMainWindow
 from utils.init_tools import read_ini_config
 
@@ -56,6 +57,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         # self.ui.pushButton_del_by_raw_wav.clicked.connect(self.open_del_info_by_wav_dialog)
         self.ui.pushButton_jump_to.clicked.connect(self.jump_to)
         self.ui.tableWidget_info_show.horizontalHeader().sectionClicked.connect(self.change_order_by)
+        self.ui.pushButton_input.clicked.connect(self.open_select_input_way_dialog)
 
     def change_page_size(self, select_index):
         new_pagesize = self.ui.comboBox_page_size.currentData()
@@ -256,7 +258,7 @@ class DatasetViewMainWindow(BaseMainWindow):
     def get_header_label(self, index=0):
 
         header_label = self.ui.tableWidget_info_show.horizontalHeaderItem(index).text()
-        if header_label in ["序号","操作"]:
+        if header_label in ["序号", "操作"]:
             header_label = "数据ID"
         return header_label
 
@@ -332,6 +334,12 @@ class DatasetViewMainWindow(BaseMainWindow):
     def open_del_info_by_wav_dialog(self):
         del_info_by_wav = DeleteInfoByWavDialog(self, self.dataset_id)
         del_info_by_wav.exec()
+
+    def open_select_input_way_dialog(self):
+        select_input_way_dialog = SelectInputWayDialog(self)
+        select_input_way_dialog.add_line("通过音频与字幕添加",
+                                         "选择音频和对应的字幕文件，程序可以根据字幕的文本和起止时间将音频分割为数据段")
+        select_input_way_dialog.exec()
 
 
 class TableTool:

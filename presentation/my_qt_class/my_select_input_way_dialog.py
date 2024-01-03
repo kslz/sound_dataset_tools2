@@ -4,13 +4,16 @@
     @Author : 李子
     @Url : https://github.com/kslz
 """
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication, QDialog, QVBoxLayout, QWidget, QHBoxLayout, QPushButton, QLabel, QSizePolicy
 
+from utils.tools import huanhang
 
-class MyDialog(QDialog):
-    def __init__(self):
-        super().__init__()
+
+class SelectInputWayDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
 
         self.setFixedSize(350, 0)  # 0表示高度自动适应内容
 
@@ -20,6 +23,7 @@ class MyDialog(QDialog):
         font = QFont()
         font.setPointSize(12)
         self.setFont(font)
+        self.button_dict = {}
 
     def add_line(self, name, introduction):
         widget_line = QWidget(self)
@@ -30,6 +34,9 @@ class MyDialog(QDialog):
         widget_line_layout.addWidget(label)
         button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.main_layout.addWidget(widget_line)
+        label.setToolTip(f"<pre>{huanhang(introduction)}</pre>")
+
+        self.button_dict[name] = button
 
 class MyLabel(QLabel):
     def __init__(self, text, parent=None):
