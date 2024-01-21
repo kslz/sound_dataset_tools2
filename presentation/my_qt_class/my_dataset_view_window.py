@@ -324,6 +324,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         pass
 
     def add_from_file_wav_srt(self):
+        print("ok")
         add_wav_srt_window = AddFromWavSrtDialog(self, self.dataset_id)
         add_wav_srt_window.exec()
 
@@ -339,6 +340,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         select_input_way_dialog = SelectInputWayDialog(self)
         select_input_way_dialog.add_line("通过音频与字幕添加",
                                          "选择音频和对应的字幕文件，程序可以根据字幕的文本和起止时间将音频分割为数据段")
+        select_input_way_dialog.button_dict["通过音频与字幕添加"].clicked.connect(self.add_from_file_wav_srt)
         select_input_way_dialog.exec()
 
 
