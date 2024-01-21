@@ -15,6 +15,8 @@ class SelectInputWayDialog(QDialog):
     def __init__(self, parent):
         super().__init__(parent)
 
+        self.setWindowTitle("选择数据导入方式")
+
         self.setFixedSize(350, 0)  # 0表示高度自动适应内容
 
         # 创建主布局
@@ -56,7 +58,7 @@ class MyLabel(QLabel):
 
 if __name__ == '__main__':
     app = QApplication([])
-    dialog = MyDialog()
+    dialog = SelectInputWayDialog(None)
     dialog.add_line("name", "介绍")
     dialog.exec_()
     app.exec_()

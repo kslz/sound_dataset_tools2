@@ -58,7 +58,7 @@ class AddFromWavSrtDialog(BaseDialog):
             ("所需参数", True, 130),
         ]
         modify_table_style(tbl, properties)
-        self.logger.debug(f"获取到优化信息{self.need_optimization_args}")
+        self.logger.info(f"获取到优化信息{self.need_optimization_args}")
         for name, args_info in self.need_optimization_args.items():
             info_obj = {}
             row = tbl.rowCount()
