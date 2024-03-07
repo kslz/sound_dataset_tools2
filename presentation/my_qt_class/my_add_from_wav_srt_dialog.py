@@ -170,10 +170,10 @@ class AddFromWavSrtDialog(BaseDialog):
         return True, result_dict
 
     def save_to_dataset(self):
-        wav_path = self.file_paths["wav"]
+        wav_path = self.file_paths.get("wav", "")
         workspace_path = self.workspace.workspace_path
         # wav_path = copy_file_to_workspace(wav_path, self.workspace.file_path)
-        srt_path = self.file_paths["srt"]
+        srt_path = self.file_paths.get("srt", "")
         speaker = self.ui.lineEdit_spk.text()
 
         if wav_path.strip() == "" or None:

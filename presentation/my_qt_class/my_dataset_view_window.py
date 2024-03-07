@@ -63,7 +63,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         new_pagesize = self.ui.comboBox_page_size.currentData()
         self.page_size = new_pagesize
         self.refresh_table()
-        self.ui.tableWidget_info_show.resizeColumnsToContents()  # 使表格自动列宽
+
 
     def init_comboBox_page_size(self):
         """
@@ -101,7 +101,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.order_by_info = (self.get_header_label(0), "asc")
         # header = self.ui.tableWidget_info_show.horizontalHeader()
         self.refresh_table()
-        self.ui.tableWidget_info_show.resizeColumnsToContents()  # 使表格自动列宽
+
 
     def set_table_style(self):
         """
@@ -301,6 +301,7 @@ class DatasetViewMainWindow(BaseMainWindow):
         table_tool.add_to_table(k_list)
 
         self.refresh_page_utils()
+        self.ui.tableWidget_info_show.resizeColumnsToContents()  # 使表格自动列宽
 
     @Slot()
     def fast_output(self, info_id):
