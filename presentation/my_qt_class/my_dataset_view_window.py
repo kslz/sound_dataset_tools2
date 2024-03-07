@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QTableWidgetItem, QLabel
 
 from domain.repositories.repositories import *
 from infrastructure.file_io import fast_output_sound
+from presentation.my_qt_class.my_add_from_long_wav_dialog import AddFromLongWavDialog
 from presentation.my_qt_class.my_add_from_wav_srt_dialog import AddFromWavSrtDialog
 from presentation.my_qt_class.my_audio_button import AudioButton
 from presentation.my_qt_class.my_base_main_window import BaseMainWindow
@@ -329,6 +330,11 @@ class DatasetViewMainWindow(BaseMainWindow):
         add_wav_srt_window = AddFromWavSrtDialog(self, self.dataset_id)
         add_wav_srt_window.exec()
 
+    def add_from_file_long_wav(self):
+        self.select_input_way_dialog.close()
+        add_wav_srt_window = AddFromLongWavDialog(self, self.dataset_id)
+        add_wav_srt_window.exec()
+
     def closeEvent(self, event):
         self.closed.emit()
         super().closeEvent(event)
@@ -341,7 +347,10 @@ class DatasetViewMainWindow(BaseMainWindow):
         self.select_input_way_dialog = SelectInputWayDialog(self)
         self.select_input_way_dialog.add_line("通过音频与字幕添加",
                                          "选择音频和对应的字幕文件，程序可以根据字幕的文本和起止时间将音频分割为数据段")
+        self.select_input_way_dialog.add_line("通过音频添加",
+                                              "选择音频文件，程序可以自动将音频分割为数据段，文本位置将留空")
         self.select_input_way_dialog.button_dict["通过音频与字幕添加"].clicked.connect(self.add_from_file_wav_srt)
+        self.select_input_way_dialog.button_dict["通过音频添加"].clicked.connect(self.add_from_file_long_wav)
         self.select_input_way_dialog.exec()
 
 
